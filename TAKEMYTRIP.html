@@ -1,0 +1,2914 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<title>Οικογενειακός Οργανωτής Ταξιδιού</title>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Comic Neue', cursive; background: #f0f8ff; margin: 0; display: flex; }
+.sidebar { width: 250px; background: #3eb489; color: white; padding: 20px; box-sizing: border-box; }
+.sidebar h2 { font-size: 20px; margin-top: 0; }
+.step { margin-bottom: 20px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; transition: background 0.2s; }
+.step.active { background: rgba(255,255,255,0.5); }
+.main { flex: 1; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+.section { display: none; }
+.section.active { display: block; }
+h1 { text-align: center; margin-bottom: 20px; }
+h2 { text-align: center; margin-bottom: 10px; }
+label { display:block; margin-top:10px; }
+select, input[type=checkbox] { margin-top:5px; }
+#destination-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; margin-top:20px; }
+.destination-card { border-radius:12px; padding:20px; min-height:140px; display:flex; flex-direction:column; justify-content:center; align-items:center; font-family:'Comic Neue', cursive; font-size:1em; font-weight:500; background: #dfefff; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:0.2s; cursor:pointer; }
+.destination-card:nth-child(2n) { background: #dfffe0; }
+.destination-card:nth-child(3n) { background: #fff0df; }
+.destination-card button { margin-top:10px; padding:8px 12px; background:#3eb489; color:white; border:none; border-radius:8px; cursor:pointer; }
+.family-options { display:flex; gap:10px; flex-wrap:wrap; margin-top:5px; }
+
+/* Βελτιστοποίηση Βήματος 1 */
+.destination-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filter-group h3 {
+    margin-top: 0;
+    color: #3eb489;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Βήμα 3 - Ξενοδοχεία */
+#step-hotel div, #step-hotel input, #step-hotel button { font-family: 'Comic Neue', cursive; }
+
+/* ΝΕΟ ΣΤΥΛ ΓΙΑ ΤΗ ΝΕΑ ΔΟΜΗ ΗΛΙΚΙΩΝ */
+.family-members-container {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.family-member-input {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.family-member-input input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-family: 'Comic Neue', cursive;
+    font-size: 16px;
+}
+
+.remove-member-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Βήμα 4 - Δραστηριότητες (Αρχικά Στυλ) */
+.total-overall { max-width: 1000px; margin: auto; margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; font-size: 26px; font-weight: bold; color: #fff; background-color: #ff7f50; }
+
+/* ================== MOBILE OPTIMIZATIONS ================== */
+/* Budget Tracker Mobile Styles */
+@media (max-width: 768px) {
+    #budget-tracker {
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        left: 10px !important;
+        width: calc(100% - 20px) !important;
+        max-width: none !important;
+        min-width: auto !important;
+        font-size: 14px !important;
+        padding: 12px !important;
+    }
+   
+    /* PDF Button Mobile */
+    #pdf-export-btn {
+        width: 90% !important;
+        padding: 18px 20px !important;
+        font-size: 16px !important;
+        margin: 15px auto !important;
+    }
+   
+    /* Activity Cards Mobile */
+    .activity-card {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 12px !important;
+        min-height: auto !important;
+    }
+   
+    .activity-card .emoji-icon {
+        font-size: 30px !important;
+        margin-bottom: 8px !important;
+    }
+   
+    /* Destination Cards Mobile */
+    .destination-card {
+        padding: 15px !important;
+        min-height: 120px !important;
+    }
+   
+    /* Family Members Mobile */
+    .family-member-input {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+   
+    .family-member-input input {
+        width: 100%;
+    }
+
+    /* Βελτιστοποίηση Βήματος 1 για κινητά */
+    .destination-filters {
+        grid-template-columns: 1fr;
+    }
+   
+    .filter-group {
+        padding: 10px;
+    }
+   
+    .buttons-container {
+        flex-direction: column;
+        align-items: center;
+    }
+   
+    .buttons-container button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Animation για Budget Tracker */
+@keyframes slideInBudget {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#budget-tracker {
+    animation: slideInBudget 0.5s ease-out;
+}
+
+/* Loading state για PDF */
+.pdf-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.pdf-loading::after {
+    content: ' ⏳';
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button { padding: 10px 20px; font-size: 16px; border-radius: 12px; border: none; background: #ff7f50; color: white; cursor: pointer; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; transition: transform 0.2s, box-shadow 0.2s; }
+
+#activities-container-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+#activities-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* ΝΕΟ ΣΤΥΛ ΓΙΑ ΚΑΡΤΕΣ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ ΧΩΡΙΣ ΦΩΤΟ */
+.activity-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    min-height: 200px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.activity-card:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    border-color: #ff7f50;
+    transform: translateY(-2px);
+}
+
+.activity-card.selected {
+    border: 3px solid #ff7f50;
+    background-color: #fff8f0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+.activity-info h3 {
+    margin-top: 0;
+    font-size: 1.3em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.activity-info p {
+    margin: 8px 0;
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5;
+}
+
+.activity-card .emoji-icon {
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.activity-card .star {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    color: gold;
+    display: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.activity-card.selected .star {
+    display: block;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+table.activity-table { width: 100%; text-align: center; margin-top: 8px; border-collapse: collapse; font-size: 0.85em; }
+table.activity-table th, table.activity-table td { padding: 4px; }
+.total { font-weight: bold; font-size: 14px; margin-top: 6px; }
+
+/* ΝΕΟ ΣΤΥΛ ΓΙΑ ΤΟ ΒΗΜΑ 5 ΚΟΥΜΠΙ */
+.step-5-btn-container { text-align: center; margin-top: 30px; }
+.step-5-btn { padding: 18px 40px; font-size: 20px; border-radius: 16px; background: #3eb489; color: white; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+
+/* ΣΤΥΛ ΓΙΑ ΤΟ LINK ΣΤΟ ΒΗΜΑ 5 */
+.summary-content {
+    text-align: center;
+    font-size: 1.2em;
+    padding: 40px;
+    border: 2px dashed #3eb489;
+    border-radius: 15px;
+    background: #e0fff0;
+}
+.summary-content a {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ff7f50;
+    text-decoration: none;
+    display: block;
+    margin-top: 15px;
+}
+
+/* 🔥 OPTIMIZED BACKGROUND */
+body {
+    background: #f0f8ff;
+    background-size: cover;
+    background-position: center;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* 🔥 ΝΕΑ ΒΕΛΤΙΩΣΗ ΓΙΑ ΚΙΝΗΤΑ */
+@media (max-width: 640px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+    .main {
+        padding: 10px;
+    }
+    .destination-card {
+        min-height: 120px;
+        padding: 15px;
+    }
+    .activity-card {
+        min-height: 180px;
+        padding: 12px;
+    }
+    table.activity-table {
+        font-size: 0.75em;
+    }
+    table.activity-table th,
+    table.activity-table td {
+        padding: 2px;
+    }
+    #map-container {
+        height: 400px;
+    }
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    display: none;
+    text-align: center;
+    padding: 10px;
+    background: #3eb489;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.mobile-nav select {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Comic Neue', cursive;
+    font-size: 16px;
+}
+
+/* Σε κινητά: απόκρυψη sidebar, εμφάνιση mobile nav */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+   
+    .mobile-nav {
+        display: block;
+    }
+   
+    .main {
+        padding: 10px;
+    }
+}
+
+/* Στυλ για τον χάρτη */
+.leaflet-container {
+    font-family: 'Comic Neue', cursive;
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>Βήματα Ταξιδιού</h2>
+  <div class="step active" data-target="step-destination">1. Επιλογή Προορισμού</div>
+  <div class="step" data-target="step-flight">2. Επιλογή Πτήσης</div>
+  <div class="step" data-target="step-hotel">3. Επιλογή Ξενοδοχείου</div>
+  <div class="step" data-target="step-activities">4. Επιλογή Δραστηριοτήτων</div>
+  <div class="step" data-target="step-summary">5. Ημερήσιο Πρόγραμμα και Διαδραστικος χαρτης με εστιατορια</div>
+  <div class="step" data-target="step-map">6. Διαδραστικός Χάρτης & Πρόγραμμα</div>
+</div>
+
+<div class="mobile-nav">
+    <select onchange="activateStep(this.value)">
+        <option value="step-destination">1. Προορισμός</option>
+        <option value="step-flight">2. Πτήσεις</option>
+        <option value="step-hotel">3. Ξενοδοχεία</option>
+        <option value="step-activities">4. Δραστηριότητες</option>
+        <option value="step-summary">5. Πρόγραμμα</option>
+        <option value="step-map">6. Χάρτης</option>
+    </select>
+</div>
+
+<div class="main">
+    <div id="step-destination" class="section active">
+    <h1>Επιλογή Προορισμού</h1>
+   
+    <!-- Βελτιστοποιημένη διάταξη φίλτρων -->
+    <div class="destination-filters">
+        <div class="filter-group">
+            <h3>Βασικά Φίλτρα</h3>
+            <label>Τύπος ταξιδιώτη:</label>
+            <select id="travel-type" onchange="toggleFamily()">
+                <option value="">Επιλέξτε...</option>
+                <option value="Μόνος">Μόνος</option>
+                <option value="Ζευγάρι">Ζευγάρι</option>
+                <option value="Οικογένεια">Οικογένεια</option>
+                <option value="Παρέα φίλων">Παρέα φίλων</option>
+            </select>
+           
+            <div class="family-options" id="family-options" style="display:none;">
+                <label><input type="checkbox" value="Καρότσι"> Καρότσι</label>
+                <label><input type="checkbox" value="Μικρά"> Μικρά</label>
+                <label><input type="checkbox" value="Μεγάλα"> Μεγάλα</label>
+                <label><input type="checkbox" value="Έφηβοι"> Έφηβοι</label>
+                <label><input type="checkbox" value="Άνω των 18"> Άνω των 18</label>
+            </div>
+           
+            <label>Απόσταση σε ώρες:</label>
+            <select id="distance">
+                <option value="">Όλα</option>
+                <option value="1">Έως 1</option>
+                <option value="2">Έως 2</option>
+                <option value="3">Έως 3</option>
+                <option value="4">Έως 4</option>
+                <option value="5">Πάνω από 4</option>
+            </select>
+           
+            <label>Θερμοκρασία/Χειμώνας:</label>
+            <select id="weather">
+                <option value="">Όλα</option>
+                <option value="Πιο ζεστό">Πιο ζεστό από Ελλάδα</option>
+                <option value="Ίδια">Ίδια θερμοκρασία</option>
+                <option value="Πιο κρύο">Πιο κρύο</option>
+                <option value="Χιόνια">Πιθανά χιόνια</option>
+            </select>
+        </div>
+       
+        <div class="filter-group">
+            <h3>Πρόσθετα Φίλτρα</h3>
+            <label>Θεματικά πάρκα:</label>
+            <select id="themeparks">
+                <option value="">Αδιαφορο</option>
+                <option value="Ναι">Ναι</option>
+            </select>
+           
+            <label>Χριστουγεννιάτικες αγορές:</label>
+            <select id="christmas">
+                <option value="">Αδιαφορο</option>
+                <option value="Ναι">Ναι</option>
+            </select>
+           
+            <label>Πόσες μέρες θα μείνετε;</label>
+<div style="display: flex; gap: 10px; align-items: center;">
+    <select id="days-stay" style="flex: 1;">
+        <option value="">-- Επιλέξτε --</option>
+        <option value="3">3 μέρες</option>
+        <option value="4">4 μέρες</option>
+        <option value="5">5 μέρες</option>
+        <option value="6">6 μέρες</option>
+        <option value="7">7 μέρες</option>
+    </select>
+    <button onclick="updateDaysStay()" style="padding: 8px 12px; background: #3eb489; color: white; border: none; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+        🔄 Update
+    </button>
+</div>
+           
+            <label>Προϋπολογισμός Ταξιδιού (προαιρετικό):</label>
+            <input type="number" id="travel-budget" placeholder="π.χ. 500" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px;">
+            <small style="color: #666;">Βάλτε το συνολικό ποσό που θέλετε να ξοδέψετε</small>
+        </div>
+       
+        <div class="filter-group">
+            <h3>Επιλογές Διακοπών</h3>
+            <label>Τύπος Διακοπών:</label>
+            <select id="vacation-type">
+                <option value="">Όλα</option>
+                <option value="Πολιτισμός">Πολιτισμός & Μουσεία</option>
+                <option value="Φυσική Ομορφιά">Φυσική Ομορφιά & Τοπία</option>
+                <option value="Θάλασσα">Θαλάσσια & Παραλίες</option>
+                <option value="Πόλη">Αστικές Διακοπές</option>
+                <option value="Βουνό">Βουνό & Χιονοδρομικά</option>
+            </select>
+
+            <label>Κόστος Διακοπών:</label>
+            <select id="cost-level">
+                <option value="">Όλα</option>
+                <option value="Οικονομικό">💰 Οικονομικό</option>
+                <option value="Μέτριο">💰💰 Μέτριο</option>
+                <option value="Ακριβό">💰💰💰 Ακριβό</option>
+            </select>
+
+            <label>Κατάλληλο για:</label>
+            <div class="family-options" id="suitability-options" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:5px;">
+                <label><input type="checkbox" value="Νεογέννητα"> Νεογέννητα (0-2)</label>
+                <label><input type="checkbox" value="ΑΜΕΑ"> Άτομα με ΑΜΕΑ</label>
+                <label><input type="checkbox" value="Ηλικιωμένοι"> Ηλικιωμένοι</label>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Κουμπιά ενεργειών -->
+    <div class="buttons-container">
+    <button onclick="filterDestinations()">Δες Προορισμούς</button>
+    <button onclick="resetFilters()" style="background: #6c757d;">🔄 Επαναφορά Φίλτρων</button>
+    <button onclick="toggleQuickSelection()" style="background: #3eb489;">🔽 Έχω ήδη βρει πόλη</button>
+    <button onclick="clearAllData()" style="background: #dc3545;">🗑️ Διαγραφή Όλων</button>
+</div>
+   
+    <!-- Γρήγορη επιλογή πόλης -->
+    <div id="quick-city-select" style="display: none; max-width: 400px; margin: 0 auto 20px auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; text-align: center;">Επιλέξτε πόλη</h3>
+        <select id="quick-city" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: 'Comic Neue', cursive;">
+            <option value="">-- Επιλέξτε πόλη --</option>
+        </select>
+        <button onclick="selectQuickCity()" style="width: 100%; padding: 10px; margin-top: 10px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            Επιλογή
+        </button>
+    </div>
+   
+    <!-- Αποτελέσματα προορισμών -->
+    <div id="destination-cards"></div>
+  </div>
+
+    <div id="step-flight" class="section">
+    <h1>✈️ Επιλογή Πτήσης</h1>
+    <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-bottom:40px;">
+      <a href="https://www.google.com/flights" target="_blank"><button style="padding:20px 45px; font-size:20px; border-radius:18px; background:#b2f0e8; color:#004d40; border:none; cursor:pointer;">🌍 Google Flights</button></a>
+      <a href="https://www.skyscanner.net" target="_blank"><button style="padding:20px 45px; font-size:20px; border-radius:18px; background:#cce3ff; color:#002b5b; border:none; cursor:pointer;">✈️ Skyscanner</button></a>
+    </div>
+    <div style="text-align:center;"><button onclick="goToStep3()" style="padding:14px 30px; font-size:18px; border-radius:14px; background:#d4edda; color:#155724; border:none; cursor:pointer;">➡️ Συνέχεια στο Βήμα 3</button></div>
+  </div>
+
+    <div id="step-hotel" class="section">
+    <h1>Επιλογή Ξενοδοχείου 🏨</h1>
+    <div style="max-width:600px; margin:auto; background:#dfefff; padding:20px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+      <h2>Αναζήτηση Ξενοδοχείου</h2>
+      <label>Προορισμός:</label>
+      <input type="text" id="hotel-destination" placeholder="π.χ. Βιέννη" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:10px;">
+      <label>Ημερομηνία Άφιξης:</label>
+      <input type="date" id="hotel-checkin" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:10px;">
+      <label>Ημερομηνία Αναχώρησης:</label>
+      <input type="date" id="hotel-checkout" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px;">
+      <button onclick="searchHotels()">Βρες Ξενοδοχεία</button>
+      <p style="margin-top:12px; font-size:0.9em; color:#555;">
+        Το link ανοίγει την έκδοση Expedia για Ευρώπη. Μπορείτε να επιλέξετε γλώσσα/νόμισμα στην ιστοσελίδα.
+      </p>
+<div style="text-align:center; margin-top:30px;">
+  <button onclick="goToStep4()" style="padding:14px 30px; font-size:18px; border-radius:14px; background:#ff7f50; color:white; border:none; cursor:pointer;">
+    ➡️ Συνέχεια στο Βήμα 4
+  </button>
+</div>
+
+    </div>
+  </div>
+
+    <div id="step-activities" class="section">
+    <h1>Οικογενειακές Δραστηριότητες</h1>
+    <div class="total-overall" id="overall-total">Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: 0 €</div>
+   
+    <!-- ΝΕΑ ΔΟΜΗ ΗΛΙΚΙΩΝ (αντικαθιστά το παλιό age-inputs) -->
+    
+        <div class="family-members-container">
+    <h2>👨‍👩‍👧‍👦 Τα Μέλη Της Οικογένειας (με ακριβείς ηλικίες)</h2>
+    <div id="family-members-list">
+        <div class="family-member-input">
+            <span>👨</span>
+            <input type="text" placeholder="Όνομα" value="1ος Ενήλικας" class="member-name">
+            <input type="number" placeholder="Ηλικία" value="" class="member-age" min="18" max="120">
+            <span>ετών</span>
+        </div>
+        <div class="family-member-input">
+            <span>👩</span>
+            <input type="text" placeholder="Όνομα" value="2ος Ενήλικας" class="member-name">
+            <input type="number" placeholder="Ηλικία" value="" class="member-age" min="18" max="120">
+            <span>ετών</span>
+        </div>
+    </div>
+            <!-- ΚΟΥΜΠΙΑ ΠΡΟΣΘΗΚΗΣ -->
+    <div style="margin: 20px 0; text-align: center;">
+        <h3 style="color: #3eb489;">➕ Προσθήκη Μελών</h3>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 15px 0;">
+            <button onclick="addAdultMember()" style="background: #3eb489; color: white; padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                👨 Προσθήκη Ενήλικα
+            </button>
+            <button onclick="addChildMember()" style="background: #4c7af0; color: white; padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                🧒 Προσθήκη Παιδιού (6-17)
+            </button>
+            <button onclick="addBabyMember()" style="background: #ff7f50; color: white; padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                👶 Προσθήκη Μωρού (0-5)
+            </button>
+        </div>
+        <button onclick="updateFamilyMembers()" style="background: #ff7f50; color: white; padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px;">
+            🔄 Ενημέρωση Οικογένειας
+        </button>
+        <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+            💡 <strong>Σημείωση:</strong> Για ηλικίες 60+ συμβουλευτείτε τα επίσημα sites για επιπλέον εκπτώσεις
+        </p>
+    </div>
+    </div>
+
+    <div id="activities-container-wrapper">
+        <div id="activities-container"></div>
+    </div>
+ <!-- ΕΞΥΠΝΟ ΚΟΥΜΠΙ ΕΚΠΤΩΣΕΩΝ -->
+    <div style="text-align: center; margin: 25px 0 40px 0;">
+        <button onclick="findSmartDiscounts()" id="smart-discounts-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 18px 35px; border: none; border-radius: 15px; cursor: pointer; font-size: 20px; font-weight: bold; box-shadow: 0 6px 15px rgba(155, 89, 182, 0.4); transition: all 0.3s;">
+            🧠 Βρες Έξυπνες Εκπτώσεις & Combos
+        </button>
+        <p style="color: #666; font-size: 0.95em; margin-top: 12px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            Το σύστημα θα αναζητήσει <strong>συνδυαστικά εισιτήρια</strong>, <strong>family discounts</strong> και <strong>combo offers</strong> για τις επιλεγμένες σας δραστηριότητες
+        </p>
+    </div>
+
+    <div class="step-5-btn-container">
+    <div class="step-5-btn-container">
+        <button class="step-5-btn" onclick="goToStep5()">
+            ➡️ Ολοκλήρωση στο Βήμα 5
+        </button>
+    </div>
+  </div>
+
+  <div id="step-summary" class="section">
+         <h1>✅ Τελική Σύνοψη</h1>
+    <div id="summary-content" class="summary-content">
+    </div>
+   
+    <div style="text-align: center; margin-top: 30px;">
+        <button onclick="goToStep6()" style="padding: 14px 30px; font-size: 18px; border-radius: 14px; background: #3eb489; color: white; border: none; cursor: pointer;">
+            🗺️ Συνέχεια στο Χάρτη (Βήμα 6)
+        </button>
+    </div>
+</div>
+ 
+<div id="step-map" class="section">
+    <h1>🗺️ Διαδραστικός Χάρτης & Πρόγραμμα</h1>
+    <div id="map-container" style="height: 600px; margin: 20px 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
+    <div style="text-align: center;">
+        <button onclick="initializeSmartMap()" style="padding: 12px 24px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            🗺️ Φόρτωση Έξυπνου Χάρτη
+        </button>
+    </div>
+</div>
+</div>
+
+<script>
+// ==================== ΝΕΟΣ ΤΡΟΠΟΣ ΔΙΑΧΕΙΡΙΣΗΣ ΗΛΙΚΙΩΝ ====================
+let familyMembers = [
+    { name: "Πατέρας", age: 42 },
+    { name: "Μητέρα", age: 40 }
+];
+
+// ==================== ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΠΡΟΣΘΗΚΗΣ ΜΕΛΩΝ ====================
+function addAdultMember() {
+    const container = document.getElementById('family-members-list');
+    const adultCount = Array.from(container.querySelectorAll('.family-member-input'))
+        .filter(m => m.querySelector('.member-name').value.includes('Ενήλικας')).length + 1;
+   
+    const memberDiv = document.createElement('div');
+    memberDiv.className = 'family-member-input';
+    memberDiv.innerHTML = `
+        <span>👨</span>
+        <input type="text" placeholder="Όνομα" value="${adultCount}ος Ενήλικας" class="member-name">
+        <input type="number" placeholder="Ηλικία" value="" class="member-age" min="18" max="120">
+        <span>ετών</span>
+        <button onclick="removeFamilyMember(this)" class="remove-member-btn">×</button>
+    `;
+   
+    container.appendChild(memberDiv);
+}
+
+function addChildMember() {
+    const container = document.getElementById('family-members-list');
+    const childCount = Array.from(container.querySelectorAll('.family-member-input'))
+        .filter(m => m.querySelector('.member-name').value.includes('Παιδί')).length + 1;
+   
+    const memberDiv = document.createElement('div');
+    memberDiv.className = 'family-member-input';
+    memberDiv.innerHTML = `
+        <span>🧒</span>
+        <input type="text" placeholder="Όνομα" value="Παιδί ${childCount}" class="member-name">
+        <input type="number" placeholder="Ηλικία" value="" class="member-age" min="6" max="17">
+        <span>ετών</span>
+        <button onclick="removeFamilyMember(this)" class="remove-member-btn">×</button>
+    `;
+   
+    container.appendChild(memberDiv);
+}
+
+function addBabyMember() {
+    const container = document.getElementById('family-members-list');
+    const babyCount = Array.from(container.querySelectorAll('.family-member-input'))
+        .filter(m => m.querySelector('.member-name').value.includes('Μωρό')).length + 1;
+   
+    const memberDiv = document.createElement('div');
+    memberDiv.className = 'family-member-input';
+    memberDiv.innerHTML = `
+        <span>👶</span>
+        <input type="text" placeholder="Όνομα" value="Μωρό ${babyCount}" class="member-name">
+        <input type="number" placeholder="Ηλικία" value="" class="member-age" min="0" max="5">
+        <span>ετών</span>
+        <button onclick="removeFamilyMember(this)" class="remove-member-btn">×</button>
+    `;
+   
+    container.appendChild(memberDiv);
+}
+
+function removeFamilyMember(button) {
+    button.parentElement.remove();
+}
+
+function removeFamilyMember(button) {
+    button.parentElement.remove();
+}
+
+function updateFamilyMembers() {
+    familyMembers = [];
+    document.querySelectorAll('.family-member-input').forEach(memberDiv => {
+        const name = memberDiv.querySelector('.member-name').value;
+        const age = parseInt(memberDiv.querySelector('.member-age').value) || 0;
+        if (name && age > 0) {
+            familyMembers.push({ name, age });
+        }
+    });
+    console.log('Οικογένεια ενημερώθηκε:', familyMembers);
+   
+    // Ανανέωση υπολογισμών
+    if (selectedDestinationName) {
+        calculateAllCosts();
+    }
+   
+    saveToLocalStorage();
+}
+
+// ** 1. ΔΕΔΟΜΕΝΑ (Τελική λίστα προορισμών)**
+let selectedDestinationName = "";
+let selectedDaysStay = 0;
+let selectedBudget = 0;
+
+const destinations = [
+  {name:"Βιέννη", dist:2, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό", "ΑΜΕΑ", "Ηλικιωμένοι"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η αυτοκρατορική πόλη με τα παλάτια, τους κήπους και τα νόστιμα schnitzel."},
+  {name:"Παρίσι", dist:3, weather:"Ίδια", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η ρομαντική πόλη του φωτός με τον Πύργο του Άιφελ και τα όμορφα καφέ."},
+  {name:"Ρώμη", dist:2, weather:"Πιο ζεστό", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η αιώνια πόλη με το Κολοσσαίο, την Ρωμαϊκή Αγορά και υπέροχη ιταλική κουζίνα."},
+  {name:"Λονδίνο", dist:4, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό", "ΑΜΕΑ"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Η μεγαλούπολη με το Μπιγκ Μπεν, το London Eye και τα ιστορικά μουσεία."},
+  {name:"Άμστερνταμ", dist:3, weather:"Ίδια", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Η πόλη των καναλιών, των ποδηλάτων και των όμορφων γεφυρών."},
+  {name:"Βουδαπέστη", dist:2, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό", "Ηλικιωμένοι"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η όμορφη πόλη του Δούναβη με τα ιστορικά λουτρά και κάστρα."},
+  {name:"Πράγα", dist:3, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Παραμυθένια πόλη με τη Γέφυρα του Καρόλου και αστρονομικό ρολόι."},
+  {name:"Βερολίνο", dist:3, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό", "ΑΜΕΑ"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Πόλη με πλούσια ιστορία, μουσεία και μοντέρνα αρχιτεκτονική."},
+  {name:"Μόναχο", dist:2, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Βαυαρική πρωτεύουσα, κοντά στις Άλπεις, με το BMW World."},
+  {name:"Κολωνία", dist:3, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Μεγάλος καθεδρικός ναός, σοκολάτα και Ρηνανία."},
+  {name:"Βαρκελώνη", dist:3, weather:"Πιο ζεστό", themeparks:"Ναι", christmas:"Όχι", vacationType:["Θάλασσα", "Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Γκαουντί, παραλίες, και η Sagrada Familia."},
+  {name:"Μαδρίτη", dist:4, weather:"Ίδια", themeparks:"Ναι", christmas:"Όχι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Πρωτεύουσα με πλούσια πολιτιστική ζωή και Πάρκο Ρετίρο."},
+  {name:"Λισαβόνα", dist:4, weather:"Πιο ζεστό", themeparks:"Όχι", christmas:"Όχι", vacationType:["Θάλασσα", "Πόλη"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Πορτογαλική πρωτεύουσα με γραφικά τελεφερίκ και όμορφα ακρωτήρια."},
+  {name:"Δουβλίνο", dist:5, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Όχι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Φιλόξενη πόλη με παμπ, κάστρα και το Βιβλίο του Kells."},
+  {name:"Εδιμβούργο", dist:5, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Όχι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Σκωτσέζικη πρωτεύουσα με κάστρο και ιστορικό κέντρο."},
+  {name:"Ζυρίχη", dist:2, weather:"Χιόνια", themeparks:"Όχι", christmas:"Ναι", vacationType:["Φυσική Ομορφιά", "Πόλη"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό", "Ηλικιωμένοι"], bestSeason:["Χειμώνας", "Καλοκαίρι"], desc:"Ελβετική πόλη με λίμνη, σοκολατοποιίες και κοντινά χιονοδρομικά."},
+  {name:"Γενεύη", dist:2, weather:"Χιόνια", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πόλη", "Φυσική Ομορφιά"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό", "Ηλικιωμένοι"], bestSeason:["Χειμώνας", "Καλοκαίρι"], desc:"Διεθνής πόλη, λίμνη Λεμάν και κοντινά βουνά."},
+  {name:"Κοπεγχάγη", dist:4, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Δανέζικη πόλη, πάρκο Τίβολι και η Μικρή Γοργόνα."},
+  {name:"Στοκχόλμη", dist:5, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Πρωτεύουσα της Σουηδίας, νησιά και το μουσείο ABBA."},
+  {name:"Βουκουρέστι", dist:2, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Ρουμανική πρωτεύουσα, με το Παλάτι του Κοινοβουλίου."},
+  {name:"Όσλο", dist:4, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Φυσική Ομορφιά", "Πόλη"], costLevel:"Ακριβό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Καλοκαίρι", "Άνοιξη"], desc:"Νορβηγική πρωτεύουσα, φιόρδ και μουσεία Viking."},
+  {name:"Μιλάνο", dist:2, weather:"Ίδια", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Πρωτεύουσα της μόδας με τον εντυπωσιακό Ντουόμο."},
+  {name:"Φλωρεντία", dist:2, weather:"Ίδια", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η καρδιά της Αναγέννησης, τέχνη και αρχιτεκτονική."},
+  {name:"Κωνσταντινούπολη", dist:2, weather:"Ίδια", themeparks:"Ναι", christmas:"Όχι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Γέφυρα μεταξύ Ευρώπης και Ασίας, Αγία Σοφία και παζάρια."},
+  {name:"Σόφια", dist:1, weather:"Πιο κρύο", themeparks:"Όχι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Βουλγαρική πρωτεύουσα, με τον καθεδρικό του Αλεξάνδρου Νιέφσκι."},
+  {name:"Βαρσοβία", dist:3, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Η πρωτεύουσα της Πολωνίας με ιστορικό κέντρο και όμορφα πάρκα."},
+  {name:"Κρακοβία", dist:2, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πόλη", "Πολιτισμός"], costLevel:"Οικονομικό", suitableFor:["Νεογέννητα", "Παιδικό"], bestSeason:["Άνοιξη", "Καλοκαίρι"], desc:"Η ιστορική πόλη με το βασιλικό κάστρο Wawel και την παλιά πόλη."}
+];
+
+const activities = [
+    // 1) Palace Ticket (βασικό εισιτήριο)
+    {
+        name: "Palace Ticket - Schönbrunn Palace",
+        desc: "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide. Timed entry.",
+        prices: {"0-2":0,"3-5":0,"6-14":28,"15-19":31.5,"18+":38},
+        selected: false,
+        lat: 48.1845, lng: 16.3122,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Residenz+Schönbrunn+Vienna' target='_blank'>Café Residenz</a> - μέσα στο Schönbrunn",
+        website: "https://www.schoenbrunn.at/en/",
+        note: "Σχολικές ομάδες (6-18): €18.00"
+    },
+    
+    // 2) State Apartments / Guided Tour Maria Theresia
+    {
+        name: "State Apartments / Guided Tour Maria Theresia",
+        desc: "Σύντομη ξενάγηση ή θεματική ξενάγηση μεγαλύτερης διάρκειας.",
+        prices: {"0-2":0,"3-5":0,"6-14":19,"15-19":29,"18+":39},
+        selected: false,
+        lat: 48.1846, lng: 16.3123,
+        restaurant: "<a href='https://maps.google.com/?q=Figlmüller+Vienna' target='_blank'>Figlmüller</a> - διάσημο για schnitzel",
+        website: "https://www.schoenbrunn.at/en/"
+    },
+    
+    // 3) Sisi Pass (συνδυαστικό)
+    {
+        name: "Sisi Pass (3 αυτοκρατορικά αξιοθέατα)",
+        desc: "Schönbrunn Palace + Sisi Museum (Hofburg) + Vienna Furniture Museum. Χωρίς timeslot για μουσεία.",
+        prices: {"0-2":0,"3-5":0,"6-14":37,"15-19":37,"18+":57},
+        selected: false,
+        lat: 48.2058, lng: 16.3698,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Central+Vienna' target='_blank'>Café Central</a> - ιστορικό καφέ",
+        website: "https://www.schoenbrunn.at/en/",
+        note: "Εκπτωτικό combo για 3 αξιοθέατα"
+    },
+    
+    // 4) Winter Pass (εποχικό)
+    {
+        name: "Winter Pass (χειμερινή περίοδος)",
+        desc: "Palace Ticket + Zoo + Desert House + Palm House. Ισχύει 3 Nov 2025–26 Mar 2026.",
+        prices: {"0-2":0,"3-5":0,"6-14":47,"15-19":47,"18+":69},
+        selected: false,
+        lat: 48.1847, lng: 16.3124,
+        restaurant: "<a href='https://maps.google.com/?q=Schweizerhaus+Vienna' target='_blank'>Schweizerhaus</a> - πέρδικα και μπύρα",
+        website: "https://www.schoenbrunn.at/en/",
+        seasonal: true
+    },
+    
+    // 5) Classic Pass & Classic Pass Plus
+    {
+        name: "Classic Pass (καλοκαιρινή περίοδος)",
+        desc: "Palace Ticket + Privy Garden + Maze & Labyrinth + Orangery Garden + Gloriette terrace.",
+        prices: {"0-2":0,"3-5":0,"6-14":28,"15-19":31,"18+":40},
+        selected: false,
+        lat: 48.1848, lng: 16.3125,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Gloriette+Vienna' target='_blank'>Café Gloriette</a> - με θέα",
+        website: "https://www.schoenbrunn.at/en/",
+        note: "Ιδανικό για μονοήμερη επίσκεψη"
+    },
+    
+    {
+        name: "Classic Pass Plus (πλήρες πακέτο)",
+        desc: "Classic Pass + Zoo + Desert House + Palm House - σχεδόν όλο το Schönbrunn.",
+        prices: {"0-2":0,"3-5":0,"6-14":53.5,"15-19":53.5,"18+":76},
+        selected: false,
+        lat: 48.1849, lng: 16.3126,
+        restaurant: "<a href='https://maps.google.com/?q=Tiergarten+Restaurant+Vienna' target='_blank'>Tiergarten Restaurant</a> - στο zoo",
+        website: "https://zoovienna.at/",
+        note: "20-30% εξοικονόμηση"
+    },
+    
+    // 6) Children's Museum
+    {
+        name: "Children's Museum (Kindermuseum)",
+        desc: "Διαδραστικό μουσείο για παιδιά 3-18 ετών με συνδυαστικά tickets.",
+        prices: {"0-2":0,"3-5":12,"6-14":12,"15-19":12,"18+":12},
+        selected: false,
+        lat: 48.1850, lng: 16.3127,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Kindermuseum+Vienna' target='_blank'>Cafe Kindermuseum</a>",
+        website: "https://www.schoenbrunn.at/en/"
+    },
+    
+    // 7) Zoo Vienna Family Packages
+    {
+        name: "Zoo Vienna - Family Block Ticket",
+        desc: "5 εισιτήρια (2 adults + 3 children/adolescents) - ισχύει 1 χρόνο.",
+        prices: {"0-2":0,"3-5":19.2,"6-14":19.2,"15-19":19.2,"18+":19.2},
+        selected: false,
+        lat: 48.1800, lng: 16.3028,
+        restaurant: "<a href='https://maps.google.com/?q=Tiergarten+Cafe+Vienna' target='_blank'>Tiergarten Cafe</a>",
+        website: "https://zoovienna.at/",
+        note: "Σύνολο: €96 για 5 άτομα"
+    },
+    
+    {
+        name: "Zoo + Palm House + Desert House Combo",
+        desc: "Συνδυαστικό εισιτήριο για μία επίσκεψη σε κάθε αξιοθέατο.",
+        prices: {"0-2":0,"3-5":22.5,"6-14":22.5,"15-19":22.5,"18+":36},
+        selected: false,
+        lat: 48.1801, lng: 16.3029,
+        restaurant: "<a href='https://maps.google.com/?q=Palm+House+Cafe+Vienna' target='_blank'>Palm House Cafe</a>",
+        website: "https://zoovienna.at/",
+        note: "Ιδανικό για οικογενείες"
+    },
+    
+    // 8) Haus des Meeres (Aquarium)
+    {
+        name: "Haus des Meeres (Aqua Terra Zoo)",
+        desc: "Ενυδρείο και μικρός ζωολογικός κήπος στο κέντρο της Βιέννης.",
+        prices: {"0-2":0,"3-5":6.5,"6-14":9.8,"15-19":22.9,"18+":22.9},
+        selected: false,
+        lat: 48.2050, lng: 16.3575,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Ritter+Mariahilfer+Straße+Vienna' target='_blank'>Café Ritter</a> - Mariahilfer Straße",
+        website: "https://www.haus-des-meeres.at/en"
+    },
+    
+    // 9) Time Travel Vienna
+    {
+        name: "Time Travel Vienna",
+        desc: "Διαδραστικό ταξίδι 2000 χρόνων ιστορίας της Βιέννης.",
+        prices: {"0-2":0,"3-5":0,"6-14":18,"15-19":22,"18+":22},
+        selected: false,
+        lat: 48.2084, lng: 16.3731,
+        restaurant: "<a href='https://maps.google.com/?q=Time+Travel+Cafe+Vienna' target='_blank'>Time Travel Cafe</a>",
+        website: "https://www.timetravel-vienna.at/en"
+    },
+    
+    // 10) Sisi's Amazing Journey (VR)
+    {
+        name: "Sisi's Amazing Journey (VR Experience)",
+        desc: "VR εμπειρία για τη ζωή της αυτοκράτειρας Σίσσι.",
+        prices: {"0-2":0,"3-5":0,"6-14":14,"15-19":14,"18+":14},
+        selected: false,
+        lat: 48.2058, lng: 16.3698,
+        restaurant: "<a href='https://maps.google.com/?q=VR+Cafe+Vienna' target='_blank'>VR Experience Cafe</a>",
+        website: "https://www.hofburg-wien.at/en/",
+        note: "Combo με Time Travel διαθέσιμο"
+    },
+    
+    // 11) House of Music
+    {
+        name: "House of Music (Haus der Musik)",
+        desc: "Διαδραστικό μουσείο μουσικής για όλες τις ηλικίες.",
+        prices: {"0-2":0,"3-5":10,"6-14":10,"15-19":22,"18+":22},
+        selected: false,
+        lat: 48.2032, lng: 16.3738,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Schwarzenberg+Vienna' target='_blank'>Café Schwarzenberg</a>",
+        website: "https://www.hausdermusik.com/en",
+        familyTicket: "2 adults + up to 3 children = 35€"
+    },
+    
+    // 12) Museum der Illusionen
+    {
+        name: "Museum der Illusionen (Μουσείο Ψευδαισθήσεων)",
+        desc: "Οπτικές ψευδαισθήσεις και διαδραστικά εκθέματα.",
+        prices: {"0-2":0,"3-5":0,"6-14":10,"15-19":12,"18+":14},
+        selected: false,
+        lat: 48.2095, lng: 16.3702,
+        restaurant: "<a href='https://maps.google.com/?q=Illusions+Cafe+Vienna' target='_blank'>Illusions Cafe</a>",
+        website: "https://www.museumderillusionen.at/wien/"
+    },
+    
+    // 13) Vienna State Opera Tour
+    {
+        name: "Vienna State Opera - Guided Tour",
+        desc: "Ξενάγηση στο ιστορικό κτήριο της όπερας.",
+        prices: {"0-2":0,"3-5":0,"6-14":9,"15-19":15,"18+":15},
+        selected: false,
+        lat: 48.2034, lng: 16.3692,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Sacher+Vienna' target='_blank'>Café Sacher</a> - για Sachertorte",
+        website: "https://www.wiener-staatsoper.at/en/"
+    },
+    
+    // 14) Belvedere Palace
+    {
+        name: "Belvedere Palace (Upper/Lower)",
+        desc: "Αυτοκρατορικό παλάτι με μόνιμη συλλογή τέχνης.",
+        prices: {"0-2":0,"3-5":0,"6-14":0,"15-19":0,"18+":29},
+        selected: false,
+        lat: 48.1910, lng: 16.3805,
+        restaurant: "<a href='https://maps.google.com/?q=Salm+Bräu+Vienna' target='_blank'>Salm Bräu</a> - μπύρα και κουζίνα",
+        website: "https://www.belvedere.at/en",
+        note: "Δωρεάν για κάτω των 19 (μόνιμη συλλογή)"
+    },
+    
+    // 15) Donauturm (Danube Tower)
+    {
+        name: "Donauturm (Danube Tower)",
+        desc: "Πανοραμική θέα της Βιέννης από τον πύργο του Δούναβη.",
+        prices: {"0-2":0,"3-5":4,"6-14":8,"15-19":12,"18+":12},
+        selected: false,
+        lat: 48.2389, lng: 16.4103,
+        restaurant: "<a href='https://maps.google.com/?q=Donauturm+Restaurant+Vienna' target='_blank'>Donauturm Restaurant</a> - στροφείο",
+        website: "https://www.donauturm.at/en/"
+    },
+    
+    // 16) Mozarthaus Vienna
+    {
+        name: "Mozarthaus Vienna",
+        desc: "Το σπίτι όπου έζησε ο Mozart, τώρα μουσείο.",
+        prices: {"0-2":0,"3-5":4.5,"6-14":4.5,"15-19":14,"18+":14},
+        selected: false,
+        lat: 48.2086, lng: 16.3735,
+        restaurant: "<a href='https://maps.google.com/?q=Cafe+Mozart+Vienna' target='_blank'>Café Mozart</a> - κλασικό",
+        website: "https://www.mozarthausvienna.at/en/",
+        familyTicket: "2 adults + up to 3 children = 29€"
+    },
+    
+    // 17) St. Stephen's Cathedral Crypt
+    {
+        name: "St. Stephen's Cathedral Crypt",
+        desc: "Επίσκεψη στην κρύπτη του διάσημου καθεδρικού ναού.",
+        prices: {"0-2":0,"3-5":0,"6-14":3,"15-19":5,"18+":5},
+        selected: false,
+        lat: 48.2085, lng: 16.3730,
+        restaurant: "<a href='https://maps.google.com/?q=Do+Co+Stephansplatz+Vienna' target='_blank'>Do & Co</a> - με θέα",
+        website: "https://www.stephanskirche.at/"
+    },
+    
+    // 18) Spanish Riding School
+    {
+         name: "Spanish Riding School",
+        desc: "Προπόνηση των διάσημων ίππων Lipizzaner. ⚠️ <strong>Ηλικιακοί περιορισμοί:</strong> Παιδιά κάτω 3 ετών: ΑΔΥΝΑΤΗ ΕΙΣΟΔΟΣ | 3-5 ετών: Μόνο σε family performances",
+        prices: {"0-2":"N/A","3-5":8,"6-14":14,"15-19":16,"18+":16},
+        selected: false,
+        lat: 48.2068, lng: 16.3675,
+        restaurant: "<a href='https://maps.google.com/?q=Griechenbeisl+Vienna' target='_blank'>Griechenbeisl</a> - παλαιότερο εστιατόριο",
+        website: "https://www.srs.at/en/",
+        ageRestrictions: true,
+        minAge: 3,
+        ageWarning: "⚠️ Παιδιά κάτω των 3 ετών ΔΕΝ επιτρέπονται. 3-5 ετών: μόνο σε family performances"
+    }
+];
+
+// ** ΝΕΑ ΛΙΣΤΑ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ ΓΙΑ ΤΟ ΒΕΡΟΛΙΝΟ **
+const activitiesBerlin = [
+  {name:"Illuseum Berlin", desc:"Ένας κόσμος γεμάτος ψευδαισθήσεις, οπτικά φαινόμενα και διαδραστικές εμπειρίες για μικρούς και μεγάλους.", prices:{"0-2":0,"3-5":0,"6-14":12,"15-19":16,"18+":16}, selected:false, lat:52.5206, lng:13.3878, restaurant:"<a href='https://maps.google.com/?q=Curry+36+Berlin+Kreuzberg' target='_blank'>Curry 36</a> - διάσημα currywurst", website:"https://www.illuseum.de/en/"},
+  {name:"Deutsches Technikmuseum", desc:"Μουσείο τεχνολογίας με τρένα, αεροπλάνα, πλοία και Spectrum για παιδιά.", prices:{"0-2":0,"3-5":0,"6-14":0,"15-19":0,"18+":12}, selected:false, lat:52.4986, lng:13.3779, restaurant:"<a href='https://maps.google.com/?q=Schleusenkrug+Berlin' target='_blank'>Schleusenkrug</a> - beer garden", website:"https://technikmuseum.berlin/en/"},
+  {name:"DDR Museum", desc:"Διαδραστικό μουσείο για την καθημερινή ζωή στην Ανατολική Γερμανία (DDR).", prices:{"0-2":0,"3-5":0,"6-14":8,"15-19":13.5,"18+":13.5}, selected:false, lat:52.5194, lng:13.4025, restaurant:"<a href='https://maps.google.com/?q=Zur+letzten+Instanz+Berlin' target='_blank'>Zur letzten Instanz</a> - παλιό εστιατόριο", website:"https://www.ddr-museum.de/en"},
+  {name:"Museum für Naturkunde", desc:"Ψηλότερος σκελετός δεινοσαύρου και μεγάλη συλλογή ζώων και ορυκτών.", prices:{"0-5":0,"6-14":5,"15-19":11,"18+":11}, selected:false, lat:52.5302, lng:13.3793, restaurant:"<a href='https://maps.google.com/?q=Transit+Berlin+Mitte' target='_blank'>Transit</a> - modern German cuisine", website:"https://www.museumfuernaturkunde.berlin/en"},
+  {name:"LEGOLAND Discovery Centre Berlin", desc:"Κέντρο διασκέδασης με LEGO, μίνι Βερολίνο, 4D cinema και παιχνίδια.", prices:{"0-2":0,"3-5":19.5,"6-14":19.5,"15-19":19.5,"18+":19.5}, selected:false, lat:52.5015, lng:13.3371, restaurant:"<a href='https://maps.google.com/?q=Vapiano+Berlin+Potsdamer+Platz' target='_blank'>Vapiano</a> - Italian", website:"https://www.legolanddiscoverycentre.de/berlin/"},
+  {name:"Madame Tussauds Berlin", desc:"Κέρινα ομοιώματα διασημοτήτων και ιστορικών προσώπων.", prices:{"0-2":0,"3-5":18,"6-14":18,"15-19":23.5,"18+":23.5}, selected:false, lat:52.5032, lng:13.3385, restaurant:"<a href='https://maps.google.com/?q=California+Berlin' target='_blank'>California</a> - American style", website:"https://www.madametussauds.com/berlin/en/"},
+  {name:"ANOHA - Children's World", desc:"Διαδραστικός παιδικός κόσμος στο Εβραϊκό Μουσείο Βερολίνου.", prices:{"0-2":3,"3-5":3,"6-14":3,"15-19":3,"18+":3}, selected:false, lat:52.5024, lng:13.3952, restaurant:"<a href='https://maps.google.com/?q=Cafe+Schmus+Berlin' target='_blank'>Cafe Schmus</a> - στο μουσείο", website:"https://www.jmberlin.de/en/anoha"},
+  {name:"Labyrinth Kindermuseum", desc:"Μουσείο για παιδιά με εκθέματα που ενθαρρύνουν παιχνίδι και μάθηση.", prices:{"0-2":0,"3-5":7,"6-14":7,"15-19":7,"18+":7}, selected:false, lat:52.5432, lng:13.4221, restaurant:"<a href='https://maps.google.com/?q=Schiller+Burg+Berlin' target='_blank'>Schiller Burg</a> - burgers", website:"https://www.labyrinth-kindermuseum.de/en"},
+  {name:"MACHmit! Museum for Children", desc:"Μουσείο για παιδιά με εργαστήρια και παιχνίδια.", prices:{"0-2":0,"3-5":9,"6-14":9,"15-19":9,"18+":9}, selected:false, lat:52.5401, lng:13.4178, restaurant:"<a href='https://maps.google.com/?q=La+Casa+Berlin' target='_blank'>La Casa</a> - Mediterranean", website:"https://www.machmitmuseum.de/en/"},
+  {name:"Zoologischer Garten Berlin", desc:"Ο παλαιότερος ζωολογικός κήπος της Γερμανίας με μεγάλη ποικιλία ζώων.", prices:{"0-4":0,"3-5":7,"6-14":7,"15-19":15.5,"18+":15.5}, selected:false, lat:52.5075, lng:13.3375, restaurant:"<a href='https://maps.google.com/?q=Block+House+Berlin' target='_blank'>Block House</a> - steakhouse", website:"https://www.zoo-berlin.de/en"},
+  {name:"Zoologischer Garten + Aquarium Berlin", desc:"Συνδυαστικό εισιτήριο ζωολογικού κήπου και ενυδρείου.", prices:{"0-4":0,"3-5":10.5,"6-14":10.5,"15-19":23.5,"18+":23.5}, selected:false, lat:52.5075, lng:13.3375, restaurant:"<a href='https://maps.google.com/?q=Hard+Rock+Cafe+Berlin' target='_blank'>Hard Rock Cafe</a> - American", website:"https://www.aquarium-berlin.de/en"},
+  {name:"Tiergarten", desc:"Το τεράστιο κεντρικό πάρκο του Βερολίνου.", prices:{"0-2":0,"3-5":0,"6-14":0,"15-19":0,"18+":0}, selected:false, lat:52.5145, lng:13.3501, restaurant:"<a href='https://maps.google.com/?q=Cafe+am+Neuen+See+Berlin' target='_blank'>Cafe am Neuen See</a> - beer garden", website:"https://www.berlin.de/en/parks-and-gardens/3559686-3104052-tiergarten.en.html"},
+  {name:"Garten der Welt", desc:"Εντυπωσιακό πάρκο με θεματικούς κήπους και τελεφερίκ.", prices:{"0-5":0,"6-14":4,"15-19":4,"18+":9}, selected:false, lat:52.5408, lng:13.5775, restaurant:"<a href='https://maps.google.com/?q=Restaurant+Erholung+Berlin' target='_blank'>Restaurant Erholung</a> - στο πάρκο", website:"https://www.gruen-berlin.de/en/gardens-of-the-world"},
+  {name:"FEZ Berlin", desc:"Μεγάλο κέντρο αναψυχής για παιδιά με εργαστήρια, θέατρο και παιδικό μουσείο.", prices:{"0-2":0,"3-5":5,"6-14":5,"15-19":5,"18+":5}, selected:false, lat:52.4456, lng:13.5364, restaurant:"<a href='https://maps.google.com/?q=FEZ+Cafe+Berlin' target='_blank'>FEZ Cafe</a> - family friendly", website:"https://fez-berlin.de/en/"},
+  {name:"Fernsehturm + VR", desc:"Πύργος Τηλεόρασης με πανοραμική θέα και VR.", prices:{"0-4":0,"3-5":26.5,"6-14":26.5,"15-19":36.5,"18+":36.5}, selected:false, lat:52.5208, lng:13.4094, restaurant:"<a href='https://maps.google.com/?q=Sphere+Restaurant+Berlin' target='_blank'>Sphere Restaurant</a> - περιστρεφόμενο", website:"https://tv-turm.de/en/"},
+  {name:"Κρουαζιέρα στον ποταμό Spree", desc:"Χαλαρωτικός τρόπος να δείτε τα αξιοθέατα της πόλης.", prices:{"0-6":0,"3-5":12.5,"6-14":12.5,"15-19":16.5,"18+":22}, selected:false, lat:52.5163, lng:13.4025, restaurant:"<a href='https://maps.google.com/?q=Spreegold+Berlin' target='_blank'>Spreegold</a> - German cuisine", website:"https://www.berlin-city-cruises.de/en/"},
+  {name:"Extavium Potsdam", desc:"Επιστημονικό κέντρο με πειράματα, ιδανικό για παιδιά 4–12 ετών.", prices:{"0-2":0,"3-5":14,"6-14":14,"15-19":14,"18+":14}, selected:false, lat:52.4009, lng:13.0592, restaurant:"<a href='https://maps.google.com/?q=Alter+Fritz+Potsdam' target='_blank'>Alter Fritz</a> - traditional", website:"https://www.extavium.de/en/"},
+  {name:"Computerspielemuseum", desc:"Μουσείο βιντεοπαιχνιδιών με interactive εκθέματα.", prices:{"0-5":0,"6-14":7,"15-19":11,"18+":11}, selected:false, lat:52.5111, lng:13.4478, restaurant:"<a href='https://maps.google.com/?q=Burger+Me+Berlin' target='_blank'>Burger Me</a> - burgers", website:"https://www.computerspielemuseum.de/"}
+];
+
+// ** ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΓΙΑ ΛΙΣΑΒΟΝΑ **
+const activitiesLisbon = [
+    {
+        name: "Oceanário de Lisboa",
+        desc: "Ένα από τα μεγαλύτερα ενυδρεία στην Ευρώπη με χιλιάδες ψάρια και θαλάσσια είδη.",
+        prices: {"0-2":0,"3-5":8,"6-14":12,"15-19":17,"18+":19},
+        selected: false,
+        lat: 38.7633,
+        lng: -9.0937,
+        restaurant: "<a href='https://maps.google.com/?q=Sea+Me+Lisbon' target='_blank'>Sea Me</a> - ψαροταβέρνα",
+        website: "https://www.oceanario.pt/en/"
+    },
+    {
+        name: "Pavilhão do Conhecimento",
+        desc: "Διαδραστικό μουσείο επιστήμης ιδανικό για παιδιά και εφήβους.",
+        prices: {"0-2":0,"3-5":6,"6-14":8,"15-19":9,"18+":9},
+        selected: false,
+        lat: 38.7625,
+        lng: -9.0950,
+        restaurant: "<a href='https://maps.google.com/?q=Restaurante+do+Oceanário' target='_blank'>Restaurante do Oceanário</a>",
+        website: "https://www.pavconhecimento.pt/en/"
+    },
+    {
+        name: "Πύργος του Μπέλεν",
+        desc: "Ιστορικός πύργος από τον 16ο αιώνα, σύμβολο της Πορτογαλίας.",
+        prices: {"0-2":0,"3-5":0,"6-14":6,"15-19":8,"18+":8},
+        selected: false,
+        lat: 38.6916,
+        lng: -9.2160,
+        restaurant: "<a href='https://maps.google.com/?q=Pasteis+de+Belem' target='_blank'>Pasteis de Belem</a> - διάσημα παστέλ νάτα",
+        website: "https://www.torrebelem.pt/en/"
+    },
+    {
+        name: "Μοναστήρι των Ιερονομιτών",
+        desc: "Μνημείο UNESCO με εκπληκτική αρχιτεκτονική και ιστορία.",
+        prices: {"0-2":0,"3-5":0,"6-14":7,"15-19":10,"18+":10},
+        selected: false,
+        lat: 38.6978,
+        lng: -9.2067,
+        restaurant: "<a href='https://maps.google.com/?q=Antiga+Confeitaria+de+Belem' target='_blank'>Antiga Confeitaria</a> - παραδοσιακά γλυκά",
+        website: "https://www.mosteirojeronimos.pt/en/"
+    },
+    {
+        name: "Κάστρο του Αγίου Γεωργίου",
+        desc: "Μεσαιωνικό κάστρο με πανοραμική θέα της Λισαβόνας.",
+        prices: {"0-2":0,"3-5":5,"6-14":8,"15-19":10,"18+":10},
+        selected: false,
+        lat: 38.7139,
+        lng: -9.1335,
+        restaurant: "<a href='https://maps.google.com/?q=Chapito' target='_blank'>Chapito</a> - εστιατόριο με θέα",
+        website: "https://castelodesaojorge.pt/en/"
+    }
+];
+
+// ** ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ ΓΙΑ ΒΟΥΔΑΠΕΣΤΗ **
+const activitiesBudapest = [
+  {
+    name: "Buda Castle (εξωτερικά)",
+    desc: "Ιστορικό κάστρο της Βούδας με πανοραμική θέα του Βουδαπέστης και του Δούναβη. Η επίσκεψη στους εξωτερικούς χώρους (αυλές, πλατείες, θέα) είναι ΔΩΡΕΑΝ.",
+    prices: {"0-2":0,"3-5":0,"6-14":0,"15-19":0,"18+":0},
+    selected: false,
+    lat: 47.4960,
+    lng: 19.0396,
+    restaurant: "<a href='https://maps.google.com/?q=Ruszwurm+Cafe+Budapest' target='_blank'>Ruszwurm Cafe</a> - το παλιότερο ζαχαροπλαστείο",
+    website: "https://budacastlebudapest.com/",
+    freeActivity: true,
+    freeExterior: true
+  },
+  {
+    name: "Royal Palace Experience Tour (Μουσείο)",
+    desc: "Πλήρης ξενάγηση στα εσωτερικά του Βασιλικού Παλατιού, με εκθέσεις τέχνης και ιστορίας. ⚠️ Δεν επιτρέπονται παιδιά 0-11 ετών.",
+    prices: {"0-2":"blocked","3-5":"blocked","6-14":"blocked","15-19":18,"18+":18},
+    selected: false,
+    lat: 47.4965,
+    lng: 19.0398,
+    restaurant: "<a href='https://maps.google.com/?q=St.+Andrea+Borászbár' target='_blank'>St. Andrea</a> - οίνος και κουζίνα",
+    website: "https://budacastlebudapest.com/",
+    minAge: 12,
+    ageWarning: "Δεν επιτρέπονται παιδιά κάτω των 12 ετών"
+  },
+  {
+    name: "Labyrinth of Buda Castle (Υπόγειος Λαβύρινθος)",
+    desc: "Υπόγειος λαβύρινθος κάτω από το Κάστρο της Βούδας, με ιστορικές εκθέσεις και ατμόσφαιρα μυστηρίου.",
+    prices: {"0-2":3,"3-5":3,"6-14":12,"15-19":14,"18+":14},
+    selected: false,
+    lat: 47.4962,
+    lng: 19.0395,
+    restaurant: "<a href='https://maps.google.com/?q=Labyrinth+Cafe+Budapest' target='_blank'>Labyrinth Cafe</a> - στην είσοδο",
+    website: "https://www.labirintus.com/",
+    minAge: 0
+  },
+  {
+    name: "Hungarian Parliament",
+    desc: "Μνημείο UNESCO με τον μεγαλύτερο καθεδρικό ναό της Ουγγαρίας. Παιδιά 0-5 ετών: δωρεάν, 6-14: 8€, 15+: 16€",
+    prices: {"0-2":0,"3-5":0,"6-14":8,"15-19":16,"18+":16},
+    selected: false,
+    lat: 47.5072,
+    lng: 19.0457,
+    restaurant: "<a href='https://maps.google.com/?q=New+York+Cafe+Budapest' target='_blank'>New York Cafe</a> - το πιο όμορφο καφέ στον κόσμο",
+    website: "https://www.parlament.hu/"
+  },
+  {
+    name: "Vajdahunyad Castle & Museum of Hungarian Agriculture",
+    desc: "Κάστρο με αρχιτεκτονικά στυλ (Ρομανικό, Γοτθικό, Μπαρόκ). Φιλοξενεί το Μουσείο Αγροτικής Ζωής.",
+    prices: {"0-2":0,"3-5":0,"6-14":0,"15-19":5,"18+":5},
+    selected: false,
+    lat: 47.5153,
+    lng: 19.0831,
+    restaurant: "<a href='https://maps.google.com/?q=Gundel+Restaurant+Budapest' target='_blank'>Gundel</a> - παλιό εστιατόριο",
+    website: "https://www.mezogazdasagimuzeum.hu/",
+    freeExterior: true,
+    priceNote: "🏰 Εξωτερικοί χώροι: ΔΩΡΕΑΝ | Εσωτερικό μουσείο: ΠΛΗΡΩΤΕΟ"
+  },
+  {
+    name: "House of Terror Museum",
+    desc: "Διαδραστικό μουσείο για τις δύο δικτατορίες στην Ουγγαρία (φασιστική και κομμουνιστική περίοδο).",
+    prices: {"0-2":0,"3-5":0,"6-14":6,"15-19":12,"18+":12},
+    selected: false,
+    lat: 47.5075,
+    lng: 19.0657,
+    restaurant: "<a href='https://maps.google.com/?q=Menza+Budapest' target='_blank'>Menza</a> - retro restaurant",
+    website: "https://www.terrorhaza.hu/",
+    minAge: 14,
+    ageWarning: "⚠️ Ακατάλληλο για άτομα κάτω των 14 ετών"
+  },
+  {
+    name: "Palace of Wonders (Csodák Palotája)",
+    desc: "Παιδικό διαδραστικό μουσείο επιστήμης και τεχνολογίας.",
+    prices: {"0-2":0,"3-5":0,"6-14":7,"15-19":10,"18+":10},
+    selected: false,
+    lat: 47.4975,
+    lng: 19.0650,
+    restaurant: "<a href='https://maps.google.com/?q=Cafe+Science+Budapest' target='_blank'>Cafe Science</a> - κοντά στο μουσείο",
+    website: "https://www.csodakpalotaja.hu/",
+    minAge: 3,
+    ageWarning: "Κατάλληλο για παιδιά από 3 ετών και πάνω"
+  },
+  {
+    name: "Museum of Illusions Budapest",
+    desc: "Οπτικές ψευδαισθήσεις, διαδραστικά εκθέματα και παζλ για όλη την οικογένεια.",
+    prices: {"0-2":0,"3-5":0,"6-14":10,"15-19":12,"18+":14},
+    selected: false,
+    lat: 47.5020,
+    lng: 19.0550,
+    restaurant: "<a href='https://maps.google.com/?q=Illusion+Cafe+Budapest' target='_blank'>Illusion Cafe</a> - δίπλα στο μουσείο",
+    website: "https://museumofillusions.hu/",
+    familyTicket: true,
+    familyPrice: 53,
+    familyDescription: "2 ενήλικες + 2 παιδιά (6-14 ετών)"
+  },
+  {
+    name: "Daytime Sightseeing Cruise (1 ώρα)",
+    desc: "Γρήγορη και οικονομική βόλτα στον Δούναβη (~1 ώρα). Χωρίς φαγητό/ποτό.",
+    prices: {"0-2":0,"3-5":6,"6-14":6,"15-19":12,"18+":12},
+    selected: false,
+    lat: 47.4989,
+    lng: 19.0437,
+    restaurant: "<a href='https://maps.google.com/?q=Spreegold+Berlin' target='_blank'>Spreegold</a> - German cuisine",
+    website: "https://www.budapestrivercruise.com/",
+    cruiseType: "daytime",
+    duration: "1 ώρα"
+  },
+  {
+    name: "Evening / Sunset Cocktail Cruise (1-1.5 ώρες)",
+    desc: "Κρουαζιέρα με ποτό/ποτά, νυχτερινή θέα της πόλης, ρομαντική ατμόσφαιρα.",
+    prices: {"0-2":0,"3-5":14,"6-14":14,"15-19":28,"18+":28},
+    selected: false,
+    lat: 47.4989,
+    lng: 19.0437,
+    restaurant: "Ποτά/κρασιά περιλαμβάνονται στην κρουαζιέρα",
+    website: "https://www.budapestrivercruise.com/",
+    cruiseType: "evening",
+    duration: "1-1.5 ώρες",
+    minAge: 6
+  },
+  {
+    name: "Széchenyi Thermal Bath",
+    desc: "Θερμά λουτρά σε νεο-μπαρόκ κτήριο, ιστορικό και θεραπευτικό.",
+    prices: {"0-2":0,"3-5":0,"6-14":18,"15-19":22,"18+":22},
+    selected: false,
+    lat: 47.5186,
+    lng: 19.0816,
+    restaurant: "<a href='https://maps.google.com/?q=Gett%C3%B3+Guly%C3%A1s+Budapest' target='_blank'>Gettó Gulyás</a> - παραδοσιακή ουγγρική κουζίνα",
+    website: "https://www.szechenyifurdo.hu/",
+    minAge: 14,
+    ageWarning: "⚠️ Ακατάλληλο για παιδιά κάτω των 14 ετών."
+  },
+  {
+    name: "Budapest Eye",
+    desc: "Τροχός με πανοραμική θέα του Βουδαπέστης και του Δούναβη.",
+    prices: {"0-2":0,"3-5":0,"6-14":8,"15-19":12,"18+":12},
+    selected: false,
+    lat: 47.4970,
+    lng: 19.0510,
+    restaurant: "<a href='https://maps.google.com/?q=360+Bar+Budapest' target='_blank'>360 Bar</a> - rooftop bar",
+    website: "https://budapesteye.com/",
+    minAge: 0
+  },
+  {
+    name: "Budapest Zoo & Botanical Garden",
+    desc: "Ζωολογικός κήπος με ζώα και φυτά, εκπαιδευτικές δραστηριότητες για παιδιά.",
+    prices: {"0-2":0,"3-5":7,"6-14":7,"15-19":14,"18+":14},
+    selected: false,
+    lat: 47.5189,
+    lng: 19.0778,
+    restaurant: "<a href='https://maps.google.com/?q=Zoo+Cafe+Budapest+Zoo' target='_blank'>Zoo Cafe</a> - μέσα στο ζωολογικό",
+    website: "https://zoobudapest.com/",
+    minAge: 0
+  },
+  {
+    name: "MAGIC2 - Θεματικό Εστιατόριο με Μάγους",
+    desc: "Ξεχωριστή εμπειρία: θεματικό εστιατόριο με ζωντανές παραστάσεις μάγων.",
+    prices: {"0-2":15,"3-5":15,"6-14":15,"15-19":15,"18+":15},
+    selected: false,
+    lat: 47.4979,
+    lng: 19.0402,
+    restaurant: "Το ίδιο το MAGIC2 - θεματικό εστιατόριο",
+    website: "https://www.magic2.hu/",
+    consumptionBased: true,
+    priceNote: "💰 Τιμή βασίζεται σε μέση κατανάλωση (15€ ανά άτομο)"
+  },
+  {
+    name: "Margaret Island (Margitsziget) - Playgrounds",
+    desc: "Νησί στο Δούναβη με 4 μεγάλες παιδικές χαρές και πολλά πράσινα χώρους.",
+    prices: {"0-2":0,"3-5":0,"6-14":0,"15-19":0,"18+":0},
+    selected: false,
+    lat: 47.5260,
+    lng: 19.0490,
+    restaurant: "<a href='https://maps.google.com/?q=Palatinus+Strand+Budapest' target='_blank'>Palatinus Strand</a> - restaurant στις πισίνες",
+    website: "https://www.budapest.com/",
+    freeActivity: true,
+    activityType: "playground"
+  }
+];
+
+function toggleFamily(){
+  const type = document.getElementById("travel-type").value;
+  document.getElementById("family-options").style.display = (type==="Οικογένεια")?"flex":"none";
+}
+
+function filterDestinations(){
+  const distance = document.getElementById("distance").value;
+  const weather = document.getElementById("weather").value;
+  const themeparks = document.getElementById("themeparks").value;
+  const christmas = document.getElementById("christmas").value;
+  const vacationType = document.getElementById("vacation-type").value;
+  const costLevel = document.getElementById("cost-level").value;
+ 
+  const suitabilityFilters = [];
+  document.querySelectorAll('#suitability-options input[type="checkbox"]:checked').forEach(cb => {
+    suitabilityFilters.push(cb.value);
+  });
+
+  const budget = document.getElementById("travel-budget").value;
+  if (budget) {
+    selectedBudget = parseInt(budget);
+  }
+
+  const filtered = destinations.filter(dest=>{
+    let ok=true;
+   
+    if(distance && distance!==""){
+      if(distance==="5") ok = ok && (dest.dist>4);
+      else ok = ok && (dest.dist <= parseInt(distance));
+    }
+    if(weather && weather!=="") ok = ok && (dest.weather===weather);
+    if(themeparks && themeparks!=="") ok = ok && (themeparks==="Ναι"?dest.themeparks==="Ναι":true);
+    if(christmas && christmas!=="") ok = ok && (christmas==="Ναι"?dest.christmas==="Ναι":true);
+   
+    if(vacationType && vacationType!=="") ok = ok && (dest.vacationType && dest.vacationType.includes(vacationType));
+    if(costLevel && costLevel!=="") ok = ok && (dest.costLevel===costLevel);
+   
+    if(suitabilityFilters.length > 0){
+      ok = ok && suitabilityFilters.some(filter => dest.suitableFor && dest.suitableFor.includes(filter));
+    }
+   
+    return ok;
+  });
+
+  const container = document.getElementById("destination-cards");
+  container.innerHTML="";
+  if(filtered.length===0) {
+    container.innerHTML="<p>Δεν βρέθηκαν προορισμοί με αυτά τα κριτήρια.</p>";
+    return;
+  }
+ 
+  filtered.forEach(dest=>{
+    const card = document.createElement("div");
+    card.className="destination-card";
+    card.innerHTML=`<h3>${dest.name}</h3><p>${dest.desc}</p><button onclick="selectDestination('${dest.name}')">ΣΥΝΕΧΕΙΑ ΣΤΟ ΒΗΜΑ 2</button>`;
+    container.appendChild(card);
+  });
+}
+
+function selectDestination(name) {
+    selectedDestinationName = name;
+    updateCityBackground(name);
+    goToStep2();
+}
+
+// ** 3. ΒΗΜΑ 2, 3 & 5 - ΛΟΓΙΚΗ ΠΛΟΗΓΗΣΗΣ & ΞΕΝΟΔΟΧΕΙΩΝ **
+function goToStep2(){
+  activateStep('step-flight');
+}
+
+function goToStep3(){
+  activateStep('step-hotel');
+  document.getElementById("hotel-destination").value = selectedDestinationName;
+}
+
+function searchHotels() {
+  const expediaLink = 'https://www.tkqlhce.com/click-101567631-13853200';
+  window.open(expediaLink, '_blank');
+  const img = document.createElement('img');
+  img.src = 'https://www.lduhtrp.net/image-101567631-13853200';
+  img.width = 1; img.height = 1; img.border = 0;
+  document.body.appendChild(img);
+}
+
+function goToStep4(){
+    activateStep('step-activities');
+    const step4Section = document.getElementById("step-activities");
+    const activityContainer = document.getElementById("activities-container");
+    const overallTotalDiv = document.getElementById("overall-total");
+    const step5BtnContainer = step4Section.querySelector('.step-5-btn-container');
+
+    let currentActivities = null;
+    let activityTitle = "";
+   
+    if(selectedDestinationName.includes("Βιέννη")){
+        currentActivities = activities;
+        activityTitle = "Οικογενειακές Δραστηριότητες στη Βιέννη";
+    } else if (selectedDestinationName.includes("Βερολίνο")){
+        currentActivities = activitiesBerlin;
+        activityTitle = "Οικογενειακές Δραστηριότητες στο Βερολίνο";
+    } else if (selectedDestinationName.includes("Λισαβόνα")){
+        currentActivities = activitiesLisbon;
+        activityTitle = "Οικογενειακές Δραστηριότητες στη Λισαβόνα";
+    } else if (selectedDestinationName.includes("Βουδαπέστη")){
+        currentActivities = activitiesBudapest;
+        activityTitle = "Οικογενειακές Δραστηριότητες στη Βουδαπέστη";
+   
+    }
+   
+    if(currentActivities){
+        // Επανάληψη των υπαρχόντων activity cards
+        createActivityCards(currentActivities);
+       
+        step4Section.querySelector('h1').innerText = activityTitle;
+        activityContainer.style.display = 'grid';
+        overallTotalDiv.style.display = 'block';
+        step5BtnContainer.style.display = 'block';
+       
+        // Υπολογισμός με τα νέα δεδομένα
+        calculateAllCosts(currentActivities);
+       
+    } else {
+        step4Section.querySelector('h1').innerText = `Βήμα 4: Προορισμός: ${selectedDestinationName || 'Χωρίς Επιλογή'}`;
+        activityContainer.style.display = 'block';
+        overallTotalDiv.style.display = 'none';
+        step5BtnContainer.style.display = 'none';
+        activityContainer.innerHTML = '<div style="text-align:center; font-size:2em; color:red; padding:50px; border:2px dashed red; border-radius:15px; background: #fff;">ΥΠΟ ΚΑΤΑΣΚΕΥΗ</div>';
+    }
+   
+    saveToLocalStorage();
+}
+
+function goToStep5(){
+    // Προφόρτωση Leaflet για γρηγορότερο χάρτη
+    preloadLeaflet();
+   
+    // ΠΡΟΣΘΗΚΗ: Διαβάζουμε πάντα τις ημέρες από το dropdown
+    const daysSelect = document.getElementById("days-stay");
+    selectedDaysStay = daysSelect.value ? parseInt(daysSelect.value) : 0;
+   
+    activateStep('step-summary');
+    const summaryDiv = document.getElementById('summary-content');
+   
+    if (!selectedDestinationName) {
+        summaryDiv.innerHTML = `
+            <h3>⚠️ Δεν έχετε επιλέξει προορισμό ακόμα</h3>
+            <p>Παρακαλώ επιστρέψτε στο Βήμα 1 για να επιλέξετε προορισμό.</p>
+            <button onclick="activateStep('step-destination')" style="padding: 10px 20px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                Επιστροφή στο Βήμα 1
+            </button>
+        `;
+        return;
+    }
+   
+    const selectedActivities = getSelectedActivities();
+   
+    const daysText = selectedDaysStay > 0 ? `${selectedDaysStay} μέρες` : "μη ορισμένες μέρες";
+   
+    if (selectedDestinationName.includes("Βιέννη")) {
+        if (selectedActivities.length > 0) {
+            const dailyProgram = createSmartDailyProgram(selectedActivities, selectedDaysStay || 1);
+            const distancesInfo = calculateDistances(selectedActivities);
+           
+            summaryDiv.innerHTML = `
+                <h3>✅ Το προσωπικό σας πρόγραμμα για ${daysText} στη Βιέννη!</h3>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 10px; border: 2px solid #3eb489; margin: 15px 0;">
+                    <strong>📅 Πρόγραμμα Διακοπών:</strong>
+                    ${dailyProgram}
+                </div>
+                ${distancesInfo}
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border: 1px solid #ffeaa7; margin: 15px 0;">
+                    <strong>Οι επιλεγμένες σας δραστηριότητες (${selectedActivities.length}):</strong>
+                    <ul>
+                        ${selectedActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        } else {
+            summaryDiv.innerHTML = `
+                <h3>🏛️ Βιέννη - Πρόγραμμα ${daysText}</h3>
+                <p>Δεν έχετε επιλέξει δραστηριότητες ακόμα. Επιστρέψτε στο Βήμα 4 και επιλέξτε δραστηριότητες!</p>
+                <button onclick="activateStep('step-activities')" style="padding: 10px 20px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                    Επιστροφή στο Βήμα 4
+                </button>
+            `;
+        }
+        summaryDiv.style.border = '2px dashed #3eb489';
+        summaryDiv.style.background = '#e0fff0';
+       
+    } else if (selectedDestinationName.includes("Βερολίνο")) {
+        if (selectedActivities.length > 0) {
+            const dailyProgram = createBerlinSmartProgram(selectedActivities, selectedDaysStay || 1);
+            const distancesInfo = calculateDistances(selectedActivities);
+           
+            summaryDiv.innerHTML = `
+                <h3>✅ Το προσωπικό σας πρόγραμμα για ${daysText} στο Βερολίνο!</h3>
+                <div style="background: #e8f4f8; padding: 15px; border-radius: 10px; border: 2px solid #4c7af0; margin: 15px 0;">
+                    <strong>📅 Πρόγραμμα Διακοπών:</strong>
+                    ${dailyProgram}
+                </div>
+                ${distancesInfo}
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border: 1px solid #ffeaa7; margin: 15px 0;">
+                    <strong>Οι επιλεγμένες σας δραστηριότητες (${selectedActivities.length}):</strong>
+                    <ul>
+                        ${selectedActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        } else {
+            summaryDiv.innerHTML = `
+                <h3>🏙️ Βερολίνο - Πρόγραμμα ${daysText}</h3>
+                <p>Δεν έχετε επιλέξει δραστηριότητες ακόμα. Επιστρέψτε στο Βήμα 4 και επιλέξτε δραστηριότητες!</p>
+                <p style="color: red; font-size: 0.9em;">💡 Βεβαιωθείτε ότι έχετε κλικάρει στις κάρτες των δραστηριοτήτων για να τις επιλέξετε (πρέπει να γίνουν κίτρινες με αστέρι ⭐)</p>
+                <button onclick="activateStep('step-activities')" style="padding: 10px 20px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                    Επιστροφή στο Βήμα 4
+                </button>
+            `;
+        }
+        summaryDiv.style.border = '2px dashed #4c7af0';
+        summaryDiv.style.background = '#f0f8ff';
+    } else if (selectedDestinationName.includes("Λισαβόνα")) {
+        if (selectedActivities.length > 0) {
+            const dailyProgram = createLisbonSmartProgram(selectedActivities, selectedDaysStay || 1);
+            const distancesInfo = calculateDistances(selectedActivities);
+           
+            summaryDiv.innerHTML = `
+                <h3>✅ Το προσωπικό σας πρόγραμμα για ${daysText} στη Λισαβόνα!</h3>
+                <div style="background: #ffeaea; padding: 15px; border-radius: 10px; border: 2px solid #ff6b6b; margin: 15px 0;">
+                    <strong>📅 Πρόγραμμα Διακοπών:</strong>
+                    ${dailyProgram}
+                </div>
+                ${distancesInfo}
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border: 1px solid #ffeaa7; margin: 15px 0;">
+                    <strong>Οι επιλεγμένες σας δραστηριότητες (${selectedActivities.length}):</strong>
+                    <ul>
+                        ${selectedActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        } else {
+            summaryDiv.innerHTML = `
+                <h3>🌊 Λισαβόνα - Πρόγραμμα ${daysText}</h3>
+                <p>Δεν έχετε επιλέξει δραστηριότητες ακόμα. Επιστρέψτε στο Βήμα 4 και επιλέξτε δραστηριότητες!</p>
+                <p style="color: red; font-size: 0.9em;">💡 Βεβαιωθείτε ότι έχετε κλικάρει στις κάρτες των δραστηριοτήτων για να τις επιλέξετε</p>
+                <button onclick="activateStep('step-activities')" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                    Επιστροφή στο Βήμα 4
+                </button>
+            `;
+        }
+        summaryDiv.style.border = '2px dashed #ff6b6b';
+        summaryDiv.style.background = '#fff5f5';
+    } else if (selectedDestinationName.includes("Βουδαπέστη")) {
+        if (selectedActivities.length > 0) {
+            const dailyProgram = createBudapestSmartProgram(selectedActivities, selectedDaysStay || 1);
+            const distancesInfo = calculateDistances(selectedActivities);
+           
+            summaryDiv.innerHTML = `
+                <h3>✅ Το προσωπικό σας πρόγραμμα για ${daysText} στη Βουδαπέστη!</h3>
+                <div style="background: #fff0e6; padding: 15px; border-radius: 10px; border: 2px solid #ff9933; margin: 15px 0;">
+                    <strong>📅 Πρόγραμμα Διακοπών:</strong>
+                    ${dailyProgram}
+                </div>
+                ${distancesInfo}
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border: 1px solid #ffeaa7; margin: 15px 0;">
+                    <strong>Οι επιλεγμένες σας δραστηριότητες (${selectedActivities.length}):</strong>
+                    <ul>
+                        ${selectedActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        } else {
+            summaryDiv.innerHTML = `
+                <h3>🏰 Βουδαπέστη - Πρόγραμμα ${daysText}</h3>
+                <p>Δεν έχετε επιλέξει δραστηριότητες ακόμα. Επιστρέψτε στο Βήμα 4 και επιλέξτε δραστηριότητες!</p>
+                <button onclick="activateStep('step-activities')" style="padding: 10px 20px; background: #ff9933; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                    Επιστροφή στο Βήμα 4
+                </button>
+            `;
+        }
+        summaryDiv.style.border = '2px dashed #ff9933';
+        summaryDiv.style.background = '#fff5e6';
+   
+    } else {
+        // Για όλους τους άλλους προορισμούς
+        summaryDiv.innerHTML = `
+            <p style="color:red; font-size:1.5em; font-weight:bold;">Η Σύνοψη για τον προορισμό ${selectedDestinationName || 'Χωρίς Επιλογή'} είναι:</p>
+            <div style="font-size:2em; color:red; padding:20px; border:2px dashed red; border-radius:10px; background: #fff;">
+                ΥΠΟ ΚΑΤΑΣΚΕΥΗ
+            </div>
+        `;
+        summaryDiv.style.border = 'none';
+        summaryDiv.style.background = 'transparent';
+    }
+}
+
+function activateStep(targetId) {
+    const steps = document.querySelectorAll('.step');
+    const sections = document.querySelectorAll('.section');
+    steps.forEach(s => s.classList.remove('active'));
+    sections.forEach(sec => sec.classList.remove('active'));
+   
+    document.querySelector(`[data-target="${targetId}"]`).classList.add('active');
+    document.getElementById(targetId).classList.add('active');
+}
+
+// ** 4. ΒΗΜΑ 4 - ΔΡΑΣΤΗΡΙΟΤΗΤΕΧ **
+function createActivityCards(activityList) {
+  const containerActivities = document.getElementById('activities-container');
+  containerActivities.innerHTML = "";
+ 
+  const emojiMap = {
+    "Palace": "🏰", "Zoo": "🐯", "Museum": "🏛️", "Aquarium": "🐠",
+    "Park": "🌳", "Castle": "🏯", "Science": "🔬", "Music": "🎵",
+    "Tower": "🗼", "Theme": "🎡", "History": "📜", "Art": "🎨",
+    "Nature": "🌿", "Adventure": "🧗", "Cruise": "🚢", "Garden": "🌸",
+    "Schonbrunn": "🏰", "Prater": "🎡", "Opera": "🎭", "Danube": "🌉",
+    "Illuseum": "🎭", "Technikmuseum": "⚙️", "Naturkunde": "🦕",
+    "LEGOLAND": "🧱", "Tussauds": "👑", "Fernsehturm": "🗼",
+    "Oceanário": "🐠", "Pavilhão": "🔭", "Belém": "🏰", "Mosteiro": "⛪",
+    "Parliament": "🏛️", "Thermal": "♨️", "Eye": "🎡", "Margaret": "🏝️"
+  };
+ 
+  activityList.forEach((act, index) => {
+    // Βρίσκουμε κατάλληλο emoji από το όνομα
+    let emoji = "📍";
+    for (const [key, value] of Object.entries(emojiMap)) {
+      if (act.name.includes(key)) {
+        emoji = value;
+        break;
+      }
+    }
+   
+    const card = document.createElement('div');
+    card.className = "activity-card";
+    card.id = `activity-${index}`;
+    card.innerHTML = `
+      <span class="emoji-icon">${emoji}</span>
+      <span class="star">⭐</span>
+      <div class="activity-info">
+        <h3>${act.name}</h3>
+        <p>${act.desc}</p>
+        ${act.website ? `<a href="${act.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px;">🔗 Δείτε περισσότερα</a>` : ''}
+        ${act.ageWarning ? `<div style="background: #fff3cd; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #856404;">⚠️ ${act.ageWarning}</div>` : ''}
+        ${act.priceNote ? `<div style="background: #d1ecf1; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #0c5460;">ℹ️ ${act.priceNote}</div>` : ''}
+        <table class="activity-table">
+          <tr><th>0-2</th><th>3-5</th><th>6-14</th><th>15-19</th><th>18+</th></tr>
+          <tr>
+            <td>${typeof act.prices["0-2"] === 'number' ? act.prices["0-2"] + '€' : act.prices["0-2"]}</td>
+            <td>${typeof act.prices["3-5"] === 'number' ? act.prices["3-5"] + '€' : act.prices["3-5"]}</td>
+            <td>${typeof act.prices["6-14"] === 'number' ? act.prices["6-14"] + '€' : act.prices["6-14"]}</td>
+            <td>${typeof act.prices["15-19"] === 'number' ? act.prices["15-19"] + '€' : act.prices["15-19"]}</td>
+            <td>${typeof act.prices["18+"] === 'number' ? act.prices["18+"] + '€' : act.prices["18+"]}</td>
+          </tr>
+        </table>
+        <div class="total" id="total-${index}">Κόστος: 0 €</div>
+      </div>
+    `;
+   
+    card.addEventListener('click', ()=> {
+        card.classList.toggle('selected');
+        activityList[index].selected = !activityList[index].selected;
+       
+        const listToPass = selectedDestinationName.includes("Βιέννη") ? activities :
+                          selectedDestinationName.includes("Βερολίνο") ? activitiesBerlin :
+                          selectedDestinationName.includes("Λισαβόνα") ? activitiesLisbon :
+                          activitiesBudapest;
+        calculateAllCosts(listToPass);
+       
+        saveToLocalStorage();
+    });
+    containerActivities.appendChild(card);
+  });
+}
+
+// ==================== ΤΡΟΠΟΠΟΙΗΜΕΝΗ ΣΥΝΑΡΤΗΣΗ calculateAllCosts ====================
+function calculateAllCosts(activityList = null) {
+    if (!activityList) {
+        activityList = selectedDestinationName.includes("Βιέννη") ? activities :
+                      selectedDestinationName.includes("Βερολίνο") ? activitiesBerlin :
+                      selectedDestinationName.includes("Λισαβόνα") ? activitiesLisbon :
+                      selectedDestinationName.includes("Βουδαπέστη") ? activitiesBudapest :
+                      activities;
+    }
+   
+    // Ενημέρωση των familyMembers πριν τον υπολογισμό
+    updateFamilyMembers();
+   
+    let overallTotal = 0;
+   
+    activityList.forEach((act, index) => {
+        const cardElement = document.getElementById(`activity-${index}`);
+        const isSelected = cardElement ? cardElement.classList.contains('selected') : false;
+       
+        act.selected = isSelected;
+
+        if(isSelected){
+            let total = 0;
+           
+            // ΝΕΟΣ ΥΠΟΛΟΓΙΣΜΟΣ με ακριβείς ηλικίες
+            familyMembers.forEach(member => {
+                let price = 0;
+               
+                if (member.age <= 2) {
+                    price = 0; // Δωρεάν για 0-2 ετών
+                } else if (member.age <= 5) {
+                    price = act.prices["3-5"] || 0; // Χρησιμοποιούμε τη στήλη "3-5"
+                } else if (member.age <= 17) {
+                    // Για Βιέννη: 6-17 ετών, για άλλες πόλεις: 6-14 ή 15-19
+                    if (selectedDestinationName.includes("Βιέννη")) {
+                        price = act.prices["6-14"] || act.prices["15-19"] || 0;
+                    } else {
+                        // Για άλλες πόλεις, χρησιμοποιούμε την κατάλληλη κατηγορία
+                        if (member.age <= 14) {
+                            price = act.prices["6-14"] || 0;
+                        } else if (member.age <= 19) {
+                            price = act.prices["15-19"] || 0;
+                        } else {
+                            price = act.prices["18+"] || 0;
+                        }
+                    }
+                } else {
+                    price = act.prices["18+"] || 0; // Ενήλικες
+                }
+               
+                total += price;
+            });
+           
+            if (document.getElementById(`total-${index}`)) {
+                document.getElementById(`total-${index}`).innerText = `Κόστος: ${total.toFixed(2)} €`;
+            }
+            overallTotal += total;
+        } else {
+            const totalElement = document.getElementById(`total-${index}`);
+            if (totalElement) totalElement.innerText = `Κόστος: 0 €`;
+        }
+    });
+   
+    const overallTotalElement = document.getElementById('overall-total');
+    if (overallTotalElement) {
+        overallTotalElement.innerText = `Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
+    }
+
+    // Budget Tracker (παραμένει ίδιο)
+    if (selectedBudget > 0) {
+        const budgetStatus = document.getElementById('budget-status') || document.createElement('div');
+        budgetStatus.id = 'budget-status';
+        budgetStatus.style.cssText = `
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        `;
+       
+        const remaining = selectedBudget - overallTotal;
+        if (remaining >= 0) {
+            budgetStatus.style.background = '#d4edda';
+            budgetStatus.style.color = '#155724';
+            budgetStatus.style.border = '2px solid #28a745';
+            budgetStatus.innerHTML = `
+                💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
+                📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
+                ✅ <strong>Υπόλοιπο:</strong> ${remaining.toFixed(2)}€
+            `;
+        } else {
+            budgetStatus.style.background = '#f8d7da';
+            budgetStatus.style.color = '#721c24';
+            budgetStatus.style.border = '2px solid #dc3545';
+            budgetStatus.innerHTML = `
+                💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
+                📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
+                ❌ <strong>Υπέρβαση:</strong> ${Math.abs(remaining).toFixed(2)}€
+            `;
+        }
+       
+        if (!document.getElementById('budget-status')) {
+            const activitiesContainer = document.getElementById('activities-container-wrapper');
+            activitiesContainer.parentNode.insertBefore(budgetStatus, activitiesContainer);
+        }
+    }
+}
+
+// ΑΡΧΙΚΟΠΟΙΗΣΗ & ΠΛΟΗΓΗΣΗ SIDEBAR
+document.querySelectorAll('.step').forEach(step=>{
+  step.addEventListener('click', ()=>{
+    const target = step.dataset.target;
+    if (target === 'step-activities') {
+      goToStep4();
+    } else if (target === 'step-summary') {
+      goToStep5();
+    } else if (target === 'step-map') {
+      goToStep6();
+    } else {
+      activateStep(target);
+    }
+  });
+});
+
+function toggleQuickSelection() {
+  const quickSelect = document.getElementById('quick-city-select');
+  quickSelect.style.display = quickSelect.style.display === 'none' ? 'block' : 'none';
+ 
+  if (document.getElementById('quick-city').options.length <= 1) {
+    fillQuickCityDropdown();
+  }
+}
+
+function fillQuickCityDropdown() {
+    const select = document.getElementById('quick-city');
+    select.innerHTML = '<option value="">-- Επιλέξτε πόλη --</option>';
+   
+    const sortedDestinations = [...destinations].sort((a, b) => {
+        return a.name.localeCompare(b.name, 'el');
+    });
+   
+    sortedDestinations.forEach(dest => {
+        const option = document.createElement('option');
+        option.value = dest.name;
+        option.textContent = dest.name;
+        select.appendChild(option);
+    });
+}
+
+function selectQuickCity() {
+  const selectedCity = document.getElementById('quick-city').value;
+  const selectedDays = document.getElementById("days-stay").value;
+ 
+  if (selectedCity) {
+    selectedDestinationName = selectedCity;
+    updateCityBackground(selectedCity);
+    selectedDaysStay = selectedDays ? parseInt(selectedDays) : 0;
+   
+    const budget = document.getElementById("travel-budget").value;
+    if (budget) {
+        selectedBudget = parseInt(budget);
+    }
+   
+        updateStep1Display();
+   
+    document.getElementById('quick-city-select').style.display = 'none';
+  } else {
+    alert('Παρακαλώ επιλέξτε μια πόλη από τη λίστα');
+  }
+}
+
+function getSelectedActivities() {
+    let currentActivities = null;
+   
+    if (selectedDestinationName.includes("Βιέννη")) {
+        currentActivities = activities;
+    } else if (selectedDestinationName.includes("Βερολίνο")) {
+        currentActivities = activitiesBerlin;
+    } else if (selectedDestinationName.includes("Λισαβόνα")) {
+        currentActivities = activitiesLisbon;
+ } else if (selectedDestinationName.includes("Βουδαπέστη")) {
+        currentActivities = activitiesBudapest;
+    } else {
+        return [];
+    }
+   
+    // Επιστροφή ΜΟΝΟ των δραστηριοτήτων που έχουν selected: true
+    const selected = currentActivities.filter(act => act.selected === true);
+    console.log("Επιλεγμένες δραστηριότητες:", selected.length, selected);
+    return selected;
+}
+
+function createDailyProgram(activities, days) {
+    let programHTML = '';
+   
+    const activitiesPerDay = Math.ceil(activities.length / days);
+   
+    for (let day = 1; day <= days; day++) {
+        const startIndex = (day - 1) * activitiesPerDay;
+        const endIndex = startIndex + activitiesPerDay;
+        const dailyActivities = activities.slice(startIndex, endIndex);
+       
+        programHTML += `
+            <div style="margin: 15px 0; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #3eb489;">
+                <h4 style="margin: 0 0 8px 0; color: #3eb489;">📅 Ημέρα ${day}</h4>
+                ${dailyActivities.length > 0 ?
+                    `<ul style="margin: 0; padding-left: 20px;">
+                        ${dailyActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>` :
+                    '<p style="margin: 0; color: #666;">⏳ Χωρίς δραστηριότητες - Αναψυχή!</p>'
+                }
+            </div>
+        `;
+    }
+   
+    return programHTML;
+}
+
+function createSmartDailyProgram(activities, days) {
+    const activitiesWithCoords = activities.filter(act => act.lat && act.lng);
+   
+    if (activitiesWithCoords.length === 0) {
+        return "<p>🚧 Για έξυπνο γεωγραφικό χωρισμό, χρειαζόμαστε συντεταγμένες στις δραστηριότητες</p>" +
+               createDailyProgram(activities, days);
+    }
+   
+    const clusters = createSmartClusters(activitiesWithCoords, days);
+   
+    let programHTML = '<p>🗺️ <strong>Έξυπνο Πρόγραμμα με Βάση την Απόσταση & Χρόνο:</strong></p>';
+   
+    clusters.forEach((cluster, index) => {
+        const morningActivities = cluster.slice(0, Math.ceil(cluster.length / 2));
+        const afternoonActivities = cluster.slice(Math.ceil(cluster.length / 2));
+       
+        programHTML += `
+            <div style="margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border-left: 6px solid #ff7f50; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 12px 0; color: #ff7f50;">📍 Ημέρα ${index + 1} - Έξυπνο Πλάνο</h4>
+               
+                ${morningActivities.length > 0 ? `
+                <div style="margin-bottom: 12px;">
+                    <h5 style="margin: 0 0 6px 0; color: #3eb489;">🌅 Πρωινό (9:00 - 13:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${morningActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                ${afternoonActivities.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                    <h5 style="margin: 0 0 6px 0; color: #4c7af0;">🌇 Απογευματινό (14:00 - 18:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${afternoonActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #666;">
+                        ✅ <strong>Βελτιστοποιημένη Διαδρομή</strong><br>
+                        🚶 <strong>Ελάχιστες Μετακινήσεις</strong><br>
+                        ⏱️ <strong>Ισορροπημένος Χρόνος</strong>
+                    </p>
+                </div>
+            </div>
+        `;
+    });
+   
+    return programHTML;
+}
+
+function createSmartClusters(activities, numClusters) {
+    if (activities.length <= numClusters) {
+        const clusters = [];
+        for (let i = 0; i < numClusters; i++) {
+            clusters.push(activities[i] ? [activities[i]] : []);
+        }
+        return clusters.filter(cluster => cluster.length > 0);
+    }
+   
+    const centerLat = activities.reduce((sum, act) => sum + act.lat, 0) / activities.length;
+    const centerLng = activities.reduce((sum, act) => sum + act.lng, 0) / activities.length;
+   
+    const activitiesWithDistance = activities.map(act => {
+        const distance = Math.sqrt(
+            Math.pow(act.lat - centerLat, 2) + Math.pow(act.lng - centerLng, 2)
+        );
+        return { ...act, distance };
+    });
+   
+    const sortedByDistance = [...activitiesWithDistance].sort((a, b) => a.distance - b.distance);
+   
+    const clusterSize = Math.ceil(sortedByDistance.length / numClusters);
+    const clusters = [];
+   
+    for (let i = 0; i < numClusters; i++) {
+        const start = i * clusterSize;
+        const end = start + clusterSize;
+        const cluster = sortedByDistance.slice(start, end).map(act => {
+            const { distance, ...activityWithoutDistance } = act;
+            return activityWithoutDistance;
+        });
+       
+        if (cluster.length > 0) {
+            cluster.sort((a, b) => a.lat - b.lat);
+            clusters.push(cluster);
+        }
+    }
+   
+    return clusters;
+}
+
+function goToStep6() {
+    activateStep('step-map');
+}
+
+// ** ΒΕΛΤΙΩΜΕΝΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΤΟΝ ΧΑΡΤΗ **
+function preloadLeaflet() {
+    if (typeof L === 'undefined') {
+        // Φόρτωση CSS αν δεν υπάρχει
+        if (!document.querySelector('link[href*="leaflet"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(link);
+        }
+       
+        // Φόρτωση script αν δεν υπάρχει
+        if (!document.querySelector('script[src*="leaflet"]')) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            document.head.appendChild(script);
+        }
+    }
+}
+
+function initializeSmartMap() {
+    const selectedActivities = getSelectedActivities();
+   
+    if (selectedActivities.length === 0) {
+        alert('⚠️ Δεν έχετε επιλέξει δραστηριότητες! Πηγαίνετε πρώτα στο Βήμα 4 και κάντε κλικ στις κάρτες δραστηριοτήτων για να τις επιλέξετε (πρέπει να γίνουν κίτρινες με αστέρι ⭐).');
+        activateStep('step-activities');
+        return;
+    }
+   
+    const mapContainer = document.getElementById('map-container');
+    mapContainer.innerHTML = '<div id="smart-map" style="height: 100%; width: 100%;"></div>';
+   
+    // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Έλεγχος αν ο Leaflet είναι ήδη φορτωμένος
+    if (typeof L === 'undefined') {
+        // Αν ΟΧΙ, φορτώνουμε και περιμένουμε
+        if (!document.querySelector('link[href*="leaflet"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(link);
+        }
+       
+        if (!document.querySelector('script[src*="leaflet"]')) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = () => {
+                // Μικρή καθυστέρηση για σίγουρο φόρτωμα
+                setTimeout(() => createSmartMapWithActivities(selectedActivities), 300);
+            };
+            document.head.appendChild(script);
+        } else {
+            // Το script είναι ήδη φορτωμένο, απλά περιμένουμε
+            setTimeout(() => {
+                if (typeof L !== 'undefined') {
+                    createSmartMapWithActivities(selectedActivities);
+                } else {
+                    // Αν ακόμα δεν είναι έτοιμο, ξαναπροσπαθούμε
+                    setTimeout(() => initializeSmartMap(), 500);
+                }
+            }, 500);
+        }
+    } else {
+        // Ο Leaflet είναι ΉΔΗ φορτωμένος - δημιουργούμε χάρτη αμέσως
+        createSmartMapWithActivities(selectedActivities);
+    }
+}
+
+// ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Δημιουργία χάρτη με δραστηριότητες (κοινή για όλες τις πόλεις)
+function createSmartMapWithActivities(activities) {
+    const mapContainer = document.getElementById('map-container');
+    const mapDiv = document.getElementById('smart-map');
+   
+    // Επιβεβαίωση ότι ο χάρτης υπάρχει
+    if (!mapDiv) {
+        mapContainer.innerHTML = '<div id="smart-map" style="height: 100%; width: 100%;"></div>';
+    }
+   
+    let mapCenter, mapZoom;
+   
+    // Προσδιορισμός κέντρου βάσει πόλης
+    if (selectedDestinationName.includes("Βερολίνο")) {
+        mapCenter = [52.5200, 13.4050];
+        mapZoom = 12;
+    } else if (selectedDestinationName.includes("Λισαβόνα")) {
+        mapCenter = [38.7223, -9.1393];
+        mapZoom = 13;
+    } else if (selectedDestinationName.includes("Βουδαπέστη")) {
+        mapCenter = [47.4979, 19.0402];
+        mapZoom = 13;
+    } else {
+        // Προεπιλογή για Βιέννη ή άλλες
+        mapCenter = [48.2082, 16.3738];
+        mapZoom = 13;
+    }
+   
+    // Δημιουργία χάρτη
+    const map = L.map('smart-map').setView(mapCenter, mapZoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+   
+    // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Προσθήκη πινεζών ΜΕ ΑΜΕΣΑ
+    addActivityMarkers(map, activities);
+   
+    // Προσθήκη κουμπιού κλεισίματος
+    addMapCloseButton(mapContainer, map);
+}
+
+// ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Προσθήκη πινεζών στον χάρτη
+function addActivityMarkers(map, activities) {
+    console.log(`Προσθήκη ${activities.length} πινεζών στον χάρτη...`);
+   
+    let selectedMarkers = [];
+    let markerColor;
+   
+    // Χρώμα πινέζας ανά πόλη
+    if (selectedDestinationName.includes("Βερολίνο")) markerColor = 'blue';
+    else if (selectedDestinationName.includes("Λισαβόνα")) markerColor = 'red';
+    else if (selectedDestinationName.includes("Βουδαπέστη")) markerColor = 'orange';
+    else markerColor = 'green';
+   
+    activities.forEach((activity, index) => {
+        if (activity.lat && activity.lng) {
+            // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Χρήση custom icon με το σωστό χρώμα
+            const customIcon = L.icon({
+                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34]
+            });
+           
+            const marker = L.marker([activity.lat, activity.lng], { icon: customIcon }).addTo(map);
+           
+            // Προσθήκη popup
+            marker.bindPopup(createPopupContent(activity));
+           
+            // Λογική για επιλογή πινεζών και διαδρομές
+            marker.on('click', function() {
+                handleMarkerClick(marker, selectedMarkers, map, activity);
+            });
+        }
+    });
+   
+    // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Εάν υπάρχουν δραστηριότητες, fit bounds
+    if (activities.length > 0) {
+        const latlngs = activities
+            .filter(a => a.lat && a.lng)
+            .map(a => [a.lat, a.lng]);
+       
+        if (latlngs.length > 0) {
+            const bounds = L.latLngBounds(latlngs);
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+        }
+    }
+}
+
+function createPopupContent(activity) {
+    return `
+        <div style="max-width: 280px;">
+            <h4 style="margin: 0 0 8px 0; color: #3eb489;">${activity.name}</h4>
+            <p style="margin: 0 0 8px 0; font-size: 0.9em;">${activity.desc || ''}</p>
+            <div style="margin: 6px 0; font-size: 0.9em;"><strong>🍽️ Κοντινό Εστιατόριο:</strong><br>${activity.restaurant || 'Δεν υπάρχει πληροφορία'}</div>
+            ${activity.website ? `<a href="${activity.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none;">🔗 Δείτε περισσότερα</a>` : ''}
+        </div>
+    `;
+}
+
+function handleMarkerClick(marker, selectedMarkers, map, activity) {
+    const markerIndex = selectedMarkers.indexOf(marker);
+    if (markerIndex === -1) {
+        selectedMarkers.push(marker);
+        // Αλλαγή χρώματος όταν επιλεγεί
+        marker.setIcon(L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        }));
+    } else {
+        selectedMarkers.splice(markerIndex, 1);
+        // Επιστροφή στο αρχικό χρώμα
+        let color;
+        if (selectedDestinationName.includes("Βερολίνο")) color = 'blue';
+        else if (selectedDestinationName.includes("Λισαβόνα")) color = 'red';
+        else if (selectedDestinationName.includes("Βουδαπέστη")) color = 'orange';
+        else color = 'green';
+       
+        marker.setIcon(L.icon({
+            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        }));
+    }
+   
+    if (selectedMarkers.length === 2) {
+        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1]);
+    } else if (selectedMarkers.length > 2) {
+        const oldMarker = selectedMarkers.shift();
+        // Επιστροφή του παλιού marker στο κανονικό χρώμα
+        let color;
+        if (selectedDestinationName.includes("Βερολίνο")) color = 'blue';
+        else if (selectedDestinationName.includes("Λισαβόνα")) color = 'red';
+        else if (selectedDestinationName.includes("Βουδαπέστη")) color = 'orange';
+        else color = 'green';
+       
+        oldMarker.setIcon(L.icon({
+            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        }));
+        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1]);
+    } else {
+        if (window.polyline) {
+            map.removeLayer(window.polyline);
+            window.polyline = null;
+        }
+        const directionsDiv = document.getElementById('route-directions');
+        if (directionsDiv) directionsDiv.remove();
+    }
+}
+
+function addMapCloseButton(mapContainer, map) {
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✖️ Κλείσιμο Χάρτη';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 1000;
+        padding: 10px 15px;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: 'Comic Neue', cursive;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    `;
+    closeBtn.onclick = () => {
+        mapContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <p style="font-size: 18px; margin-bottom: 20px;">Ο χάρτης έκλεισε.</p>
+                <button onclick="initializeSmartMap()" style="padding: 12px 25px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                    🗺️ Ξαναφόρτωση Χάρτη
+                </button>
+            </div>
+        `;
+    };
+    mapContainer.appendChild(closeBtn);
+}
+
+function calculateDistances(activities) {
+    if (activities.length < 2) return '';
+   
+    let distancesHTML = '<div style="background: #e8f4f8; padding: 15px; border-radius: 10px; margin: 15px 0; border: 2px solid #4c7af0;"><h4>🗺️ Αποστάσεις & Μετακινήσεις:</h4>';
+   
+    for (let i = 0; i < activities.length - 1; i++) {
+        const fromAct = activities[i];
+        const toAct = activities[i + 1];
+       
+        if (fromAct.lat && fromAct.lng && toAct.lat && toAct.lng) {
+            const distance = calculateDistance(fromAct.lat, fromAct.lng, toAct.lat, toAct.lng);
+            distancesHTML += `
+                <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 8px;">
+                    <strong>${fromAct.name}</strong> → <strong>${toAct.name}</strong>
+                    <div style="font-size: 0.9em; margin-top: 5px;">
+                        📏 Απόσταση: <strong>${distance} km</strong><br>
+                        🚶 Περπάτημα: ~${Math.round(distance * 15)} λεπτά<br>
+                        🚗 Αυτοκίνητο: ~${Math.round(distance * 3)} λεπτά<br>
+                        🚇 ΜΜΜ: ~${Math.round(distance * 5)} λεπτά
+                    </div>
+                    <a href="https://www.google.com/maps/dir/${fromAct.lat},${fromAct.lng}/${toAct.lat},${toAct.lng}" target="_blank" style="color: #4c7af0; font-size: 0.9em;">📱 Άνοιγμα Google Maps</a>
+                </div>
+            `;
+        }
+    }
+   
+    distancesHTML += '</div>';
+    return distancesHTML;
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    return distance.toFixed(1);
+}
+
+function showRouteAndDirections(marker1, marker2) {
+    const map = marker1._map;
+    const latlngs = [marker1.getLatLng(), marker2.getLatLng()];
+   
+    if (window.polyline) {
+        map.removeLayer(window.polyline);
+    }
+   
+    window.polyline = L.polyline(latlngs, {color: 'red', weight: 5}).addTo(map);
+   
+    const distance = map.distance(latlngs[0], latlngs[1]) / 1000;
+   
+    const directionsDiv = document.createElement('div');
+    directionsDiv.id = 'route-directions';
+    directionsDiv.style.cssText = `
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        max-width: 300px;
+        border: 2px solid #3eb489;
+    `;
+   
+    directionsDiv.innerHTML = `
+        <h4 style="margin: 0 0 10px 0; color: #3eb489;">🗺️ Οδηγίες Μετακίνησης</h4>
+        <p style="margin: 5px 0;"><strong>📏 Απόσταση:</strong> ${distance.toFixed(1)} km</p>
+        <p style="margin: 5px 0;"><strong>🚶 Περπάτημα:</strong> ~${Math.round(distance * 15)} λεπτά</p>
+        <p style="margin: 5px 0;"><strong>🚗 Αυτοκίνητο:</strong> ~${Math.round(distance * 3)} λεπτά</p>
+        <p style="margin: 5px 0;"><strong>🚇 ΜΜΜ:</strong> ~${Math.round(distance * 5)} λεπτά</p>
+        <div style="margin-top: 10px;">
+            <a href="https://www.google.com/maps/dir/${latlngs[0].lat},${latlngs[0].lng}/${latlngs[1].lat},${latlngs[1].lng}"
+               target="_blank" style="color: #4c7af0; text-decoration: none; font-weight: bold;">
+               📱 Άνοιγμα Google Maps
+            </a>
+        </div>
+        <button onclick="this.parentElement.remove(); if(window.polyline) map.removeLayer(window.polyline);"
+                style="margin-top: 10px; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                ✖️ Κλείσιμο
+        </button>
+    `;
+   
+    const oldDirections = document.getElementById('route-directions');
+    if (oldDirections) oldDirections.remove();
+   
+    map.getContainer().appendChild(directionsDiv);
+}
+
+function isMobile() {
+    return window.innerWidth <= 640;
+}
+
+function checkMobileView() {
+    const mobileNav = document.querySelector('.mobile-nav');
+    const sidebar = document.querySelector('.sidebar');
+   
+    if (isMobile()) {
+        if (mobileNav) mobileNav.style.display = 'block';
+        if (sidebar) sidebar.style.display = 'none';
+    } else {
+        if (mobileNav) mobileNav.style.display = 'none';
+        if (sidebar) sidebar.style.display = 'block';
+    }
+}
+
+window.addEventListener('resize', checkMobileView);
+window.addEventListener('load', checkMobileView);
+
+function createBerlinSmartProgram(activities, days) {
+    const activitiesWithCoords = activities.filter(act => act.lat && act.lng);
+   
+    if (activitiesWithCoords.length === 0) {
+        return "<p>🚧 Για έξυπνο γεωγραφικό χωρισμό, χρειαζόμαστε συντεταγμένες στις δραστηριότητες</p>" +
+               createDailyProgram(activities, days);
+    }
+   
+    const clusters = createSmartClusters(activitiesWithCoords, days);
+   
+    let programHTML = '<p>🗺️ <strong>Έξυπνο Πρόγραμμα για Βερολίνο:</strong></p>';
+   
+    clusters.forEach((cluster, index) => {
+        const morningActivities = cluster.slice(0, Math.ceil(cluster.length / 2));
+        const afternoonActivities = cluster.slice(Math.ceil(cluster.length / 2));
+       
+        programHTML += `
+            <div style="margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border-left: 6px solid #4c7af0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 12px 0; color: #4c7af0;">📍 Ημέρα ${index + 1} - Βερολίνο</h4>
+               
+                ${morningActivities.length > 0 ? `
+                <div style="margin-bottom: 12px;">
+                    <h5 style="margin: 0 0 6px 0; color: #3eb489;">🌅 Πρωινό (9:00 - 13:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${morningActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                ${afternoonActivities.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                    <h5 style="margin: 0 0 6px 0; color: #ff7f50;">🌇 Απογευματινό (14:00 - 18:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${afternoonActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                <div style="background: #f0f8ff; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #666;">
+                        ✅ <strong>Βελτιστοποιημένη Διαδρομή</strong><br>
+                        🚇 <strong>Εύκολες Μετακινήσεις με ΜΜΜ</strong><br>
+                        ⏱️ <strong>Ισορροπημένος Χρόνος</strong>
+                    </p>
+                </div>
+            </div>
+        `;
+    });
+   
+    return programHTML;
+}
+
+function createLisbonSmartProgram(activities, days) {
+    const activitiesWithCoords = activities.filter(act => act.lat && act.lng);
+   
+    if (activitiesWithCoords.length === 0) {
+        return "<p>🚧 Για έξυπνο γεωγραφικό χωρισμό, χρειαζόμαστε συντεταγμένες στις δραστηριότητες</p>" +
+               createDailyProgram(activities, days);
+    }
+   
+    const clusters = createSmartClusters(activitiesWithCoords, days);
+   
+    let programHTML = '<p>🗺️ <strong>Έξυπνο Πρόγραμμα για Λισαβόνα:</strong></p>';
+   
+    clusters.forEach((cluster, index) => {
+        const morningActivities = cluster.slice(0, Math.ceil(cluster.length / 2));
+        const afternoonActivities = cluster.slice(Math.ceil(cluster.length / 2));
+       
+        programHTML += `
+            <div style="margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border-left: 6px solid #ff6b6b; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 12px 0; color: #ff6b6b;">📍 Ημέρα ${index + 1} - Λισαβόνα</h4>
+               
+                ${morningActivities.length > 0 ? `
+                <div style="margin-bottom: 12px;">
+                    <h5 style="margin: 0 0 6px 0; color: #3eb489;">🌅 Πρωινό (9:00 - 13:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${morningActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                ${afternoonActivities.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                    <h5 style="margin: 0 0 6px 0; color: #ff6b6b;">🌇 Απογευματινό (14:00 - 18:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${afternoonActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                <div style="background: #fff5f5; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #666;">
+                        ✅ <strong>Βελτιστοποιημένη Διαδρομή</strong><br>
+                        🚋 <strong>Χρήση Τραμ & Μετρό</strong><br>
+                        ⏱️ <strong>Ισορροπημένος Χρόνος</strong>
+                    </p>
+                </div>
+            </div>
+        `;
+    });
+   
+    return programHTML;
+}
+
+function createBudapestSmartProgram(activities, days) {
+    const activitiesWithCoords = activities.filter(act => act.lat && act.lng);
+   
+    if (activitiesWithCoords.length === 0) {
+        return "<p>🚧 Για έξυπνο γεωγραφικό χωρισμό, χρειαζόμαστε συντεταγμένες στις δραστηριότητες</p>" +
+               createDailyProgram(activities, days);
+    }
+   
+    const clusters = createSmartClusters(activitiesWithCoords, days);
+   
+    let programHTML = '<p>🗺️ <strong>Έξυπνο Πρόγραμμα για Βουδαπέστη:</strong></p>';
+   
+    clusters.forEach((cluster, index) => {
+        const morningActivities = cluster.slice(0, Math.ceil(cluster.length / 2));
+        const afternoonActivities = cluster.slice(Math.ceil(cluster.length / 2));
+       
+        programHTML += `
+            <div style="margin: 20px 0; padding: 15px; background: white; border-radius: 12px; border-left: 6px solid #ff9933; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 12px 0; color: #ff9933;">📍 Ημέρα ${index + 1} - Βουδαπέστη</h4>
+               
+                ${morningActivities.length > 0 ? `
+                <div style="margin-bottom: 12px;">
+                    <h5 style="margin: 0 0 6px 0; color: #3eb489;">🌅 Πρωινό (9:00 - 13:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${morningActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                ${afternoonActivities.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                    <h5 style="margin: 0 0 6px 0; color: #4c7af0;">🌇 Απογευματινό (14:00 - 18:00)</h5>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${afternoonActivities.map(act => `<li>${act.name}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+               
+                <div style="background: #fff5e6; padding: 8px; border-radius: 6px; margin-top: 8px;">
+                    <p style="margin: 0; font-size: 0.85em; color: #666;">
+                        ✅ <strong>Βελτιστοποιημένη Διαδρομή</strong><br>
+                        🌉 <strong>Εύκολη Πρόσβαση στις Γέφυρες</strong><br>
+                        ⏱️ <strong>Ισορροπημένος Χρόνος</strong>
+                    </p>
+                </div>
+            </div>
+        `;
+    });
+   
+    return programHTML;
+}
+
+function updateCityBackground(cityName) {
+    const cityBackgrounds = {
+        "Βιέννη": "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=1200",
+        "Βερολίνο": "https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=1200",
+        "Παρίσι": "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=1200",
+        "Ρώμη": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200",
+        "Λονδίνο": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200",
+        "Άμστερνταμ": "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=1200",
+        "Βουδαπέστη": "https://images.unsplash.com/photo-1551867633-194f125bdbfa?w=1200",
+        "Πράγα": "https://images.unsplash.com/photo-1592906209472-a36b1f3782ef?w=1200",
+        "Μόναχο": "https://images.unsplash.com/photo-1595867818082-083862f3d630?w=1200",
+        "Κολωνία": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=1200",
+        "Βαρκελώνη": "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200",
+        "Μαδρίτη": "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200",
+        "Λισαβόνα": "https://images.unsplash.com/photo-1585208798174-6cedd86bd019?w=1200",
+        "Δουβλίνο": "https://images.unsplash.com/photo-1549918864-6bac32c52dcb?w=1200",
+        "Εδιμβούργο": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200",
+        "Ζυρίχη": "https://images.unsplash.com/photo-1544483048-8b74d33a11bd?w=1200",
+        "Γενεύη": "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=1200",
+        "Κοπεγχάγη": "https://images.unsplash.com/photo-1513622472932-bd5c45e1987b?w=1200",
+        "Στοκχόλμη": "https://images.unsplash.com/photo-1506970843675-04a04c64ad6f?w=1200",
+        "Βουκουρέστι": "https://images.unsplash.com/photo-1594736797933-d0f289d3f0b3?w=1200",
+        "Όσλο": "https://images.unsplash.com/photo-1583149454066-4c76b4d2ad23?w=1200",
+        "Μιλάνο": "https://images.unsplash.com/photo-1610018556010-6c6d89b95a0a?w=1200",
+        "Φλωρεντία": "https://images.unsplash.com/photo-1543429259-5070ada7b72c?w=1200",
+        "Κωνσταντινούπολη": "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=1200",
+        "Σόφια": "https://images.unsplash.com/photo-1578351120013-6e2ada1d570d?w=1200",
+        "Βαρσοβία": "https://images.unsplash.com/photo-1590330237165-7c36d3d82b44?w=1200",
+        "Κρακοβία": "https://images.unsplash.com/photo-1544298628-3a4c18a4fb6b?w=1200"
+    };
+   
+    const backgroundUrl = cityBackgrounds[cityName] || 'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200';
+   
+    const img = new Image();
+    img.src = backgroundUrl;
+   
+    img.onload = function() {
+        document.body.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.4)), url(${backgroundUrl})`;
+    };
+}
+
+function resetFilters(){
+  document.querySelectorAll('select').forEach(select => select.value = '');
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.getElementById("travel-budget").value = '';
+  filterDestinations();
+}
+
+// ==================== ΑΥΤΟΜΑΤΗ ΑΠΟΘΗΚΕΥΣΗ ΚΑΙ ΕΠΑΝΑΦΟΡΤΩΣΗ ====================
+function saveToLocalStorage() {
+    const data = {
+        selectedDestinationName,
+        selectedDaysStay,
+        selectedBudget,
+        selectedActivities: getSelectedActivities().map(act => act.name),
+        familyMembers: familyMembers
+    };
+    localStorage.setItem('travelPlannerData', JSON.stringify(data));
+}
+
+function loadFromLocalStorage() {
+    const saved = localStorage.getItem('travelPlannerData');
+    if (saved) {
+        const data = JSON.parse(saved);
+       
+        const shouldContinue = confirm('📋 Βρέθηκε προηγούμενο σχέδιο ταξιδιού! Θέλετε να συνεχίσετε από εκεί που είχατε μείνει;');
+       
+        if (shouldContinue) {
+            selectedDestinationName = data.selectedDestinationName || "";
+            selectedDaysStay = data.selectedDaysStay || 0;
+            selectedBudget = data.selectedBudget || 0;
+           
+            // Επαναφορά ημερών
+            if (selectedDaysStay > 0) {
+                document.getElementById("days-stay").value = selectedDaysStay;
+            }
+           
+            // Επαναφορά budget
+            if (selectedBudget > 0) {
+                document.getElementById("travel-budget").value = selectedBudget;
+            }
+           
+            // Επαναφορά family members
+            if (data.familyMembers && data.familyMembers.length > 0) {
+                familyMembers = data.familyMembers;
+                updateFamilyMembersUI();
+            }
+           
+            // Επαναφορά επιλεγμένων δραστηριοτήτων
+            if (data.selectedActivities && data.selectedActivities.length > 0) {
+                window.savedActivities = data.selectedActivities;
+            }
+           
+            setTimeout(() => {
+                alert(`✅ Φορτώθηκε προηγούμενο σχέδιο:\n🏙️ Προορισμός: ${selectedDestinationName || 'Κανένας'}\n👨‍👩‍👧‍👦 Μέλη: ${familyMembers.length}\n📅 Μέρες: ${selectedDaysStay}\n💰 Προϋπολογισμός: ${selectedBudget}€`);
+            }, 500);
+        } else {
+            localStorage.removeItem('travelPlannerData');
+        }
+    }
+}
+
+// ΒΟΗΘΗΤΙΚΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΕΠΑΝΑΦΟΡΤΩΣΗ UI
+function updateFamilyMembersUI() {
+    const container = document.getElementById('family-members-list');
+    container.innerHTML = '';
+   
+    familyMembers.forEach((member, index) => {
+        const emoji = index === 0 ? '👨' : index === 1 ? '👩' : '🧒';
+        const memberDiv = document.createElement('div');
+        memberDiv.className = 'family-member-input';
+        memberDiv.innerHTML = `
+            <span>${emoji}</span>
+            <input type="text" placeholder="Όνομα" value="${member.name}" class="member-name">
+            <input type="number" placeholder="Ηλικία" value="${member.age}" class="member-age" min="0" max="120">
+            <span>ετών</span>
+            ${index >= 2 ? '<button onclick="removeFamilyMember(this)" class="remove-member-btn">×</button>' : ''}
+        `;
+        container.appendChild(memberDiv);
+    });
+}
+
+// Ενημέρωση ημερών όταν αλλάζει το dropdown - με autosave
+document.getElementById("days-stay").addEventListener("change", function() {
+    selectedDaysStay = this.value ? parseInt(this.value) : 0;
+    saveToLocalStorage();
+   
+    updateStep1Display();
+   
+    if (document.getElementById('step-summary').classList.contains('active')) {
+        setTimeout(() => goToStep5(), 100);
+    }
+});
+
+function updateDaysStay() {
+    const daysSelect = document.getElementById("days-stay");
+    selectedDaysStay = daysSelect.value ? parseInt(daysSelect.value) : 0;
+   
+    saveToLocalStorage();
+   
+    updateStep1Display();
+   
+    if (document.getElementById('step-summary').classList.contains('active')) {
+        goToStep5();
+    }
+   
+    const message = document.createElement('div');
+    message.textContent = `✅ Ενημερώθηκαν οι μέρες: ${selectedDaysStay}`;
+    message.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #3eb489; color: white; padding: 10px; border-radius: 8px; z-index: 10000;';
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 3000);
+}
+
+function clearAllData() {
+    if (confirm('⚠️ Θέλετε να διαγράψετε ΟΛΑ τα δεδομένα του ταξιδιού; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.')) {
+        localStorage.removeItem('travelPlannerData');
+        familyMembers = [
+            { name: "Πατέρας", age: 42 },
+            { name: "Μητέρα", age: 40 }
+        ];
+        updateFamilyMembersUI();
+        location.reload();
+    }
+}
+
+function updateStep1Display() {
+    const destinationCards = document.getElementById('destination-cards');
+   
+    destinationCards.innerHTML = `
+        <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 12px; border: 2px solid #3eb489;">
+            <h3>✅ Επιλέξατε: ${selectedDestinationName}</h3>
+            <p>📅 Διάρκεια διακοπών: ${selectedDaysStay > 0 ? selectedDaysStay + ' μέρες' : 'μη ορισμένες μέρες'}</p>
+            <p>💰 Προϋπολογισμός: ${selectedBudget > 0 ? selectedBudget + '€' : 'Δεν ορίστηκε'}</p>
+            <p>👨‍👩‍👧‍👦 Μέλη οικογένειας: ${familyMembers.length}</p>
+            <p>Μπορείτε να συνεχίστε στο επόμενο βήμα</p>
+            <button onclick="goToStep2()" style="padding: 10px 20px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">
+                Συνέχεια στο Βήμα 2
+            </button>
+        </div>
+    `;
+}
+
+// Κλήση της loadFromLocalStorage όταν φορτώνει η σελίδα
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        loadFromLocalStorage();
+        checkMobileView();
+    }, 100);
+});
+
+// Αποθήκευση όταν αλλάζει το budget
+document.getElementById("travel-budget").addEventListener("input", function() {
+    selectedBudget = this.value ? parseInt(this.value) : 0;
+    saveToLocalStorage();
+});
+
+// Αποθήκευση όταν αλλάζουν τα ονόματα/ηλικίες
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('member-name') || e.target.classList.contains('member-age')) {
+        setTimeout(saveToLocalStorage, 100);
+    }
+});
+// ==================== ΕΞΥΠΝΟ ΚΟΥΜΠΙ ΕΚΠΤΩΣΕΩΝ ====================
+function findSmartDiscounts() {
+    // 1. Βρες τις επιλεγμένες δραστηριότητες
+    const selectedActivities = getSelectedActivities();
+    
+    // 2. Αν δεν υπάρχουν αρκετές, εμφάνισε μήνυμα
+    if (selectedActivities.length < 2) {
+        showDiscountMessage(
+            '⚠️ Χρειάζονται τουλάχιστον 2 επιλεγμένες δραστηριότητες για να βρεθούν έξυπνες εκπτώσεις.',
+            'warning'
+        );
+        return;
+    }
+    
+    // 3. Υπολόγισε το τρέχον σύνολο
+    const currentTotal = calculateCurrentTotal(selectedActivities);
+    let discounts = [];
+    let totalSavings = 0;
+    
+    // 4. ΑΝΑΖΗΤΗΣΗ ΕΚΠΤΩΣΕΩΝ ΜΟΝΟ ΓΙΑ ΒΙΕΝΝΗ
+    if (selectedDestinationName && selectedDestinationName.includes("Βιέννη")) {
+        // ΕΚΠΤΩΣΗ 1: Time Travel + Sisi VR Combo
+        const hasTimeTravel = selectedActivities.some(a => 
+            a.name.includes("Time Travel") || a.name.includes("Sisi's Amazing Journey")
+        );
+        const hasSisiVR = selectedActivities.some(a => 
+            a.name.includes("Sisi's Amazing Journey") || a.name.includes("VR Experience")
+        );
+        
+        if (hasTimeTravel && hasSisiVR) {
+            const comboPrice = 28; // Combo price
+            const individualPrice = 22 + 14; // €22 + €14
+            const savings = individualPrice - comboPrice;
+            
+            if (savings > 0) {
+                discounts.push({
+                    type: 'COMBO',
+                    name: 'Time Travel + Sisi VR Combo',
+                    newPrice: comboPrice,
+                    oldPrice: individualPrice,
+                    savings: savings,
+                    description: 'Αγοράστε το συνδυαστικό εισιτήριο αντί για δύο ξεχωριστά'
+                });
+                totalSavings += savings;
+            }
+        }
+        
+        // ΕΚΠΤΩΣΗ 2: Sisi Pass αν έχει τουλάχιστον 2 από τα 3 αξιοθέατα
+        const hasSchonbrunn = selectedActivities.some(a => 
+            a.name.includes("Schönbrunn") || a.name.includes("Palace")
+        );
+        const hasSisiMuseum = selectedActivities.some(a => 
+            a.name.includes("Sisi Museum") || a.name.includes("Hofburg")
+        );
+        
+        if ((hasSchonbrunn && hasSisiMuseum) || selectedActivities.length >= 3) {
+            const sisiPassPrice = 57;
+            if (currentTotal > sisiPassPrice + 10) { // Αν εξοικονομεί τουλάχιστον €10
+                const savings = currentTotal - sisiPassPrice;
+                discounts.push({
+                    type: 'MULTI_ATTRACTION',
+                    name: 'Sisi Pass (3 Αξιοθέατα)',
+                    newPrice: sisiPassPrice,
+                    oldPrice: currentTotal,
+                    savings: savings,
+                    description: 'Περιλαμβάνει: Schönbrunn Palace + Sisi Museum + Furniture Museum'
+                });
+                totalSavings += savings;
+            }
+        }
+        
+        // ΕΚΠΤΩΣΗ 3: Family Tickets
+        const familySize = familyMembers.length;
+        if (familySize >= 4) {
+            // Έλεγχος για family tickets σε διάφορες δραστηριότητες
+            selectedActivities.forEach(act => {
+                if (act.familyTicket || (act.prices && act.prices["18+"] > 15)) {
+                    const individualTotal = familySize * act.prices["18+"];
+                    const estimatedFamilyPrice = individualTotal * 0.75; // 25% έκπτωση
+                    
+                    discounts.push({
+                        type: 'FAMILY',
+                        name: `Family Discount για ${act.name}`,
+                        newPrice: estimatedFamilyPrice,
+                        oldPrice: individualTotal,
+                        savings: individualTotal - estimatedFamilyPrice,
+                        description: `Ρωτήστε στο ταμείο για οικογενειακά εισιτήρια (συνήθως 20-30% φθηνότερα)`
+                    });
+                }
+            });
+        }
+    }
+    
+    // 5. ΕΜΦΑΝΙΣΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ
+    showDiscountResults(discounts, totalSavings, currentTotal);
+}
+
+// Βοηθητική συνάρτηση για υπολογισμό τρέχοντος συνόλου
+function calculateCurrentTotal(activities) {
+    let total = 0;
+    familyMembers.forEach(member => {
+        activities.forEach(act => {
+            if (act.prices) {
+                let price = 0;
+                if (member.age <= 2) price = 0;
+                else if (member.age <= 5) price = act.prices["3-5"] || 0;
+                else if (member.age <= 17) price = act.prices["6-14"] || act.prices["15-19"] || 0;
+                else price = act.prices["18+"] || 0;
+                
+                if (typeof price === 'number') total += price;
+            }
+        });
+    });
+    return total;
+}
+
+// Εμφάνιση αποτελεσμάτων
+function showDiscountResults(discounts, totalSavings, currentTotal) {
+    // Αφαίρεση προηγούμενου μηνύματος
+    const oldMessage = document.getElementById('discount-results');
+    if (oldMessage) oldMessage.remove();
+    
+    // Δημιουργία νέου container
+    const resultsDiv = document.createElement('div');
+    resultsDiv.id = 'discount-results';
+    resultsDiv.style.cssText = `
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 25px;
+        border-radius: 16px;
+        background: ${totalSavings > 0 ? '#e8f6f3' : '#fff3cd'};
+        border: 3px solid ${totalSavings > 0 ? '#2ecc71' : '#f39c12'};
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    `;
+    
+    if (discounts.length > 0) {
+        resultsDiv.innerHTML = `
+            <h3 style="color: #2ecc71; margin-bottom: 20px;">
+                🎯 Βρέθηκαν ${discounts.length} Έξυπνες Εκπτώσεις!
+            </h3>
+            
+            <div style="text-align: left; margin: 20px 0;">
+                ${discounts.map(d => `
+                    <div style="background: white; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 5px solid #9b59b6;">
+                        <h4 style="margin: 0 0 8px 0; color: #9b59b6;">${d.name}</h4>
+                        <p style="margin: 5px 0; color: #666;">${d.description}</p>
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <span style="text-decoration: line-through; color: #e74c3c;">Παλιά τιμή: €${d.oldPrice}</span>
+                            <span style="font-weight: bold; color: #2ecc71;">Νέα τιμή: €${d.newPrice}</span>
+                        </div>
+                        <div style="margin-top: 8px; padding: 8px; background: #d5f4e6; border-radius: 6px;">
+                            ✅ <strong>Εξοικονόμηση: €${d.savings}</strong>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div style="background: #2ecc71; color: white; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <h4 style="margin: 0;">💰 ΣΥΝΟΛΙΚΗ ΕΞΟΙΚΟΝΟΜΗΣΗ: €${totalSavings}</h4>
+                <p style="margin: 8px 0 0 0; font-size: 0.9em;">
+                    Από €${currentTotal} → €${(currentTotal - totalSavings).toFixed(2)}
+                </p>
+            </div>
+            
+            <button onclick="applyBestDiscount()" 
+                    style="background: #2ecc71; color: white; padding: 15px 30px; 
+                           border: none; border-radius: 10px; cursor: pointer; 
+                           font-size: 18px; font-weight: bold; margin: 10px;">
+                ✅ Εφαρμογή Βέλτιστων Εκπτώσεων
+            </button>
+        `;
+    } else {
+        resultsDiv.innerHTML = `
+            <h3 style="color: #f39c12;">🤔 Δεν βρέθηκαν έξυπνες εκπτώσεις</h3>
+            <p style="margin: 15px 0;">Δοκιμάστε να επιλέξετε:</p>
+            <ul style="text-align: left; display: inline-block; margin: 0;">
+                <li>Περισσότερες από 2 δραστηριότητες</li>
+                <li>Συνδυαστικά αξιοθέατα (π.χ. Time Travel + Sisi VR)</li>
+                <li>Family tickets για οικογένειες 4+ ατόμων</li>
+            </ul>
+        `;
+    }
+    
+    // Εισαγωγή μετά το κουμπί
+    const button = document.getElementById('smart-discounts-btn');
+    button.parentNode.insertBefore(resultsDiv, button.nextSibling);
+    
+    // Smooth scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Εμφάνιση απλού μηνύματος
+function showDiscountMessage(message, type) {
+    const oldMessage = document.getElementById('discount-results');
+    if (oldMessage) oldMessage.remove();
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.id = 'discount-results';
+    messageDiv.style.cssText = `
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 12px;
+        background: ${type === 'warning' ? '#fff3cd' : '#d4edda'};
+        border: 2px solid ${type === 'warning' ? '#ffc107' : '#28a745'};
+        text-align: center;
+    `;
+    messageDiv.innerHTML = `<p style="margin: 0; font-size: 16px;">${message}</p>`;
+    
+    const button = document.getElementById('smart-discounts-btn');
+    button.parentNode.insertBefore(messageDiv, button.nextSibling);
+}
+
+// Εφαρμογή εκπτώσεων (placeholder - θα το επεκτείνουμε)
+function applyBestDiscount() {
+    alert('Η λειτουργία αυτόματης εφαρμογής εκπτώσεων θα προστεθεί σύντομα!');
+    // Στο μέλλον: Αυτόματη αλλαγή των επιλεγμένων δραστηριοτήτων σε combos
+}
+</script>
+</body>
+</html>
