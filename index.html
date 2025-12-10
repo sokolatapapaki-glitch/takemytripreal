@@ -768,6 +768,12 @@ function updateFamilyMembers() {
 let selectedDestinationName = "";
 let selectedDaysStay = 0;
 let selectedBudget = 0;
+    // ΒΟΗΘΗΤΙΚΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΜΟΡΦΟΠΟΙΗΣΗ ΤΙΜΩΝ
+function formatPrice(price) {
+    if (price === undefined || price === null) return '-';
+    if (typeof price === 'number') return price + '€';
+    return price;
+}
 
 const destinations = [
   {name:"Βιέννη", dist:2, weather:"Πιο κρύο", themeparks:"Ναι", christmas:"Ναι", vacationType:["Πολιτισμός", "Πόλη"], costLevel:"Μέτριο", suitableFor:["Νεογέννητα", "Παιδικό", "ΑΜΕΑ", "Ηλικιωμένοι"], bestSeason:["Άνοιξη", "Φθινόπωρο"], desc:"Η αυτοκρατορική πόλη με τα παλάτια, τους κήπους και τα νόστιμα schnitzel."},
@@ -1741,16 +1747,16 @@ function createActivityCards(activityList) {
         ${act.website ? `<a href="${act.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px;">🔗 Δείτε περισσότερα</a>` : ''}
         ${act.ageWarning ? `<div style="background: #fff3cd; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #856404;">⚠️ ${act.ageWarning}</div>` : ''}
         ${act.priceNote ? `<div style="background: #d1ecf1; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #0c5460;">ℹ️ ${act.priceNote}</div>` : ''}
-        <table class="activity-table">
-          <tr><th>0-2</th><th>3-5</th><th>6-14</th><th>15-19</th><th>18+</th></tr>
-          <tr>
-            <td>${typeof act.prices["0-2"] === 'number' ? act.prices["0-2"] + '€' : act.prices["0-2"]}</td>
-            <td>${typeof act.prices["3-5"] === 'number' ? act.prices["3-5"] + '€' : act.prices["3-5"]}</td>
-            <td>${typeof act.prices["6-14"] === 'number' ? act.prices["6-14"] + '€' : act.prices["6-14"]}</td>
-            <td>${typeof act.prices["15-19"] === 'number' ? act.prices["15-19"] + '€' : act.prices["15-19"]}</td>
-            <td>${typeof act.prices["18+"] === 'number' ? act.prices["18+"] + '€' : act.prices["18+"]}</td>
-          </tr>
-        </table>
+       <table class="activity-table">
+    <tr><th>0-2</th><th>3-5</th><th>6-14</th><th>15-19</th><th>18+</th></tr>
+    <tr>
+        <td>${formatPrice(act.prices["0-2"])}</td>
+        <td>${formatPrice(act.prices["3-5"])}</td>
+        <td>${formatPrice(act.prices["6-14"])}</td>
+        <td>${formatPrice(act.prices["15-19"])}</td>
+        <td>${formatPrice(act.prices["18+"])}</td>
+    </tr>
+</table>
         <div class="total" id="total-${index}">Κόστος: 0 €</div>
       </div>
     `;
@@ -1800,34 +1806,55 @@ function calculateAllCosts(activityList = null) {
         if(isSelected){
             let total = 0;
            
-            // ΝΕΟΣ ΥΠΟΛΟΓΙΣΜΟΣ με ακριβείς ηλικίες
-            familyMembers.forEach(member => {
-                let price = 0;
-               
-                if (member.age <= 2) {
-                    price = 0; // Δωρεάν για 0-2 ετών
-                } else if (member.age <= 5) {
-                    price = act.prices["3-5"] || 0; // Χρησιμοποιούμε τη στήλη "3-5"
-                } else if (member.age <= 17) {
-                    // Για Βιέννη: 6-17 ετών, για άλλες πόλεις: 6-14 ή 15-19
-                    if (selectedDestinationName.includes("Βιέννη")) {
-                        price = act.prices["6-14"] || act.prices["15-19"] || 0;
-                    } else {
-                        // Για άλλες πόλεις, χρησιμοποιούμε την κατάλληλη κατηγορία
-                        if (member.age <= 14) {
-                            price = act.prices["6-14"] || 0;
-                        } else if (member.age <= 19) {
-                            price = act.prices["15-19"] || 0;
-                        } else {
-                            price = act.prices["18+"] || 0;
-                        }
+            // ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ που καταλαβαίνει ΟΛΕΣ τις ηλικιακές ομάδες
+familyMembers.forEach(member => {
+    let price = 0;
+    const age = member.age;
+    
+    // 1. ΠΡΩΤΑ: Προσπάθεια με τις κανονικές ομάδες (0-2, 3-5, 6-14, 15-19, 18+)
+    if (age <= 2 && act.prices["0-2"] !== undefined) {
+        price = act.prices["0-2"];
+    } else if (age <= 5 && act.prices["3-5"] !== undefined) {
+        price = act.prices["3-5"];
+    } else if (age <= 14 && act.prices["6-14"] !== undefined) {
+        price = act.prices["6-14"];
+    } else if (age <= 19 && act.prices["15-19"] !== undefined) {
+        price = act.prices["15-19"];
+    } else if (act.prices["18+"] !== undefined) {
+        price = act.prices["18+"];
+    }
+    // 2. ΑΝ ΟΧΙ: Δοκιμή με άλλες ομάδες (0-6, 7-12, 13-17 κλπ)
+    else if (age <= 6 && act.prices["0-6"] !== undefined) {
+        price = act.prices["0-6"];
+    } else if (age <= 12 && act.prices["7-12"] !== undefined) {
+        price = act.prices["7-12"];
+    } else if (age <= 17 && act.prices["13-17"] !== undefined) {
+        price = act.prices["13-17"];
+    }
+    // 3. ΤΕΛΙΚΗ ΠΡΟΣΠΑΘΕΙΑ: Βρες οποιαδήποτε τιμή
+    else {
+        // Ψάξε για οποιαδήποτε τιμή
+        const priceKeys = Object.keys(act.prices);
+        for (const key of priceKeys) {
+            if (typeof act.prices[key] === 'number') {
+                // Απλός έλεγχος αν η ηλικία ταιριάζει (πχ "0-6" -> 0-6)
+                if (key.includes('-')) {
+                    const [min, max] = key.split('-').map(Number);
+                    if (age >= min && age <= max) {
+                        price = act.prices[key];
+                        break;
                     }
-                } else {
-                    price = act.prices["18+"] || 0; // Ενήλικες
                 }
-               
-                total += price;
-            });
+            }
+        }
+    }
+    
+    // Αν δεν βρέθηκε τιμή, χρησιμοποίησε 0
+    if (typeof price !== 'number') price = 0;
+    
+    total += price;
+});
+            
            
             if (document.getElementById(`total-${index}`)) {
                 document.getElementById(`total-${index}`).innerText = `Κόστος: ${total.toFixed(2)} €`;
@@ -4079,6 +4106,11 @@ function showCustomPointForm(lat, lng, suggestedName = '') {
 
 // ==================== ΠΡΟΣΩΡΙΝΟΣ ΚΩΔΙΚΑΣ ΓΙΑ ΝΕΕΣ ΠΟΛΕΙΣ ====================
 const EXTRA_CITIES_CONFIG = {
+    "Κωνσταντινούπολη": {  // 👈 ΠΡΟΣΘΕΣΕ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    file: "istanbul.json", // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    enabled: true,        // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    emoji: "🕌"           // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+  },                      // 👈 ΚΑΙ ΑΥΤΟ ΤΟ ΚΟΜΜΑ
   "Παρίσι": {
     file: "paris.json",
     enabled: true,
