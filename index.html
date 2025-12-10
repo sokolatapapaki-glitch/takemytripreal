@@ -1710,6 +1710,11 @@ function activateStep(targetId) {
 
 // ** 4. ΒΗΜΑ 4 - ΔΡΑΣΤΗΡΙΟΤΗΤΕΧ **
 function createActivityCards(activityList) {
+     if (selectedDestinationName.includes("Κωνσταντινούπολη") || 
+        selectedDestinationName.includes("Παρίσι") || 
+        selectedDestinationName.includes("Πράγα")) {
+        window.loadedExtraCityActivities = activityList;
+    }
   const containerActivities = document.getElementById('activities-container');
   containerActivities.innerHTML = "";
  
@@ -1979,21 +1984,35 @@ function selectQuickCity() {
 function getSelectedActivities() {
     console.log("🔍 Αναζήτηση επιλεγμένων για:", selectedDestinationName);
     
-        // 1. ΓΙΑ ΠΑΡΙΣΙ & ΠΡΑΓΑ (από JSON)
-    if ((selectedDestinationName.includes("Παρίσι") || selectedDestinationName.includes("Πράγα")) 
+    // 1. ΓΙΑ ΚΩΝΣΤΑΝΤΙΝΟΥΠΟΛΗ (από JSON)
+    if (selectedDestinationName.includes("Κωνσταντινούπολη") 
         && window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
-        console.log("🔍 Έλεγχος για Παρίσι...");
+        console.log("🔍 Έλεγχος για Κωνσταντινούπολη...");
         const selected = window.loadedExtraCityActivities.filter(act => act.selected === true);
         if (selected.length > 0) {
-            console.log("✅ Βρέθηκαν επιλεγμένες για Παρίσι:", selected.length);
+            console.log("✅ Βρέθηκαν επιλεγμένες για Κωνσταντινούπολη:", selected.length);
             return selected;
         } else {
-            console.log("⚠️ Δεν βρέθηκαν επιλεγμένες δραστηριότητες για Παρίσι");
+            console.log("⚠️ Δεν βρέθηκαν επιλεγμένες δραστηριότητες για Κωνσταντινούπολη");
             return [];
         }
     }
     
-    // 2. Αν όχι, ψάχνουμε στις παλιές μεταβλητές
+    // 2. ΓΙΑ ΠΑΡΙΣΙ & ΠΡΑΓΑ (από JSON)
+    if ((selectedDestinationName.includes("Παρίσι") || selectedDestinationName.includes("Πράγα")) 
+        && window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
+        console.log("🔍 Έλεγχος για Παρίσι/Πράγα...");
+        const selected = window.loadedExtraCityActivities.filter(act => act.selected === true);
+        if (selected.length > 0) {
+            console.log("✅ Βρέθηκαν επιλεγμένες:", selected.length);
+            return selected;
+        } else {
+            console.log("⚠️ Δεν βρέθηκαν επιλεγμένες δραστηριότητες");
+            return [];
+        }
+    }
+    
+    // 3. Αν όχι, ψάχνουμε στις παλιές μεταβλητές
     let currentActivities = null;
    
     if (selectedDestinationName.includes("Βιέννη")) {
