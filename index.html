@@ -1753,14 +1753,27 @@ function createActivityCards(activityList) {
         ${act.ageWarning ? `<div style="background: #fff3cd; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #856404;">⚠️ ${act.ageWarning}</div>` : ''}
         ${act.priceNote ? `<div style="background: #d1ecf1; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #0c5460;">ℹ️ ${act.priceNote}</div>` : ''}
        <table class="activity-table">
-    <tr><th>0-2</th><th>3-5</th><th>6-14</th><th>15-19</th><th>18+</th></tr>
-    <tr>
-        <td>${formatPrice(act.prices["0-2"])}</td>
-        <td>${formatPrice(act.prices["3-5"])}</td>
-        <td>${formatPrice(act.prices["6-14"])}</td>
-        <td>${formatPrice(act.prices["15-19"])}</td>
-        <td>${formatPrice(act.prices["18+"])}</td>
-    </tr>
+    ${selectedDestinationName.includes("Κωνσταντινούπολη") || 
+      selectedDestinationName.includes("Παρίσι") || 
+      selectedDestinationName.includes("Πράγα") ?
+      // 👇 ΓΙΑ ΚΩΝΣΤΑΝΤΙΝΟΥΠΟΛΗ, ΠΑΡΙΣΙ, ΠΡΑΓΑ 👇
+      `<tr><th>0-6</th><th>7-12</th><th>13-17</th><th>18+</th></tr>
+       <tr>
+          <td>${formatPrice(act.prices["0-6"])}</td>
+          <td>${formatPrice(act.prices["7-12"])}</td>
+          <td>${formatPrice(act.prices["13-17"])}</td>
+          <td>${formatPrice(act.prices["18+"])}</td>
+       </tr>` :
+      // 👇 ΓΙΑ ΟΛΕΣ ΤΙΣ ΑΛΛΕΣ ΠΟΛΕΙΣ 👇
+      `<tr><th>0-2</th><th>3-5</th><th>6-14</th><th>15-19</th><th>18+</th></tr>
+       <tr>
+          <td>${formatPrice(act.prices["0-2"])}</td>
+          <td>${formatPrice(act.prices["3-5"])}</td>
+          <td>${formatPrice(act.prices["6-14"])}</td>
+          <td>${formatPrice(act.prices["15-19"])}</td>
+          <td>${formatPrice(act.prices["18+"])}</td>
+       </tr>`
+    }
 </table>
         <div class="total" id="total-${index}">Κόστος: 0 €</div>
       </div>
@@ -3156,11 +3169,19 @@ const activitiesMadrid = [
     }
 ];
 // ==================== ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ COMBO ====================
-
 function calculateSmartCombos() {
     let currentActivities = null;
    
-    if (selectedDestinationName.includes("Βιέννη")) {
+    // 1. ΠΡΩΤΑ: Έλεγχος για πόλεις από JSON (Κωνσταντινούπολη, Παρίσι, Πράγα)
+    if ((selectedDestinationName.includes("Κωνσταντινούπολη") || 
+         selectedDestinationName.includes("Παρίσι") || 
+         selectedDestinationName.includes("Πράγα")) &&
+        window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
+        
+        console.log("🎯 Χρήση δραστηριοτήτων από JSON για:", selectedDestinationName);
+        currentActivities = window.loadedExtraCityActivities;
+   
+    } else if (selectedDestinationName.includes("Βιέννη")) {
         currentActivities = activities;
     } else if (selectedDestinationName.includes("Βερολίνο")) {
         currentActivities = activitiesBerlin;
@@ -3201,9 +3222,18 @@ function calculateSmartCombos() {
     // Εμφάνιση αποτελεσμάτων
     displayComboResults(comboResults, regularCost);
 }
-
 function updateSelectedActivities(activityList) {
-    console.log("🔍 Ενημέρωση επιλεγμένων δραστηριοτήτων...");
+    console.log("🔍 Ενημέρωση επιλεγμένων δραστηριοτήτων για:", selectedDestinationName);
+    
+    // Ειδική λογική για JSON πόλεις
+    if ((selectedDestinationName.includes("Κωνσταντινούπολη") || 
+         selectedDestinationName.includes("Παρίσι") || 
+         selectedDestinationName.includes("Πράγα")) &&
+        window.loadedExtraCityActivities) {
+        
+        console.log("🔄 Συγχρονισμός με window.loadedExtraCityActivities");
+        activityList = window.loadedExtraCityActivities;
+    }
    
     activityList.forEach((act, index) => {
         const cardElement = document.getElementById(`activity-${index}`);
@@ -3212,7 +3242,7 @@ function updateSelectedActivities(activityList) {
             act.selected = isSelected;
             console.log(`   ${act.name}: ${isSelected ? '✅ Επιλεγμένη' : '❌ Μη επιλεγμένη'}`);
         } else {
-            console.log(`   ⚠️ Δεν βρέθηκε card για: ${act.name}`);
+            console.log(`   ⚠️ Δεν βρέθηκε card για: ${act.name} (index: ${index})`);
         }
     });
    
@@ -3220,6 +3250,7 @@ function updateSelectedActivities(activityList) {
     const selectedCount = activityList.filter(act => act.selected).length;
     console.log(`📊 Σύνολο επιλεγμένων: ${selectedCount}`);
 }
+
 function categorizeFamilyMembers() {
     console.log("👨‍👩‍👧‍👦 Κατηγοριοποίηση οικογένειας...");
     console.log("Μέλη οικογένειας:", familyMembers);
@@ -3257,36 +3288,78 @@ function categorizeFamilyMembers() {
     return categories;
 }
 function calculateRegularCost(selectedActivities, ageGroups) {
-    console.log("🧮 Υπολογισμός κανονικού κόστους...");
+    console.log("🧮 Υπολογισμός κόστους για Κωνσταντινούπολη...");
+    console.log("Επιλεγμένες:", selectedActivities.length);
     console.log("Ηλικιακές ομάδες:", ageGroups);
-    console.log("Επιλεγμένες δραστηριότητες:", selectedActivities.length);
-   
+    
     let totalCost = 0;
-    let debugInfo = [];
-   
-    selectedActivities.forEach((activity, idx) => {
+    
+    selectedActivities.forEach((activity, index) => {
         let activityCost = 0;
-       
+        console.log(`\n📊 ${activity.name}:`);
+        console.log("Προσβάσιμες τιμές:", activity.prices);
+        
+        // ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ για Κωνσταντινούπολη
         Object.keys(ageGroups).forEach(ageCategory => {
             const count = ageGroups[ageCategory];
-            if (count > 0 && activity.prices && activity.prices[ageCategory]) {
-                const price = parseFloat(activity.prices[ageCategory]) || 0;
-                const costForThisAge = price * count;
+            if (count > 0) {
+                let price = 0;
+                
+                // Μετατροπή ηλικιακών κατηγοριών για Κωνσταντινούπολη
+                if (ageCategory === "0-2") {
+                    // 0-2 → ψάχνουμε 0-6
+                    price = activity.prices["0-6"] || 0;
+                } else if (ageCategory === "3-5") {
+                    // 3-5 → ψάχνουμε 0-6
+                    price = activity.prices["0-6"] || 0;
+                } else if (ageCategory === "6-14") {
+                    // 6-14 → ψάχνουμε 7-12 (για 6-12) και 13-17 (για 13-14)
+                    if (activity.prices["7-12"] !== undefined) {
+                        price = activity.prices["7-12"];
+                    } else if (activity.prices["13-17"] !== undefined) {
+                        price = activity.prices["13-17"];
+                    }
+                } else if (ageCategory === "15-19") {
+                    // 15-19 → ψάχνουμε 13-17 (για 15-17) και 18+ (για 18-19)
+                    if (activity.prices["13-17"] !== undefined) {
+                        price = activity.prices["13-17"];
+                    } else if (activity.prices["18+"] !== undefined) {
+                        price = activity.prices["18+"];
+                    }
+                } else if (ageCategory === "18+") {
+                    // 18+ → ψάχνουμε 18+
+                    price = activity.prices["18+"] || 0;
+                }
+                
+                // Άμα δεν βρέθηκε, δοκιμή γενικότερης αναζήτησης
+                if (price === 0 || price === undefined) {
+                    // Ψάξε για οποιαδήποτι τιμή που ταιριάζει
+                    for (const [key, value] of Object.entries(activity.prices || {})) {
+                        if (key.includes('-')) {
+                            const [min, max] = key.split('-').map(Number);
+                            const ageNum = parseInt(ageCategory.split('-')[0]); // πχ "6-14" → 6
+                            if (ageNum >= min && ageNum <= max) {
+                                price = value;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                const costForThisAge = (price || 0) * count;
                 activityCost += costForThisAge;
-               
+                
                 if (costForThisAge > 0) {
-                    debugInfo.push(`${activity.name} - ${ageCategory}: ${price}€ × ${count} = ${costForThisAge}€`);
+                    console.log(`  ${ageCategory}: ${price}€ × ${count} = ${costForThisAge}€`);
                 }
             }
         });
-       
+        
         totalCost += activityCost;
-        console.log(`   ${activity.name}: ${activityCost}€`);
+        console.log(`  Σύνολο για ${activity.name}: ${activityCost}€`);
     });
-   
-    console.log("💰 Σύνολο κόστος:", totalCost);
-    debugInfo.forEach(info => console.log("   " + info));
-   
+    
+    console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ: ${totalCost}€`);
     return totalCost;
 }
 function findAvailableCombos(allActivities, selectedActivities) {
@@ -3363,7 +3436,75 @@ function findAvailableCombos(allActivities, selectedActivities) {
             });
         }
     }
-   
+       // Για Κωνσταντινούπολη: Combo για μουσεία
+           if (selectedDestinationName.includes("Κωνσταντινούπολη")) {
+        console.log("🕌 Αναζήτηση combos για Κωνσταντινούπολη");
+        
+        // Combo 1: Αγία Σοφία + Τοπ Καπί (από το json)
+        const hasHagiaSophia = selectedActivities.some(act =>
+            act.name && act.name.includes("Αγία Σοφία")
+        );
+        const hasTopkapi = selectedActivities.some(act =>
+            act.name && act.name.includes("Τοπ Καπί")
+        );
+       
+        if (hasHagiaSophia && hasTopkapi) {
+            console.log("✅ Βρέθηκε combo Αγία Σοφία + Τοπ Καπί");
+            combos.push({
+                name: "🎟️ Combo: Αγία Σοφία + Τοπ Καπί",
+                description: "Συνδυαστικό εισιτήριο για τα 2 κύρια αξιοθέατα",
+                activities: ["Αγία Σοφία", "Τοπ Καπί"],
+                regularPrice: 90,  // 30€ + 60€ = 90€
+                comboPrice: 75,    // από το json
+                saving: 15,
+                note: "Εξοικονόμηση 15€"
+            });
+        }
+        
+        // Combo 2: Μπλε Τζαμί + Βασιλική Κινστέρνα
+        const hasBlueMosque = selectedActivities.some(act =>
+            act.name && act.name.includes("Μπλε Τζαμί")
+        );
+        const hasBasilicaCistern = selectedActivities.some(act =>
+            act.name && act.name.includes("Βασιλική Κινστέρνα")
+        );
+       
+        if (hasBlueMosque && hasBasilicaCistern) {
+            console.log("✅ Βρέθηκε combo Μπλε Τζαμί + Βασιλική Κινστέρνα");
+            combos.push({
+                name: "💧 Combo: Μπλε Τζαμί + Βασιλική Κινστέρνα",
+                description: "Τζαμί & υπόγεια δεξαμενή",
+                activities: ["Μπλε Τζαμί", "Βασιλική Κινστέρνα"],
+                regularPrice: 30,  // 0€ + 30€ = 30€ (Μπλε Τζαμί είναι δωρεάν!)
+                comboPrice: 25,    // εκτίμηση
+                saving: 5,
+                note: "Εξοικονόμηση 5€ - Το Μπλε Τζαμί είναι δωρεάν"
+            });
+        }
+        
+        // Combo 3: Museum Pass Istanbul (5 Ημερών)
+        if (selectedActivities.length >= 3) {
+            // Μετράμε πόσες από τις 5 κύριες δραστηριότητες του pass έχει επιλέξει
+            const passActivities = ["Αγία Σοφία", "Τοπ Καπί", "Αρχαιολογικό Μουσείο", 
+                                   "Μουσείο Σύγχρονης Τέχνης", "Βασιλική Κινστέρνα"];
+            const selectedPassActivities = (selectedActivities || []).filter(act => 
+    passActivities.some(passAct => act.name && act.name.includes(passAct))
+);
+            
+            if (selectedPassActivities.length >= 3) {
+                console.log("✅ Βρέθηκε Museum Pass (3+ δραστηριότητες)");
+                combos.push({
+                    name: "🏛️ Museum Pass Istanbul (5 Ημερών)",
+                    description: "Πρόσβαση σε 12+ μουσεία και αξιοθέατα για 5 ημέρες",
+                    activities: selectedPassActivities.map(a => a.name),
+                    regularPrice: calculateRegularCost(selectedPassActivities, categorizeFamilyMembers()),
+                    comboPrice: 85,  // από το json
+                    saving: "Έως 50%",
+                    note: "Αγοράστε online: https://www.muze.gov.tr/museum-pass-istanbul"
+                });
+            }
+        }
+    }
     console.log("📊 Σύνολο combos που βρέθηκαν:", combos.length);
     return combos;
 }
