@@ -5,60 +5,178 @@
   "currency": "€",
   "activities": [
     {
+      "name": "British Museum",
+      "desc": "Ένα από τα σημαντικότερα μουσεία παγκοσμίως, με συλλογές που καλύπτουν δύο εκατομμύρια χρόνια ανθρώπινης ιστορίας. Είσοδος δωρεάν, αλλά συνιστάται προθέρμανση κράτησης ηλεκτρονικά για να αποφύγετε τις ουρές.",
+      "emoji": "🏛️",
+      "prices": {
+        "0-4": 0,
+        "5-15": 0,
+        "16+": 0
+      },
+      "lat": 51.5194,
+      "lng": -0.1270,
+      "restaurant": "<a href='https://maps.google.com/?q=British+Museum+cafe+London' target='_blank'>British Museum Cafes & Restaurants</a>",
+      "website": "https://www.britishmuseum.org/",
+      "duration": "3-4 ώρες",
+      "bestFor": ["Ιστορία", "Πολιτισμός"],
+      "selected": false
+    },
+    {
+      "name": "Natural History Museum",
+      "desc": "Εμβληματικό μουσείο με καταπληκτικά εκθέματα δεινοσαύρων, γεωλογίας και τη διάσημη μπλε φάλαινα. Είσοδος δωρεάν. Ιδανικό για οικογένειες.",
+      "emoji": "🦕",
+      "prices": {
+        "0-4": 0,
+        "5-15": 0,
+        "16+": 0
+      },
+      "lat": 51.4967,
+      "lng": -0.1764,
+      "restaurant": "<a href='https://maps.google.com/?q=Natural+History+Museum+cafe+London' target='_blank'>Natural History Museum Cafes</a>",
+      "website": "https://www.nhm.ac.uk/",
+      "duration": "3-4 ώρες",
+      "bestFor": ["Οικογένειες", "Επιστήμη", "Παιδιά"],
+      "selected": false
+    },
+    {
+      "name": "Science Museum",
+      "desc": "Διαδραστικό μουσείο με εκθέματα για την εξέλιξη της τεχνολογίας, διαστημόπλοια και παιχνίδια. Δωρεάν είσοδος.",
+      "emoji": "⚙️",
+      "prices": {
+        "0-4": 0,
+        "5-15": 0,
+        "16+": 0
+      },
+      "lat": 51.4975,
+      "lng": -0.1747,
+      "restaurant": "<a href='https://maps.google.com/?q=Science+Museum+cafe+London' target='_blank'>Science Museum Cafes</a>",
+      "website": "https://www.sciencemuseum.org.uk/",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Οικογένειες", "Τεχνολογία", "Παιδιά"],
+      "selected": false
+    },
+    {
+      "name": "Tate Modern",
+      "desc": "Το διεθνώς αναγνωρισμένο μουσείο σύγχρονης τέχνης, στεγάζεται σε πρώην ηλεκτροστάσιο. Δωρεάν είσοδος στις μόνιμες συλλογές.",
+      "emoji": "🎨",
+      "prices": {
+        "0-4": 0,
+        "5-15": 0,
+        "16+": 0
+      },
+      "lat": 51.5076,
+      "lng": -0.0994,
+      "restaurant": "<a href='https://maps.google.com/?q=Tate+Modern+cafe+London' target='_blank'>Tate Modern Restaurants & Cafe</a>",
+      "website": "https://www.tate.org.uk/visit/tate-modern",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Τέχνης", "Αρχιτεκτονική"],
+      "selected": false
+    },
+    {
+      "name": "Sky Garden",
+      "desc": "Ο «κήπος στον ουρανό» προσφέρει μία από τις καλύτερες πανοραμικές θέας του Λονδίνου από το ύψος. Είσοδος δωρεάν, αλλά απαιτείται ΥΠΟΧΡΕΩΤΙΚΗ προβλεπόμενη κράτηση χωρίς κόστος.",
+      "emoji": "🌿",
+      "prices": {
+        "0-4": 0,
+        "5-15": 0,
+        "16+": 0
+      },
+      "lat": 51.5116,
+      "lng": -0.0831,
+      "restaurant": "<a href='https://maps.google.com/?q=Sky+Garden+restaurant+London' target='_blank'>Sky Garden Bars & Restaurants</a>",
+      "website": "https://skygarden.london/",
+      "duration": "1-2 ώρες",
+      "bestFor": ["Θέα", "Φωτογραφίες", "Ρομαντικό"],
+      "selected": false
+    },
+    {
+      "name": "Greenwich Park & Royal Observatory",
+      "desc": "Ιστορικό πάρκο με υπέροχη θέα του Λονδίνου. Η είσοδος στο πάρκο είναι δωρεάν. Το Βασιλικό Αστεροσκοπείο (Royal Observatory) είναι ξεχωριστή επίσκεψη, όπου μπορείτε να σταθείτε πάνω στον Μεσημβρινό του Γκρίνουιτς.",
+      "emoji": "🌳",
+      "prices": {
+        "0-4": 0,
+        "5-15": 8,
+        "16+": 16
+      },
+      "lat": 51.4769,
+      "lng": -0.0005,
+      "restaurant": "<a href='https://maps.google.com/?q=Greenwich+Park+cafe+London' target='_blank'>Greenwich Park Cafes</a>",
+      "website": "https://www.rmg.co.uk/royal-observatory",
+      "duration": "2-4 ώρες",
+      "bestFor": ["Φύση", "Ιστορία", "Θέα"],
+      "selected": false
+    },
+    {
       "name": "Tower of London",
-      "desc": "Ιστορικό κάστρο και φρούριο, παλαιότερο βασιλικό παλάτι και φυλακή. Εδώ φυλάσσονται τα Κράνη των Βρετανών Μοναρχών.",
+      "desc": "Ιστορικό κάστρο και παλάτι, φυλακή και θησαυροφυλάκιο. Εδώ φυλάσσονται τα Κορώνα Βρετανικής Αυτοκρατορίας. Απαραίτητη προθέρμανση κράτηση χρονοθέτησης.",
       "emoji": "🏰",
       "prices": {
         "0-4": 0,
         "5-15": 20,
-        "18+": 41
+        "16+": 41
       },
       "lat": 51.5081,
       "lng": -0.0759,
-      "restaurant": "<a href='https://maps.google.com/?q=Tower+of+London+cafe' target='_blank'>Cafes near Tower of London</a>",
+      "restaurant": "<a href='https://maps.google.com/?q=Tower+of+London+cafe' target='_blank'>New Armouries Cafe</a>",
       "website": "https://www.hrp.org.uk/tower-of-london/",
-      "duration": "2-3 ώρες",
-      "bestFor": ["Ιστορία", "Αρχιτεκτονική"],
+      "duration": "3-4 ώρες",
+      "bestFor": ["Ιστορία", "Οικογένειες"],
       "selected": false
     },
     {
       "name": "London Eye",
-      "desc": "Ο γιγαντιαίος τροχός λέγεται, που προσφέρει πανοραμική θέα 360° στο Λονδίνο. Από τα πιο δημοφιλή τουριστικά αξιοθέατα.",
+      "desc": "Το γιγαντιαίο τροχό παρατήρησης που προσφέρει θέα 360 μοιρών του κέντρου του Λονδίνου. Προτείνεται νωρίτερη κράτηση.",
       "emoji": "🎡",
       "prices": {
         "0-2": 0,
-        "2-15": 34,
-        "18+": 37
+        "3-15": 34,
+        "16+": 37
       },
       "lat": 51.5033,
       "lng": -0.1195,
       "restaurant": "<a href='https://maps.google.com/?q=London+Eye+restaurants' target='_blank'>Restaurants near London Eye</a>",
       "website": "https://www.londoneye.com/",
-      "duration": "30-40 λεπτά",
-      "bestFor": ["Θέα", "Ρομαντικό"],
+      "duration": "1 ώρα",
+      "bestFor": ["Θέα", "Ρομαντικό", "Φωτογραφίες"],
       "selected": false
     },
     {
-      "name": "Warner Bros. Harry Potter Studio Tour",
-      "desc": "Μαγική βόλτα στα στούντιο όπου γυρίστηκαν οι ταινίες Χάρι Πότερ. Βλέπετε σκηνικά, κοστούμια και ειδικά εφέ.",
+      "name": "Warner Bros. Studio Tour - The Making of Harry Potter",
+      "desc": "Μπείτε στο μαγικό κόσμο του Χάρι Πότερ. Δείτε τα πραγματικά σκηνικά, τα κοστούμια και τις ειδικές εφέ. Η επίσκεψη χωρίς μεταφορά. Διαθέσιμη οικογενειακή έκπτωση (26€) για τουλάχιστον 2 ενήλικες & 2 παιδιά.",
       "emoji": "⚡",
       "prices": {
         "0-4": 0,
         "5-15": 51,
-        "18+": 63
+        "16+": 63
       },
       "lat": 51.6900,
-      "lng": -0.4176,
-      "restaurant": "<a href='https://maps.google.com/?q=Harry+Potter+Studio+cafe' target='_blank'>Studio Cafe</a>",
+      "lng": -0.4186,
+      "restaurant": "<a href='https://maps.google.com/?q=Harry+Potter+Studio+cafe' target='_blank'>The Hub Cafe & Food Hall</a>",
       "website": "https://www.wbstudiotour.co.uk/",
-      "duration": "3-4 ώρες",
-      "bestFor": ["Οικογένειες", "Κινηματογράφος"],
-      "selected": false,
-      "note": "Οικογενειακή έκπτωση 26€ για ≥2 ενήλικες & ≥2 παιδιά."
+      "duration": "3-5 ώρες",
+      "bestFor": ["Οικογένειες", "Ταινίες", "Παιδιά"],
+      "selected": false
+    },
+    {
+      "name": "ZSL London Zoo",
+      "desc": "Ο ιστορικός ζωολογικός κήπος του Λονδίνου. Οι τιμές ποικίλλουν ανάλογα με την περίοδο (Off-Peak / Standard / Peak).",
+      "emoji": "🦁",
+      "prices": {
+        "0-4": 0,
+        "5-15": "26-30",
+        "16+": "32-37"
+      },
+      "lat": 51.5353,
+      "lng": -0.1534,
+      "restaurant": "<a href='https://maps.google.com/?q=London+Zoo+restaurant' target='_blank'>London Zoo Restaurants</a>",
+      "website": "https://www.londonzoo.org/",
+      "duration": "3-5 ώρες",
+      "bestFor": ["Οικογένειες", "Ζώα", "Παιδιά"],
+      "selected": false
     },
     {
       "name": "Postal Museum & Mail Rail",
-      "desc": "Μοναδική εμπειρία στο μουσείο του ταχυδρομείου και βόλτα με το παλιό υπόγειο ταχυδρομικό τρένο (Mail Rail).",
+      "desc": "Μοναδική εμπειρία στο υπόγειο ταχυδρομικό τρένο (Mail Rail) και ιστορία του ταχυδρομείου.",
       "emoji": "📮",
       "prices": {
         "0-1": 0,
@@ -66,206 +184,81 @@
         "16-24": 14.5,
         "25+": 21
       },
-      "lat": 51.5291,
-      "lng": -0.1099,
-      "restaurant": "<a href='https://maps.google.com/?q=Postal+Museum+Cafe+London' target='_blank'>Postal Museum Cafe</a>",
+      "lat": 51.5279,
+      "lng": -0.1206,
+      "restaurant": "<a href='https://maps.google.com/?q=Postal+Museum+cafe+London' target='_blank'>Postal Museum Cafe</a>",
       "website": "https://www.postalmuseum.org/",
-      "duration": "1.5-2 ώρες",
+      "duration": "2-3 ώρες",
       "bestFor": ["Ιστορία", "Μοναδική εμπειρία"],
       "selected": false
     },
     {
-      "name": "ZSL London Zoo",
-      "desc": "Το παλαιότερο επιστημονικό ζωολογικό πάρκο στον κόσμο. Με πάνω από 750 είδη ζώων και διαδραστικά εκθέματα.",
-      "emoji": "🦁",
-      "prices": {
-        "0-2": 0,
-        "3-15": 26,
-        "16+": 32
-      },
-      "lat": 51.5353,
-      "lng": -0.1534,
-      "restaurant": "<a href='https://maps.google.com/?q=London+Zoo+restaurant' target='_blank'>Zoo Restaurant</a>",
-      "website": "https://www.zsl.org/zsl-london-zoo",
-      "duration": "3-5 ώρες",
-      "bestFor": ["Οικογένειες", "Ζώα"],
-      "selected": false,
-      "note": "Τιμές διαφέρουν (Off-Peak/Standard/Peak)."
-    },
-    {
-      "name": "SEA LIFE London Aquarium",
-      "desc": "Εντυπωσιακό ενυδρείο στο South Bank με σαρκοφάγους, πιγκουίνους και έναν υπόγειο ωκεανό.",
+      "name": "Horniman Museum & Gardens",
+      "desc": "Μουσείο, ενυδρείο και κήποι. Το μουσείο και οι κήποι είναι δωρεάν. Το ενυδρείο έχει μικρή χρέωση.",
       "emoji": "🐠",
       "prices": {
         "0-2": 0,
-        "3-15": 22,
-        "16+": 28
+        "3-15": "5-7",
+        "16+": "6-8"
       },
-      "lat": 51.5023,
-      "lng": -0.1190,
-      "restaurant": "<a href='https://maps.google.com/?q=SEA+LIFE+London+Aquarium+cafe' target='_blank'>Aquarium Cafe</a>",
-      "website": "https://www.visitsealife.com/london/",
-      "duration": "1.5-2 ώρες",
-      "bestFor": ["Οικογένειες", "Θαλάσσια ζώα"],
+      "lat": 51.4412,
+      "lng": -0.0606,
+      "restaurant": "<a href='https://maps.google.com/?q=Horniman+Museum+cafe' target='_blank'>Horniman Cafe</a>",
+      "website": "https://www.horniman.ac.uk/",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Οικογένειες", "Φύση"],
       "selected": false
     },
     {
-      "name": "Madame Tussauds London",
-      "desc": "Το διάσημο μουσείο κέρινων ομοιομάτων με διασημότητες, αθλητές και ιστορικές προσωπικότητες.",
-      "emoji": "👑",
+      "name": "Combo Pass: 2-Attraction Pass",
+      "desc": "Ευέλικτο πάσο για 2 αξιοθέατα (επιλογή από London Eye, Madame Tussauds, SEA LIFE, Shrek’s Adventure, κλπ.). Ισχύει για ~90 ημέρες.",
+      "emoji": "🎫",
       "prices": {
-        "0-4": 0,
-        "5-15": 30,
-        "16+": 36
+        "0-2": 0,
+        "3-15": "~28-30",
+        "16+": "~28-30"
       },
-      "lat": 51.5230,
-      "lng": -0.1545,
-      "restaurant": "<a href='https://maps.google.com/?q=Madame+Tussauds+London+cafe' target='_blank'>Madame Tussauds Cafe</a>",
-      "website": "https://www.madametussauds.com/london/",
-      "duration": "1.5-2 ώρες",
-      "bestFor": ["Διασημότητες", "Φωτογραφίες"],
+      "lat": 51.5033,
+      "lng": -0.1195,
+      "restaurant": "Εξαρτάται από τα αξιοθέατα που επιλέξετε",
+      "website": "https://www.londoneye.com/tickets-passes/multi-attraction-pass/",
+      "duration": "Διάρκεια επίσκεψης",
+      "bestFor": ["Οικονομία", "Ευελιξία"],
       "selected": false
     },
     {
-      "name": "Natural History Museum",
-      "desc": "Εντυπωσιακό μουσείο με σκελετό δεινοσαύρου, ηφαίστειο και εκθέματα για τη φυσική ιστορία. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🦕",
+      "name": "Combo Pass: 3-Attraction Pass",
+      "desc": "Ευέλικτο πάσο για 3 αξιοθέατα. Ιδανικό για εξοικονόμηση χρημάτων όταν επισκέπτεστε πολλά μέρη.",
+      "emoji": "🎫",
       "prices": {
         "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
+        "3-15": "~20-22",
+        "16+": "~20-22"
       },
-      "lat": 51.4967,
-      "lng": -0.1764,
-      "restaurant": "<a href='https://maps.google.com/?q=Natural+History+Museum+cafe' target='_blank'>Museum Cafe</a>",
-      "website": "https://www.nhm.ac.uk/",
-      "duration": "2-3 ώρες",
-      "bestFor": ["Εκπαίδευση", "Οικογένειες"],
-      "selected": false,
-      "freeActivity": true
+      "lat": 51.5033,
+      "lng": -0.1195,
+      "restaurant": "Εξαρτάται από τα αξιοθέατα που επιλέξετε",
+      "website": "https://www.londoneye.com/tickets-passes/multi-attraction-pass/",
+      "duration": "Διάρκεια επίσκεψης",
+      "bestFor": ["Οικονομία", "Ευελιξία"],
+      "selected": false
     },
     {
-      "name": "Science Museum",
-      "desc": "Διαδραστικό μουσείο με εκθέματα για επιστήμη, τεχνολογία και διαστημικές εξερευνήσεις. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🔭",
+      "name": "Combo Pass: 5-Attraction Pass",
+      "desc": "Η καλύτερη οικονομική επιλογή για οικογένειες ή ομάδες που σχεδιάζουν να δουν πολλά αξιοθέατα. Μειώνει δραστικά το κόστος ανά αξιοθέατο.",
+      "emoji": "🎫",
       "prices": {
         "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
+        "3-15": "~13-15",
+        "16+": "~13-15"
       },
-      "lat": 51.4975,
-      "lng": -0.1747,
-      "restaurant": "<a href='https://maps.google.com/?q=Science+Museum+cafe' target='_blank'>Science Museum Cafe</a>",
-      "website": "https://www.sciencemuseum.org.uk/",
-      "duration": "2-3 ώρες",
-      "bestFor": ["Επιστήμη", "Διαδραστικά"],
-      "selected": false,
-      "freeActivity": true
-    },
-    {
-      "name": "British Museum",
-      "desc": "Ένα από τα σπουδαιότερα μουσεία παγκοσμίως, με εκθέματα από όλο τον κόσμο. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🏛️",
-      "prices": {
-        "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
-      },
-      "lat": 51.5194,
-      "lng": -0.1270,
-      "restaurant": "<a href='https://maps.google.com/?q=British+Museum+cafe' target='_blank'>British Museum Cafe</a>",
-      "website": "https://www.britishmuseum.org/",
-      "duration": "2-4 ώρες",
-      "bestFor": ["Ιστορία", "Πολιτισμός"],
-      "selected": false,
-      "freeActivity": true
-    },
-    {
-      "name": "Tate Modern",
-      "desc": "Το εθνικό μουσείο διεθνούς μοντέρνας τέχνης, σε παλιό σταθμό παραγωγής ηλεκτρικής ενέργειας. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🎨",
-      "prices": {
-        "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
-      },
-      "lat": 51.5076,
-      "lng": -0.0994,
-      "restaurant": "<a href='https://maps.google.com/?q=Tate+Modern+cafe' target='_blank'>Tate Modern Cafe</a>",
-      "website": "https://www.tate.org.uk/visit/tate-modern",
-      "duration": "1.5-2 ώρες",
-      "bestFor": ["Τέχνη", "Αρχιτεκτονική"],
-      "selected": false,
-      "freeActivity": true
-    },
-    {
-      "name": "Regent's Park",
-      "desc": "Ένα από τα βασιλικά πάρκα του Λονδίνου, με τους κήπους Queen Mary's, το αμφιθέατρο και ελεύθερα μονοπάτια. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🌳",
-      "prices": {
-        "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
-      },
-      "lat": 51.5308,
-      "lng": -0.1558,
-      "restaurant": "<a href='https://maps.google.com/?q=Regents+Park+cafe' target='_blank'>Park Cafe</a>",
-      "website": "https://www.royalparks.org.uk/parks/the-regents-park",
-      "duration": "1-2 ώρες",
-      "bestFor": ["Φύση", "Χαλάρωση"],
-      "selected": false,
-      "freeActivity": true
-    },
-    {
-      "name": "Richmond Park",
-      "desc": "Το μεγαλύτερο Βασιλικό Πάρκο του Λονδίνου, γνωστό για τα ελεύθερα ελάφια και τη φύση. Είσοδος ΔΩΡΕΑΝ.",
-      "emoji": "🦌",
-      "prices": {
-        "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
-      },
-      "lat": 51.4490,
-      "lng": -0.2682,
-      "restaurant": "<a href='https://maps.google.com/?q=Richmond+Park+cafe' target='_blank'>Richmond Park Cafe</a>",
-      "website": "https://www.royalparks.org.uk/parks/richmond-park",
-      "duration": "2-3 ώρες",
-      "bestFor": ["Φύση", "Περπάτημα"],
-      "selected": false,
-      "freeActivity": true
-    },
-    {
-      "name": "Sky Garden",
-      "desc": "Δωρεάν παρατηρητήριο και κήπος στον 35ο όροφο του κτιρίου 'Walkie Talkie'. Απαιτεί ΚΡΑΤΗΣΗ online.",
-      "emoji": "🏙️",
-      "prices": {
-        "0-2": 0,
-        "3-5": 0,
-        "6-14": 0,
-        "15-19": 0,
-        "18+": 0
-      },
-      "lat": 51.5115,
-      "lng": -0.0831,
-      "restaurant": "<a href='https://maps.google.com/?q=Sky+Garden+restaurant' target='_blank'>Sky Garden Restaurants</a>",
-      "website": "https://skygarden.london/",
-      "duration": "1 ώρα",
-      "bestFor": ["Θέα", "Φωτογραφίες"],
-      "selected": false,
-      "freeActivity": true,
-      "note": "⚠️ Δωρεάν αλλά απαιτεί ΥΠΟΧΡΕΩΤΙΚΗ online κράτηση εκ των προτέρων."
+      "lat": 51.5033,
+      "lng": -0.1195,
+      "restaurant": "Εξαρτάται από τα αξιοθέατα που επιλέξετε",
+      "website": "https://www.londoneye.com/tickets-passes/multi-attraction-pass/",
+      "duration": "Διάρκεια επίσκεψης",
+      "bestFor": ["Οικονομία", "Μεγάλες οικογένειες"],
+      "selected": false
     }
   ]
 }
