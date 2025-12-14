@@ -38,6 +38,234 @@
       "bestFor": ["Θέα", "Ρομαντικό"],
       "selected": false
     },
-    // ... εδώ ακολουθούν και τα υπόλοιπα αξιοθέατα (Postal Museum, Warner Bros, κλπ.)
+    {
+      "name": "Warner Bros. Harry Potter Studio Tour",
+      "desc": "Μαγική βόλτα στα στούντιο όπου γυρίστηκαν οι ταινίες Χάρι Πότερ. Βλέπετε σκηνικά, κοστούμια και ειδικά εφέ.",
+      "emoji": "⚡",
+      "prices": {
+        "0-4": 0,
+        "5-15": 51,
+        "18+": 63
+      },
+      "lat": 51.6900,
+      "lng": -0.4176,
+      "restaurant": "<a href='https://maps.google.com/?q=Harry+Potter+Studio+cafe' target='_blank'>Studio Cafe</a>",
+      "website": "https://www.wbstudiotour.co.uk/",
+      "duration": "3-4 ώρες",
+      "bestFor": ["Οικογένειες", "Κινηματογράφος"],
+      "selected": false,
+      "note": "Οικογενειακή έκπτωση 26€ για ≥2 ενήλικες & ≥2 παιδιά."
+    },
+    {
+      "name": "Postal Museum & Mail Rail",
+      "desc": "Μοναδική εμπειρία στο μουσείο του ταχυδρομείου και βόλτα με το παλιό υπόγειο ταχυδρομικό τρένο (Mail Rail).",
+      "emoji": "📮",
+      "prices": {
+        "0-1": 0,
+        "2-15": 12.5,
+        "16-24": 14.5,
+        "25+": 21
+      },
+      "lat": 51.5291,
+      "lng": -0.1099,
+      "restaurant": "<a href='https://maps.google.com/?q=Postal+Museum+Cafe+London' target='_blank'>Postal Museum Cafe</a>",
+      "website": "https://www.postalmuseum.org/",
+      "duration": "1.5-2 ώρες",
+      "bestFor": ["Ιστορία", "Μοναδική εμπειρία"],
+      "selected": false
+    },
+    {
+      "name": "ZSL London Zoo",
+      "desc": "Το παλαιότερο επιστημονικό ζωολογικό πάρκο στον κόσμο. Με πάνω από 750 είδη ζώων και διαδραστικά εκθέματα.",
+      "emoji": "🦁",
+      "prices": {
+        "0-2": 0,
+        "3-15": 26,
+        "16+": 32
+      },
+      "lat": 51.5353,
+      "lng": -0.1534,
+      "restaurant": "<a href='https://maps.google.com/?q=London+Zoo+restaurant' target='_blank'>Zoo Restaurant</a>",
+      "website": "https://www.zsl.org/zsl-london-zoo",
+      "duration": "3-5 ώρες",
+      "bestFor": ["Οικογένειες", "Ζώα"],
+      "selected": false,
+      "note": "Τιμές διαφέρουν (Off-Peak/Standard/Peak)."
+    },
+    {
+      "name": "SEA LIFE London Aquarium",
+      "desc": "Εντυπωσιακό ενυδρείο στο South Bank με σαρκοφάγους, πιγκουίνους και έναν υπόγειο ωκεανό.",
+      "emoji": "🐠",
+      "prices": {
+        "0-2": 0,
+        "3-15": 22,
+        "16+": 28
+      },
+      "lat": 51.5023,
+      "lng": -0.1190,
+      "restaurant": "<a href='https://maps.google.com/?q=SEA+LIFE+London+Aquarium+cafe' target='_blank'>Aquarium Cafe</a>",
+      "website": "https://www.visitsealife.com/london/",
+      "duration": "1.5-2 ώρες",
+      "bestFor": ["Οικογένειες", "Θαλάσσια ζώα"],
+      "selected": false
+    },
+    {
+      "name": "Madame Tussauds London",
+      "desc": "Το διάσημο μουσείο κέρινων ομοιομάτων με διασημότητες, αθλητές και ιστορικές προσωπικότητες.",
+      "emoji": "👑",
+      "prices": {
+        "0-4": 0,
+        "5-15": 30,
+        "16+": 36
+      },
+      "lat": 51.5230,
+      "lng": -0.1545,
+      "restaurant": "<a href='https://maps.google.com/?q=Madame+Tussauds+London+cafe' target='_blank'>Madame Tussauds Cafe</a>",
+      "website": "https://www.madametussauds.com/london/",
+      "duration": "1.5-2 ώρες",
+      "bestFor": ["Διασημότητες", "Φωτογραφίες"],
+      "selected": false
+    },
+    {
+      "name": "Natural History Museum",
+      "desc": "Εντυπωσιακό μουσείο με σκελετό δεινοσαύρου, ηφαίστειο και εκθέματα για τη φυσική ιστορία. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🦕",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.4967,
+      "lng": -0.1764,
+      "restaurant": "<a href='https://maps.google.com/?q=Natural+History+Museum+cafe' target='_blank'>Museum Cafe</a>",
+      "website": "https://www.nhm.ac.uk/",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Εκπαίδευση", "Οικογένειες"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "Science Museum",
+      "desc": "Διαδραστικό μουσείο με εκθέματα για επιστήμη, τεχνολογία και διαστημικές εξερευνήσεις. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🔭",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.4975,
+      "lng": -0.1747,
+      "restaurant": "<a href='https://maps.google.com/?q=Science+Museum+cafe' target='_blank'>Science Museum Cafe</a>",
+      "website": "https://www.sciencemuseum.org.uk/",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Επιστήμη", "Διαδραστικά"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "British Museum",
+      "desc": "Ένα από τα σπουδαιότερα μουσεία παγκοσμίως, με εκθέματα από όλο τον κόσμο. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🏛️",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.5194,
+      "lng": -0.1270,
+      "restaurant": "<a href='https://maps.google.com/?q=British+Museum+cafe' target='_blank'>British Museum Cafe</a>",
+      "website": "https://www.britishmuseum.org/",
+      "duration": "2-4 ώρες",
+      "bestFor": ["Ιστορία", "Πολιτισμός"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "Tate Modern",
+      "desc": "Το εθνικό μουσείο διεθνούς μοντέρνας τέχνης, σε παλιό σταθμό παραγωγής ηλεκτρικής ενέργειας. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🎨",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.5076,
+      "lng": -0.0994,
+      "restaurant": "<a href='https://maps.google.com/?q=Tate+Modern+cafe' target='_blank'>Tate Modern Cafe</a>",
+      "website": "https://www.tate.org.uk/visit/tate-modern",
+      "duration": "1.5-2 ώρες",
+      "bestFor": ["Τέχνη", "Αρχιτεκτονική"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "Regent's Park",
+      "desc": "Ένα από τα βασιλικά πάρκα του Λονδίνου, με τους κήπους Queen Mary's, το αμφιθέατρο και ελεύθερα μονοπάτια. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🌳",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.5308,
+      "lng": -0.1558,
+      "restaurant": "<a href='https://maps.google.com/?q=Regents+Park+cafe' target='_blank'>Park Cafe</a>",
+      "website": "https://www.royalparks.org.uk/parks/the-regents-park",
+      "duration": "1-2 ώρες",
+      "bestFor": ["Φύση", "Χαλάρωση"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "Richmond Park",
+      "desc": "Το μεγαλύτερο Βασιλικό Πάρκο του Λονδίνου, γνωστό για τα ελεύθερα ελάφια και τη φύση. Είσοδος ΔΩΡΕΑΝ.",
+      "emoji": "🦌",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.4490,
+      "lng": -0.2682,
+      "restaurant": "<a href='https://maps.google.com/?q=Richmond+Park+cafe' target='_blank'>Richmond Park Cafe</a>",
+      "website": "https://www.royalparks.org.uk/parks/richmond-park",
+      "duration": "2-3 ώρες",
+      "bestFor": ["Φύση", "Περπάτημα"],
+      "selected": false,
+      "freeActivity": true
+    },
+    {
+      "name": "Sky Garden",
+      "desc": "Δωρεάν παρατηρητήριο και κήπος στον 35ο όροφο του κτιρίου 'Walkie Talkie'. Απαιτεί ΚΡΑΤΗΣΗ online.",
+      "emoji": "🏙️",
+      "prices": {
+        "0-2": 0,
+        "3-5": 0,
+        "6-14": 0,
+        "15-19": 0,
+        "18+": 0
+      },
+      "lat": 51.5115,
+      "lng": -0.0831,
+      "restaurant": "<a href='https://maps.google.com/?q=Sky+Garden+restaurant' target='_blank'>Sky Garden Restaurants</a>",
+      "website": "https://skygarden.london/",
+      "duration": "1 ώρα",
+      "bestFor": ["Θέα", "Φωτογραφίες"],
+      "selected": false,
+      "freeActivity": true,
+      "note": "⚠️ Δωρεάν αλλά απαιτεί ΥΠΟΧΡΕΩΤΙΚΗ online κράτηση εκ των προτέρων."
+    }
   ]
 }
