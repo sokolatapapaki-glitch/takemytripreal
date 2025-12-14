@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Οικογενειακός Οργανωτής Ταξιδιού</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<link rel="manifest" href="manifest.json">
 
 <!-- 👇 ΕΙΚΟΝΙΔΙΟ: ΒΑΛΙΤΣΑ 👇 -->
 <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/2983/2983787.png">
@@ -130,17 +132,66 @@ select, input[type=checkbox] { margin-top:5px; }
     }
    
     /* Activity Cards Mobile */
-    .activity-card {
-        flex-direction: column !important;
-        text-align: center !important;
-        padding: 12px !important;
-        min-height: auto !important;
-    }
-   
-    .activity-card .emoji-icon {
-        font-size: 30px !important;
-        margin-bottom: 8px !important;
-    }
+.activity-card {
+    flex-direction: column !important;
+    text-align: left !important;  /* Αριστερά, όχι κέντρο */
+    padding: 15px !important;
+    min-height: 160px !important;  /* Σταθερό ύψος */
+    max-height: 200px !important;  /* Μέγιστο ύψος */
+    overflow: hidden !important;   /* Κρύβει παραπανίσιο κείμενο */
+    position: relative !important; /* Για το αστεράκι */
+}
+
+.activity-card .emoji-icon {
+    font-size: 28px !important;
+    margin-bottom: 10px !important;
+    float: left !important;        /* Emoji αριστερά */
+    margin-right: 15px !important;
+}
+
+/* Το αστεράκι να είναι ΟΡΑΤΟ */
+.activity-card .star {
+    position: absolute !important;
+    top: 10px !important;         /* Πιο χαμηλά */
+    right: 10px !important;       /* Πιο μέσα */
+    font-size: 24px !important;   /* Μέγεθος */
+    color: gold !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10 !important;       /* Πάνω από όλα */
+    display: block !important;    /* Βεβαίωση ότι φαίνεται */
+}
+
+/* Περιορισμός κειμένου */
+.activity-info h3 {
+    font-size: 1.1em !important;
+    margin: 0 0 8px 35px !important; /* Κενό για το emoji */
+    line-height: 1.2 !important;
+    max-height: 2.4em !important;    /* Μέγιστο 2 γραμμές */
+    overflow: hidden !important;
+}
+
+.activity-info p {
+    font-size: 0.9em !important;
+    line-height: 1.4 !important;
+    margin: 5px 0 !important;
+    max-height: 4.2em !important;    /* Μέγιστο 3 γραμμές */
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3 !important; /* Κόβει στις 3 γραμμές */
+    -webkit-box-orient: vertical !important;
+}
+
+/* Πίνακας τιμών πιο συμπαγής */
+table.activity-table {
+    font-size: 0.8em !important;
+    margin-top: 8px !important;
+    width: 100% !important;
+}
+
+table.activity-table th,
+table.activity-table td {
+    padding: 3px 2px !important;
+}
    
     /* Destination Cards Mobile */
     .destination-card {
@@ -159,14 +210,59 @@ select, input[type=checkbox] { margin-top:5px; }
         width: 100%;
     }
 
-    /* Βελτιστοποίηση Βήματος 1 για κινητά */
+   /* Βελτιστοποίηση Βήματος 1 για κινητά */
+@media (max-width: 768px) {
     .destination-filters {
         grid-template-columns: 1fr;
+        gap: 8px;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin: 10px 0;
     }
    
     .filter-group {
-        padding: 10px;
+        padding: 0;
+        margin: 0;
+        background: none;
+        box-shadow: none;
+        border: none;
     }
+    
+    /* Κρύψε τους τίτλους "Βασικά Φίλτρα", κλπ */
+    .filter-group h3 {
+        display: none;
+    }
+    
+    /* Καλύτερο spacing για τα input/select */
+    .filter-group label {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 4px;
+    }
+   
+    .buttons-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin: 15px 0;
+    }
+   
+    .buttons-container button {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        margin: 0;
+    }
+}
    
     .buttons-container {
         flex-direction: column;
@@ -354,7 +450,7 @@ body {
 
 /* Mobile Navigation */
 .mobile-nav {
-    display: none;
+    display: none !important;
     text-align: center;
     padding: 10px;
     background: #3eb489;
@@ -372,24 +468,86 @@ body {
     font-size: 16px;
 }
 
-/* Σε κινητά: απόκρυψη sidebar, εμφάνιση mobile nav */
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-   
-    .mobile-nav {
-        display: block;
-    }
-   
-    .main {
-        padding: 10px;
-    }
-}
 
 /* Στυλ για τον χάρτη */
 .leaflet-container {
     font-family: 'Comic Neue', Arial, Helvetica, sans-serif;
+}
+/* =========== MOBILE OPTIMIZATION =========== */
+@media (max-width: 768px) {
+    /* 1. Διόρθωση διάταξης */
+    body {
+        flex-direction: column;
+        display: block;
+    }
+    
+    /* 2. Σίγουρη απόκρυψη sidebar */
+    .sidebar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        visibility: hidden !important;
+    }
+    
+    /* 3. Εμφάνιση mobile nav */
+    .mobile-nav {
+        display: block !important;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: #3eb489;
+        padding: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .mobile-nav select {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        display: block;
+        padding: 12px 15px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 2px solid white;
+        background: white;
+    }
+    
+    /* 4. Κύριο περιεχόμενο full width */
+    .main {
+        width: 100% !important;
+        padding: 10px 15px !important;
+        margin-left: 0 !important;
+        max-width: 100% !important;
+    }
+    
+    /* 5. Διόρθωση destination cards */
+    #destination-cards {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+    
+    .destination-card {
+        padding: 15px !important;
+        margin: 5px 0 !important;
+    }
+    
+    /* 6. Διόρθωση filters */
+    .destination-filters {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+        padding: 10px !important;
+        margin: 10px 0 !important;
+    }
+    
+    .filter-group {
+        padding: 15px !important;
+        margin-bottom: 10px !important;
+    }
 }
 </style>
 </head>
@@ -524,7 +682,7 @@ body {
     </div>
    
     <!-- Κουμπιά ενεργειών -->
-    <div class="buttons-container">
+    <div class="buttons-container" style="display: flex; flex-direction: column; gap: 12px; align-items: stretch;">
     <button onclick="filterDestinations()">Δες Προορισμούς</button>
     <button onclick="resetFilters()" style="background: #6c757d;">🔄 Επαναφορά Φίλτρων</button>
     <button onclick="toggleQuickSelection()" style="background: #3eb489;">🔽 Έχω ήδη βρει πόλη</button>
@@ -1508,8 +1666,7 @@ function goToStep5(){
         return;
     }
    
-    const selectedActivities = getSelectedActivities();
-   
+const selectedActivities = getSelectedActivities ? getSelectedActivities() : [];   
     const daysText = selectedDaysStay > 0 ? `${selectedDaysStay} μέρες` : "μη ορισμένες μέρες";
    
     if (selectedDestinationName.includes("Βιέννη")) {
@@ -1712,6 +1869,7 @@ function activateStep(targetId) {
    
     document.querySelector(`[data-target="${targetId}"]`).classList.add('active');
     document.getElementById(targetId).classList.add('active');
+window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ** 4. ΒΗΜΑ 4 - ΔΡΑΣΤΗΡΙΟΤΗΤΕΧ **
@@ -2199,8 +2357,7 @@ function preloadLeaflet() {
 }
 
 function initializeSmartMap() {
-    const selectedActivities = getSelectedActivities();
-    const mapContainer = document.getElementById('map-container');
+const selectedActivities = getSelectedActivities ? getSelectedActivities() : [];    const mapContainer = document.getElementById('map-container');
     mapContainer.innerHTML = '<div id="smart-map" style="height: 100%; width: 100%;"></div>';
    
     let mapCenter, mapZoom;
@@ -4323,6 +4480,18 @@ window.TravelPlannerExtensions = {
     }
   }
 };
+// ==================== PWA SERVICE WORKER ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js')
+      .then(function(registration) {
+        console.log('✅ Service Worker registered: ', registration.scope);
+      })
+      .catch(function(error) {
+        console.log('❌ Service Worker registration failed: ', error);
+      });
+  });
+}
 </script>
 </body>
 </html>
