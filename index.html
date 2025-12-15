@@ -839,6 +839,8 @@ body {
 </div>
 
 <script>
+// ==================== ΓΛΟΒΑΛ ΜΕΤΑΒΛΗΤΕΣ ====================
+let selectedActivities = [];  // ΕΔΩ! 
 // ==================== ΝΕΟΣ ΤΡΟΠΟΣ ΔΙΑΧΕΙΡΙΣΗΣ ΗΛΙΚΙΩΝ ====================
 let familyMembers = [
     { name: "Πατέρας", age: 42 },
@@ -1556,11 +1558,9 @@ function searchHotels() {
   img.width = 1; img.height = 1; img.border = 0;
   document.body.appendChild(img);
 }
-
 async function goToStep4() {
     activateStep('step-activities');
     
-        
     const step4Section = document.getElementById("step-activities");
     const activityContainer = document.getElementById("activities-container");
     const overallTotalDiv = document.getElementById("overall-total");
@@ -1569,7 +1569,7 @@ async function goToStep4() {
     let currentActivities = null;
     let activityTitle = "";
     
-    // 1. ΠΑΛΙΕΣ ΠΟΛΕΙΣ (built-in) - ΟΙ ΙΔΙΕΣ
+    // 1. ΠΑΛΙΕΣ ΠΟΛΕΙΣ (built-in)
     if(selectedDestinationName.includes("Βιέννη")){
         currentActivities = activities;
         activityTitle = "Οικογενειακές Δραστηριότητες στη Βιέννη";
@@ -1587,29 +1587,25 @@ async function goToStep4() {
         activityTitle = "Οικογενειακές Δραστηριότητες στη Μαδρίτη";
     }
     
-    // 2. ΝΕΟ ΣΥΣΤΗΜΑ: Έλεγχος για ΕΞΩΤΕΡΙΚΕΣ ΠΟΛΕΙΣ
-    if (!currentActivities && window.TravelPlannerExtensions) {
-        console.log(`🔍 Έλεγχος για εξωτερική πόλη: ${selectedDestinationName}`);
+    // 2. ΝΕΟ ΣΥΣΤΗΜΑ: ΧΡΗΣΗ TravelDataManager
+    if (!currentActivities && TravelDataManager) {
+        console.log(`🔍 Έλεγχος στον TravelDataManager: ${selectedDestinationName}`);
         
         try {
-            const extraCityData = await TravelPlannerExtensions.checkAndLoadExtraCity(selectedDestinationName);
+            const cityData = TravelDataManager.getCityData(selectedDestinationName);
             
-            if (extraCityData && extraCityData.activities && extraCityData.activities.length > 0) {
-                currentActivities = extraCityData.activities;
+            if (cityData && cityData.activities && cityData.activities.length > 0) {
+                currentActivities = cityData.activities;
                 activityTitle = `Οικογενειακές Δραστηριότητες στην ${selectedDestinationName}`;
-                console.log(`✅ Βρέθηκαν ${currentActivities.length} δραστηριότητες από εξωτερικό αρχείο`);
-                 // 👇 ΑΥΤΗ Η ΓΡΑΜΜΗ ΠΡΟΣΘΕΤΕΙ
-    window.loadedExtraCityActivities = extraCityData.activities;
-    console.log("💾 Αποθηκεύτηκαν στη window.loadedExtraCityActivities");
+                console.log(`✅ Βρέθηκαν ${currentActivities.length} δραστηριότητες από TravelDataManager`);
             }
         } catch (error) {
-            console.error("❌ Σφάλμα φόρτωσης εξωτερικής πόλης:", error);
+            console.error("❌ Σφάλμα:", error);
         }
     }
     
     // 3. ΕΑΝ ΒΡΕΘΟΥΝ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ
     if(currentActivities && currentActivities.length > 0){
-        // Επανάληψη των activity cards
         createActivityCards(currentActivities);
         
         step4Section.querySelector('h1').innerText = activityTitle;
@@ -1617,33 +1613,15 @@ async function goToStep4() {
         overallTotalDiv.style.display = 'block';
         step5BtnContainer.style.display = 'block';
         
-        // Υπολογισμός με τα νέα δεδομένα
         calculateAllCosts(currentActivities);
         
     } else {
-        // 4. ΕΑΝ ΔΕΝ ΒΡΕΘΟΥΝ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ
-        step4Section.querySelector('h1').innerText = `Βήμα 4: Προορισμός: ${selectedDestinationName || 'Χωρίς Επιλογή'}`;
-        activityContainer.style.display = 'block';
-        overallTotalDiv.style.display = 'none';
-        step5BtnContainer.style.display = 'none';
-        activityContainer.innerHTML = `
-            <div style="text-align:center; font-size:1.5em; color:#ff6b6b; padding:40px; border:2px dashed #ff6b6b; border-radius:15px; background: #fff; margin:20px;">
-                <h3>🏗️ ΥΠΟ ΚΑΤΑΣΚΕΥΗ</h3>
-                <p>Οι δραστηριότητες για την πόλη <strong>${selectedDestinationName}</strong> προστίθενται σύντομα!</p>
-                <p>💡 Μπορείτε να:</p>
-                <ul style="text-align:left; display:inline-block; margin:15px 0;">
-                    <li>Επιστρέψετε στο Βήμα 1 και επιλέξετε άλλη πόλη</li>
-                    <li>Ή να περιμένετε για την επόμενη ενημέρωση</li>
-                </ul>
-                <button onclick="activateStep('step-destination')" style="padding:12px 24px; background:#3eb489; color:white; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin-top:15px;">
-                    ↩️ Επιστροφή στο Βήμα 1
-                </button>
-            </div>
-        `;
+        showNoActivitiesMessage(selectedDestinationName);
     }
     
     saveToLocalStorage();
 }
+
 function goToStep5(){
     // Προφόρτωση Leaflet για γρηγορότερο χάρτη
     preloadLeaflet();
@@ -1961,24 +1939,19 @@ function createActivityCards(activityList) {
   });
 }
 
-// ==================== ΤΡΟΠΟΠΟΙΗΜΕΝΗ ΣΥΝΑΡΤΗΣΗ calculateAllCosts ====================
+// ==================== ΝΕΟΣ ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ====================
 function calculateAllCosts(activityList = null) {
-            if (!activityList) {
-        activityList = selectedDestinationName.includes("Βιέννη") ? activities :
-                      selectedDestinationName.includes("Βερολίνο") ? activitiesBerlin :
-                      selectedDestinationName.includes("Λισαβόνα") ? activitiesLisbon :
-                      selectedDestinationName.includes("Βουδαπέστη") ? activitiesBudapest :
-                      selectedDestinationName.includes("Μαδρίτη") ? activitiesMadrid :
-                      (selectedDestinationName.includes("Πράγα") || selectedDestinationName.includes("Παρίσι")) ? 
-                      (window.loadedExtraCityActivities || []) : // 👈 ΓΙΑ JSON ΠΟΛΕΙΣ
-                      [];
+    // 1. ΕΥΡΕΣΗ ΤΩΝ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ
+    if (!activityList) {
+        activityList = TravelDataManager.getCityData(selectedDestinationName)?.activities || [];
     }
-   
-    // Ενημέρωση των familyMembers πριν τον υπολογισμό
+    
+    // 2. ΕΝΗΜΕΡΩΣΗ ΟΙΚΟΓΕΝΕΙΑΣ
     updateFamilyMembers();
    
     let overallTotal = 0;
    
+    // 3. ΥΠΟΛΟΓΙΣΜΟΣ ΓΙΑ ΚΑΘΕ ΔΡΑΣΤΗΡΙΟΤΗΤΑ
     activityList.forEach((act, index) => {
         const cardElement = document.getElementById(`activity-${index}`);
         const isSelected = cardElement ? cardElement.classList.contains('selected') : false;
@@ -1988,58 +1961,16 @@ function calculateAllCosts(activityList = null) {
         if(isSelected){
             let total = 0;
            
-            // ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ που καταλαβαίνει ΟΛΕΣ τις ηλικιακές ομάδες
-familyMembers.forEach(member => {
-    let price = 0;
-    const age = member.age;
-    
-    // 1. ΠΡΩΤΑ: Προσπάθεια με τις κανονικές ομάδες (0-2, 3-5, 6-14, 15-19, 18+)
-    if (age <= 2 && act.prices["0-2"] !== undefined) {
-        price = act.prices["0-2"];
-    } else if (age <= 5 && act.prices["3-5"] !== undefined) {
-        price = act.prices["3-5"];
-    } else if (age <= 14 && act.prices["6-14"] !== undefined) {
-        price = act.prices["6-14"];
-    } else if (age <= 19 && act.prices["15-19"] !== undefined) {
-        price = act.prices["15-19"];
-    } else if (act.prices["18+"] !== undefined) {
-        price = act.prices["18+"];
-    }
-    // 2. ΑΝ ΟΧΙ: Δοκιμή με άλλες ομάδες (0-6, 7-12, 13-17 κλπ)
-    else if (age <= 6 && act.prices["0-6"] !== undefined) {
-        price = act.prices["0-6"];
-    } else if (age <= 12 && act.prices["7-12"] !== undefined) {
-        price = act.prices["7-12"];
-    } else if (age <= 17 && act.prices["13-17"] !== undefined) {
-        price = act.prices["13-17"];
-    }
-    // 3. ΤΕΛΙΚΗ ΠΡΟΣΠΑΘΕΙΑ: Βρες οποιαδήποτε τιμή
-    else {
-        // Ψάξε για οποιαδήποτε τιμή
-        const priceKeys = Object.keys(act.prices);
-        for (const key of priceKeys) {
-            if (typeof act.prices[key] === 'number') {
-                // Απλός έλεγχος αν η ηλικία ταιριάζει (πχ "0-6" -> 0-6)
-                if (key.includes('-')) {
-                    const [min, max] = key.split('-').map(Number);
-                    if (age >= min && age <= max) {
-                        price = act.prices[key];
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    
-    // Αν δεν βρέθηκε τιμή, χρησιμοποίησε 0
-    if (typeof price !== 'number') price = 0;
-    
-    total += price;
-});
+            // ΧΡΗΣΗ ΤΟΥ ΝΕΟΥ MANAGER
+            familyMembers.forEach(member => {
+                const price = TravelDataManager.calculatePriceForMember(member.age, act.prices);
+                total += price;
+            });
             
-           
-            if (document.getElementById(`total-${index}`)) {
-                document.getElementById(`total-${index}`).innerText = `Κόστος: ${total.toFixed(2)} €`;
+            // ΕΜΦΑΝΙΣΗ
+            const totalElement = document.getElementById(`total-${index}`);
+            if (totalElement) {
+                totalElement.innerText = `Κόστος: ${total.toFixed(2)} €`;
             }
             overallTotal += total;
         } else {
@@ -2048,12 +1979,14 @@ familyMembers.forEach(member => {
         }
     });
    
+    // 4. ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ
     const overallTotalElement = document.getElementById('overall-total');
     if (overallTotalElement) {
-        overallTotalElement.innerText = `Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
+        overallTotalElement.innerText = 
+            `Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
     }
 
-    // Budget Tracker (παραμένει ίδιο)
+    // 5. BUDGET TRACKER (παραμένει ίδιο)
     if (selectedBudget > 0) {
         const budgetStatus = document.getElementById('budget-status') || document.createElement('div');
         budgetStatus.id = 'budget-status';
@@ -2071,7 +2004,6 @@ familyMembers.forEach(member => {
         if (remaining >= 0) {
             budgetStatus.style.background = '#d4edda';
             budgetStatus.style.color = '#155724';
-            budgetStatus.style.border = '2px solid #28a745';
             budgetStatus.innerHTML = `
                 💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
                 📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
@@ -2080,7 +2012,6 @@ familyMembers.forEach(member => {
         } else {
             budgetStatus.style.background = '#f8d7da';
             budgetStatus.style.color = '#721c24';
-            budgetStatus.style.border = '2px solid #dc3545';
             budgetStatus.innerHTML = `
                 💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
                 📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
@@ -2094,7 +2025,6 @@ familyMembers.forEach(member => {
         }
     }
 }
-
 // ΑΡΧΙΚΟΠΟΙΗΣΗ & ΠΛΟΗΓΗΣΗ SIDEBAR
 document.querySelectorAll('.step').forEach(step=>{
   step.addEventListener('click', ()=>{
