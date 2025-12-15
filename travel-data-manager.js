@@ -41,7 +41,8 @@ const TravelDataManager = {
   jsonCities: {
     "Κωνσταντινούπολη": { file: "istanbul.json", emoji: "🕌" },
     "Παρίσι": { file: "paris.json", emoji: "🗼" },
-    "Πράγα": { file: "prague.json", emoji: "🏰" }
+    "Πράγα": { file: "prague.json", emoji: "🏰" },
+    "Λονδίνο": { file: "london.json", emoji: "🇬🇧" }  // 👈 ΠΡΟΣΘΗΚΗ ΕΔΩ
   },
   
   // 🚀 ΑΡΧΙΚΟΠΟΙΗΣΗ
