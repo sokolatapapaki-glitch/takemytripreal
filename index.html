@@ -1983,11 +1983,9 @@ function calculateAllCosts(activityList = null) {
                       (window.loadedExtraCityActivities || []) : [];
     }
    
-    // Ενημέρωση της λίστας μελών από την οθόνη
     updateFamilyMembers();
     let overallTotal = 0;
    
-    // Για κάθε δραστηριότητα στη λίστα
     activityList.forEach((act, index) => {
         const cardElement = document.getElementById(`activity-${index}`);
         const isSelected = cardElement ? cardElement.classList.contains('selected') : false;
@@ -1995,32 +1993,31 @@ function calculateAllCosts(activityList = null) {
         act.selected = isSelected;
         let activityTotal = 0;
 
-        // Εάν η κάρτα είναι επιλεγμένη, υπολόγισε κόστος
         if(isSelected){
-            // ΓΙΑ ΚΑΘΕ ΜΕΛΟΣ ΤΗΣ ΟΙΚΟΓΕΝΕΙΑΣ
             familyMembers.forEach(member => {
                 let finalPrice = 0;
                 const age = member.age;
                 const priceKeys = Object.keys(act.prices || {});
                 let priceFound = false;
+                let foundKey = '';
 
-                // 🔍 ΑΝΑΖΗΤΗΣΗ ΤΗΣ ΣΩΣΤΗΣ ΤΙΜΗΣ ΒΑΣΗ ΗΛΙΚΙΑΣ
-                // Δοκιμή 1: Range (π.χ., "5-15", "0-4")
+                // 1. ΑΝΑΖΗΤΗΣΗ ΣΕ RANGES
                 for (const key of priceKeys) {
                     if (key.includes('-')) {
                         const [minStr, maxStr] = key.split('-');
                         const min = parseInt(minStr);
                         const max = parseInt(maxStr);
-                        if (age >= min && age <= max) {
+                        if (!isNaN(min) && !isNaN(max) && age >= min && age <= max) {
                             const value = act.prices[key];
                             finalPrice = (typeof value === 'number' && !isNaN(value)) ? value : 0;
                             priceFound = true;
+                            foundKey = key;
                             break;
                         }
                     }
                 }
                 
-                // Δοκιμή 2: "+" (π.χ., "16+", "18+")
+                // 2. ΑΝΑΖΗΤΗΣΗ ΓΙΑ "+"
                 if (!priceFound) {
                     for (const key of priceKeys) {
                         if (key.endsWith('+')) {
@@ -2029,29 +2026,36 @@ function calculateAllCosts(activityList = null) {
                                 const value = act.prices[key];
                                 finalPrice = (typeof value === 'number' && !isNaN(value)) ? value : 0;
                                 priceFound = true;
+                                foundKey = key;
                                 break;
                             }
                         }
                     }
                 }
                 
-                // Δοκιμή 3: Αν δεν βρέθηκε τίποτα, χρησιμοποίησε την τιμή για ενήλικες "18+" ή την τελευταία τιμή
+                // 3. ΠΡΟΕΠΙΛΟΓΗ
                 if (!priceFound) {
                     if (act.prices["18+"] !== undefined) {
                         finalPrice = act.prices["18+"];
+                        foundKey = "18+";
+                    } else if (act.prices["16+"] !== undefined) {
+                        finalPrice = act.prices["16+"];
+                        foundKey = "16+";
                     } else if (priceKeys.length > 0) {
                         const lastKey = priceKeys[priceKeys.length - 1];
                         finalPrice = act.prices[lastKey];
+                        foundKey = lastKey;
                     } else {
-                        finalPrice = 0; // ΔΩΡΕΑΝ αν δεν υπάρχουν καθόλου τιμές
+                        finalPrice = 0;
+                        foundKey = 'προεπιλογή';
                     }
                 }
 
-                // ΠΡΟΣΘΗΚΗ ΣΤΟ ΣΥΝΟΛΟ ΤΗΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+                // DEBUG: Βλέπεις τι τιμή βρήκε για κάθε άτομο
+                console.log(`💰 ${member.name} (${age}): ${finalPrice}€ [${foundKey}]`);
                 activityTotal += finalPrice;
             });
            
-            // ΕΝΗΜΕΡΩΣΗ ΚΑΡΤΑΣ
             const totalElement = document.getElementById(`total-${index}`);
             if (totalElement) {
                 totalElement.innerText = `Κόστος: ${activityTotal.toFixed(2)} €`;
@@ -2060,7 +2064,6 @@ function calculateAllCosts(activityList = null) {
             }
             overallTotal += activityTotal;
         } else {
-            // Εάν δεν είναι επιλεγμένη, μηδενικό κόστος
             const totalElement = document.getElementById(`total-${index}`);
             if (totalElement) {
                 totalElement.innerText = `Κόστος: 0 €`;
@@ -2070,7 +2073,6 @@ function calculateAllCosts(activityList = null) {
         }
     });
    
-    // ΕΝΗΜΕΡΩΣΗ ΣΥΝΟΛΙΚΟΥ ΚΟΣΤΟΥΣ
     const overallTotalElement = document.getElementById('overall-total');
     if (overallTotalElement) {
         overallTotalElement.innerText = `Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
