@@ -1960,6 +1960,7 @@ function calculateLondonPrice(age, prices) {
 
 // ==================== ΝΕΟΣ ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ====================
 function calculateAllCosts(activityList = null) {
+      console.log(`🔍 ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ΓΙΑ: ${selectedDestinationName}`);
     // 1. ΕΥΡΕΣΗ ΤΩΝ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ
     if (!activityList) {
         activityList = TravelDataManager.getCityData(selectedDestinationName)?.activities || [];
