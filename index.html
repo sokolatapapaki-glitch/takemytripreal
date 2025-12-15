@@ -1737,13 +1737,15 @@ function createActivityCardsFromJSON(activityList, cityName) {
     calculateAllCosts(activityList);
 } 
   // ΒΟΗΘΗΤΙΚΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΜΟΡΦΟΠΟΙΗΣΗ ΤΙΜΩΝ
+// ΒΟΗΘΗΤΙΚΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΜΟΡΦΟΠΟΙΗΣΗ ΤΙΜΩΝ
 function formatPrice(price) {
     if (price === undefined || price === null) return '-';
     if (price === 0) return '0€';
     if (typeof price === 'number') return price + '€';
     if (typeof price === 'string' && price.toLowerCase() === 'free') return 'ΔΩΡΕΑΝ';
+    if (typeof price === 'string' && price.toLowerCase() === 'n/a') return 'ΔΕΝ ΕΠΙΤΡΕΠΕΤΑΙ';
     return price;
-}  
+}
 function goToStep5(){
     // Προφόρτωση Leaflet για γρηγορότερο χάρτη
     preloadLeaflet();
@@ -1998,8 +2000,15 @@ function createActivityCards(activityList) {
     card.className = "activity-card";
     card.id = `activity-${index}`;
     
-    // ΧΡΗΣΗ ΤΟΥ MANAGER ΓΙΑ ΤΟΝ ΠΙΝΑΚΑ
-    const priceTable = TravelDataManager.generatePriceTable(act);
+    // Δημιουργία πίνακα τιμών ΜΑΝΟΥΑΛΙΑ
+    let priceTableHTML = '<table class="activity-table"><tr><th>Ηλικία</th><th>Τιμή</th></tr>';
+    
+    if (act.prices) {
+        Object.entries(act.prices).forEach(([ageRange, price]) => {
+            priceTableHTML += `<tr><td>${ageRange} ετών</td><td>${formatPrice(price)}</td></tr>`;
+        });
+    }
+    priceTableHTML += '</table>';
     
     card.innerHTML = `
       <span class="emoji-icon">${emoji}</span>
@@ -2009,9 +2018,9 @@ function createActivityCards(activityList) {
         <p>${act.desc}</p>
         ${act.website ? `<a href="${act.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px;">🔗 Δείτε περισσότερα</a>` : ''}
         
-        <!-- ΕΥΕΛΙΚΤΟΣ ΠΙΝΑΚΑΣ ΑΠΟ ΤΟΝ MANAGER -->
+        <!-- ΠΙΝΑΚΑΣ ΤΙΜΩΝ -->
         <div style="margin-top: 10px;">
-          ${priceTable}
+          ${priceTableHTML}
         </div>
         
         <div class="total" id="total-${index}">Κόστος: 0 €</div>
@@ -2103,22 +2112,35 @@ function calculateAllCosts(activityList = null) {
         if(isSelected){
             let total = 0;
            
-            // ΧΡΗΣΗ ΤΟΥ ΝΕΟΥ MANAGER
+                        // ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ΜΑΝΟΥΑΛΙΑ
             familyMembers.forEach(member => {
-    let price = 0;
-    
-    // 👇 ΕΔΩ ΒΑΖΟΥΜΕ ΤΗ ΝΕΑ ΛΟΓΙΚΗ:
-    if (selectedDestinationName && selectedDestinationName.includes("Λονδίνο")) {
-        // Ειδική λογική για Λονδίνο
-        price = calculateLondonPrice(member.age, act.prices);
-    } else {
-        // Κανονική λογική για άλλες πόλεις
-        price = TravelDataManager.calculatePriceForMember(member.age, act.prices);
-    }
-    // 👆 ΜΕΧΡΙ ΕΔΩ
-    
-    total += price;
-});
+                let price = 0;
+                const age = member.age;
+                
+                if (act.prices) {
+                    // Ψάχνουμε για την ηλικιακή κατηγορία
+                    for (const [range, rangePrice] of Object.entries(act.prices)) {
+                        if (range.includes('-')) {
+                            const [minStr, maxStr] = range.split('-');
+                            const min = parseInt(minStr);
+                            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
+                            
+                            if (age >= min && age <= max) {
+                                price = parseFloat(rangePrice) || 0;
+                                break;
+                            }
+                        } else if (range.includes('+')) {
+                            const min = parseInt(range.replace('+', ''));
+                            if (age >= min) {
+                                price = parseFloat(rangePrice) || 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                total += price;
+            });
             
             // ΕΜΦΑΝΙΣΗ
             const totalElement = document.getElementById(`total-${index}`);
@@ -4563,8 +4585,6 @@ window.TravelPlannerExtensions = {
   }
 };
 </script>
-
-<script src="travel-data-manager.js"></script>
 
 <script>
 // ==================== PWA SERVICE WORKER ====================
