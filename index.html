@@ -1906,6 +1906,57 @@ function createActivityCards(activityList) {
     containerActivities.appendChild(card);
   });
 }
+    // 👇 ΒΑΛΤΕ ΑΥΤΗ ΤΗ ΣΥΝΑΡΤΗΣΗ ΑΚΡΙΒΩΣ ΠΡΙΝ ΤΗΝ calculateAllCosts:
+function calculateLondonPrice(age, prices) {
+    if (!prices || typeof prices !== 'object') return 0;
+    
+    const ageNum = parseInt(age);
+    console.log(`🇬🇧 Υπολογισμός για Λονδίνο: ${ageNum} ετών, τιμές:`, prices);
+    
+    // 1. Πρώτα δοκιμάζουμε συγκεκριμένες κατηγορίες
+    if (ageNum <= 4) {
+        if (prices["0-4"] !== undefined) return prices["0-4"];
+        if (prices["0-2"] !== undefined) return prices["0-2"];
+    }
+    
+    if (ageNum >= 5 && ageNum <= 15) {
+        if (prices["5-15"] !== undefined) return prices["5-15"];
+        if (prices["2-15"] !== undefined) return prices["2-15"];
+    }
+    
+    if (ageNum >= 16 && ageNum <= 24) {
+        if (prices["16-24"] !== undefined) return prices["16-24"];
+        if (prices["16+"] !== undefined) return prices["16+"];
+    }
+    
+    if (ageNum >= 25) {
+        if (prices["25+"] !== undefined) return prices["25+"];
+        if (prices["16+"] !== undefined) return prices["16+"];
+    }
+    
+    // 2. Αν δεν βρέθηκε, ψάχνουμε γενικότερα
+    for (const [range, price] of Object.entries(prices)) {
+        if (range.includes('-')) {
+            const [minStr, maxStr] = range.split('-');
+            const min = parseInt(minStr);
+            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
+            
+            if (ageNum >= min && ageNum <= max) {
+                console.log(`✅ Βρέθηκε: ${range} = ${price}£`);
+                return parseFloat(price) || 0;
+            }
+        } else if (range.includes('+')) {
+            const min = parseInt(range.replace('+', ''));
+            if (ageNum >= min) {
+                console.log(`✅ Βρέθηκε: ${range} = ${price}£`);
+                return parseFloat(price) || 0;
+            }
+        }
+    }
+    
+    console.log(`❌ Δεν βρέθηκε τιμή για ${ageNum} ετών`);
+    return 0;
+}
 
 // ==================== ΝΕΟΣ ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ====================
 function calculateAllCosts(activityList = null) {
@@ -1931,9 +1982,20 @@ function calculateAllCosts(activityList = null) {
            
             // ΧΡΗΣΗ ΤΟΥ ΝΕΟΥ MANAGER
             familyMembers.forEach(member => {
-                const price = TravelDataManager.calculatePriceForMember(member.age, act.prices);
-                total += price;
-            });
+    let price = 0;
+    
+    // 👇 ΕΔΩ ΒΑΖΟΥΜΕ ΤΗ ΝΕΑ ΛΟΓΙΚΗ:
+    if (selectedDestinationName && selectedDestinationName.includes("Λονδίνο")) {
+        // Ειδική λογική για Λονδίνο
+        price = calculateLondonPrice(member.age, act.prices);
+    } else {
+        // Κανονική λογική για άλλες πόλεις
+        price = TravelDataManager.calculatePriceForMember(member.age, act.prices);
+    }
+    // 👆 ΜΕΧΡΙ ΕΔΩ
+    
+    total += price;
+});
             
             // ΕΜΦΑΝΙΣΗ
             const totalElement = document.getElementById(`total-${index}`);
