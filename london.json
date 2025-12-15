@@ -1,0 +1,45 @@
+{
+  "city": "Λονδίνο",
+  "country": "Ηνωμένο Βασίλειο",
+  "emoji": "🇬🇧",
+  "activities": [
+    {
+      "name": "Tower of London (Πύργος του Λονδίνου)",
+      "desc": "Ιστορικό κάστρο και φυλακή, τόπος φύλαξης των τιμαλφών του στέμματος και κατοικία των διάσημων κορακιών.",
+      "prices": {"0-4": 0, "5-15": 20, "16+": 41},
+      "lat": 51.5081,
+      "lng": -0.0759,
+      "restaurant": "<a href='https://maps.google.com/?q=The+Coach+and+Horses+Tower+Hill' target='_blank'>The Coach and Horses</a> - παραδοσιακό παμπ",
+      "website": "https://www.hrp.org.uk/tower-of-london/"
+    },
+    {
+      "name": "London Eye",
+      "desc": "Ο γιγαντιαίος τροχός με πανοραμική θέα του Λονδίνου και του Τάμεση.",
+      "prices": {"0-1": 0, "2-15": 34, "16+": 37},
+      "lat": 51.5033,
+      "lng": -0.1195,
+      "restaurant": "<a href='https://maps.google.com/?q=Restaurant+London+Eye' target='_blank'>Restaurant London Eye</a>",
+      "website": "https://www.londoneye.com/"
+    },
+    {
+      "name": "Natural History Museum (Μουσείο Φυσικής Ιστορίας - ΔΩΡΕΑΝ)",
+      "desc": "Εντυπωσιακό μουσείο με σκελετό δεινοσαύρου, ηφαίστεια και διαδραστικά εκθέματα.",
+      "prices": {"0-120": 0},
+      "lat": 51.4967,
+      "lng": -0.1764,
+      "restaurant": "<a href='https://maps.google.com/?q=The+Darwin+Centre+Cafe+London' target='_blank'>The Darwin Centre Café</a>",
+      "website": "https://www.nhm.ac.uk/",
+      "freeActivity": true
+    },
+    {
+      "name": "Combo Pass: 5 Αξιοθέατα (London Eye, Madame Tussauds, SEA LIFE, Shrek’s, Dungeon)",
+      "desc": "Συνδυαστικό εισιτηρίου για 5 αξιοθέατα. Τιμή ανά αξιοθέατο: ~13-15€. Ισχύει 90 μέρες.",
+      "prices": {"0-1": 0, "2-15": 14, "16+": 14},
+      "lat": 51.5033,
+      "lng": -0.1195,
+      "restaurant": "Επιλέξτε εστιατόριο κοντά στο αξιοθέατο που επισκέπτεστε.",
+      "website": "https://www.londontoolkit.com/tickets/combo_pass.htm",
+      "note": "🏆 ΚΑΛΥΤΕΡΗ ΕΞΟΙΚΟΝΟΜΗΣΗ! Μέχρι 60% φθηνότερα."
+    }
+  ]
+}
