@@ -1469,7 +1469,43 @@ const activitiesBudapest = [
     activityType: "playground"
   }
 ];
-
+// ==================== ΕΥΦΥΗΣ ΥΠΟΛΟΓΙΣΜΟΣ ΓΙΑ ΟΛΕΣ ΤΙΣ ΠΟΛΕΙΣ ====================
+function getPriceForAge(age, priceMap) {
+    if (!priceMap || typeof priceMap !== 'object') return 0;
+    
+    // 1. Μετατροπή age σε number
+    const ageNum = parseInt(age);
+    
+    // 2. Άμεση αντιστοίχιση (για "0-2", "3-5", κλπ)
+    for (const [range, price] of Object.entries(priceMap)) {
+        if (range.includes('-')) {
+            const [minStr, maxStr] = range.split('-');
+            const min = parseInt(minStr);
+            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
+            
+            if (ageNum >= min && ageNum <= max) {
+                return parseFloat(price) || 0;
+            }
+        } else if (range === 'free') {
+            return 0;
+        }
+    }
+    
+    // 3. Fallback για διάσημες κατηγορίες
+    if (ageNum <= 2) {
+        return priceMap["0-2"] || priceMap["0-4"] || priceMap["infant"] || 0;
+    }
+    if (ageNum <= 5) {
+        return priceMap["3-5"] || priceMap["2-5"] || priceMap["child"] || 0;
+    }
+    if (ageNum <= 14) {
+        return priceMap["6-14"] || priceMap["5-15"] || priceMap["junior"] || 0;
+    }
+    if (ageNum <= 19) {
+        return priceMap["15-19"] || priceMap["16-24"] || priceMap["student"] || 0;
+    }
+    return priceMap["18+"] || priceMap["25+"] || priceMap["adult"] || 0;
+}
 function toggleFamily(){
   const type = document.getElementById("travel-type").value;
   document.getElementById("family-options").style.display = (type==="Οικογένεια")?"flex":"none";
@@ -2122,33 +2158,9 @@ function calculateAllCosts(activityList = null) {
            
                         // ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ΜΑΝΟΥΑΛΙΑ
             familyMembers.forEach(member => {
-                let price = 0;
-                const age = member.age;
-                
-                if (act.prices) {
-                    // Ψάχνουμε για την ηλικιακή κατηγορία
-                    for (const [range, rangePrice] of Object.entries(act.prices)) {
-                        if (range.includes('-')) {
-                            const [minStr, maxStr] = range.split('-');
-                            const min = parseInt(minStr);
-                            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
-                            
-                            if (age >= min && age <= max) {
-                                price = parseFloat(rangePrice) || 0;
-                                break;
-                            }
-                        } else if (range.includes('+')) {
-                            const min = parseInt(range.replace('+', ''));
-                            if (age >= min) {
-                                price = parseFloat(rangePrice) || 0;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                total += price;
-            });
+    const price = getPriceForAge(member.age, act.prices);
+    total += price;
+});
             
             // ΕΜΦΑΝΙΣΗ
             const totalElement = document.getElementById(`total-${index}`);
@@ -3623,67 +3635,32 @@ function categorizeFamilyMembers() {
 }
 function calculateRegularCost(selectedActivities, ageGroups) {
     console.log("🧮 Υπολογισμός κόστους...");
-    console.log("Επιλεγμένες:", selectedActivities.length);
-    console.log("Ηλικιακές ομάδες:", ageGroups);
     
     let totalCost = 0;
     
     selectedActivities.forEach((activity) => {
+        if (!activity.prices) return;
+        
         let activityCost = 0;
         
-        if (!activity.prices) {
-            console.log(`⚠️ ${activity.name}: Δεν έχει prices`);
-            return;
-        }
-        
-        // ΓΕΝΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ για ΟΛΕΣ τις πόλεις
+        // ΓΙΑ ΚΑΘΕ ΗΛΙΚΙΑΚΗ ΟΜΑΔΑ
         Object.keys(ageGroups).forEach(ageCategory => {
             const count = ageGroups[ageCategory];
             if (count > 0) {
-                let price = 0;
+                // Βρες τη μέση ηλικία αυτής της κατηγορίας
+                const [minAge, maxAge] = ageCategory.split('-').map(Number);
+                const midAge = Math.floor((minAge + (maxAge || minAge)) / 2);
                 
-                // 1. Πρώτα δοκιμάζουμε άμεση αντιστοίχιση
-                if (activity.prices[ageCategory] !== undefined) {
-                    price = parseFloat(activity.prices[ageCategory]) || 0;
-                } 
-                // 2. Αν όχι, ψάχνουμε για διαφορετικά εύρη
-                else {
-                    for (const [range, rangePrice] of Object.entries(activity.prices)) {
-                        if (range.includes('-')) {
-                            const [minStr, maxStr] = range.split('-');
-                            const min = parseInt(minStr);
-                            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
-                            const ageNum = parseInt(ageCategory.split('-')[0]);
-                            
-                            if (ageNum >= min && ageNum <= max) {
-                                price = parseFloat(rangePrice) || 0;
-                                break;
-                            }
-                        } else if (range.includes('+')) {
-                            const min = parseInt(range.replace('+', ''));
-                            const ageNum = parseInt(ageCategory.split('-')[0]);
-                            if (ageNum >= min) {
-                                price = parseFloat(rangePrice) || 0;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                const costForThisAge = price * count;
-                activityCost += costForThisAge;
+                // ΧΡΗΣΙΜΟΠΟΙΗΣΕ ΤΗΝ getPriceForAge!
+                const price = getPriceForAge(midAge, activity.prices);
+                activityCost += price * count;
             }
         });
         
-        // Στρογγυλοποίηση
-        activityCost = Math.round(activityCost * 100) / 100;
-        totalCost += activityCost;
+        totalCost += Math.round(activityCost * 100) / 100;
     });
     
-    // Τελική στρογγυλοποίηση
-    totalCost = Math.round(totalCost * 100) / 100;
-    console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ: ${totalCost}€`);
-    return totalCost;
+    return Math.round(totalCost * 100) / 100;
 }
 function findAvailableCombos(allActivities, selectedActivities) {
     console.log("🔍 Αναζήτηση combos...");
