@@ -937,7 +937,15 @@ let selectedBudget = 0;
     // ΒΟΗΘΗΤΙΚΗ ΣΥΝΑΡΤΗΣΗ ΓΙΑ ΜΟΡΦΟΠΟΙΗΣΗ ΤΙΜΩΝ
 function formatPrice(price) {
     if (price === undefined || price === null) return '-';
-    if (typeof price === 'number') return price + '€';
+    if (price === 0) return '0€';
+    if (typeof price === 'number') {
+        // Στρογγυλοποίηση σε 2 δεκαδικά
+        const rounded = Math.round(price * 100) / 100;
+        // Αφαίρεση μηδενικών .00
+        return rounded % 1 === 0 ? rounded + '€' : rounded.toFixed(2) + '€';
+    }
+    if (typeof price === 'string' && price.toLowerCase() === 'free') return 'ΔΩΡΕΑΝ';
+    if (typeof price === 'string' && price.toLowerCase() === 'n/a') return 'ΔΕΝ ΕΠΙΤΡΕΠΕΤΑΙ';
     return price;
 }
 
@@ -3557,77 +3565,66 @@ function categorizeFamilyMembers() {
     return categories;
 }
 function calculateRegularCost(selectedActivities, ageGroups) {
-    console.log("🧮 Υπολογισμός κόστους για Κωνσταντινούπολη...");
+    console.log("🧮 Υπολογισμός κόστους...");
     console.log("Επιλεγμένες:", selectedActivities.length);
     console.log("Ηλικιακές ομάδες:", ageGroups);
     
     let totalCost = 0;
     
-    selectedActivities.forEach((activity, index) => {
+    selectedActivities.forEach((activity) => {
         let activityCost = 0;
-        console.log(`\n📊 ${activity.name}:`);
-        console.log("Προσβάσιμες τιμές:", activity.prices);
         
-        // ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ για Κωνσταντινούπολη
+        if (!activity.prices) {
+            console.log(`⚠️ ${activity.name}: Δεν έχει prices`);
+            return;
+        }
+        
+        // ΓΕΝΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ για ΟΛΕΣ τις πόλεις
         Object.keys(ageGroups).forEach(ageCategory => {
             const count = ageGroups[ageCategory];
             if (count > 0) {
                 let price = 0;
                 
-                // Μετατροπή ηλικιακών κατηγοριών για Κωνσταντινούπολη
-                if (ageCategory === "0-2") {
-                    // 0-2 → ψάχνουμε 0-6
-                    price = activity.prices["0-6"] || 0;
-                } else if (ageCategory === "3-5") {
-                    // 3-5 → ψάχνουμε 0-6
-                    price = activity.prices["0-6"] || 0;
-                } else if (ageCategory === "6-14") {
-                    // 6-14 → ψάχνουμε 7-12 (για 6-12) και 13-17 (για 13-14)
-                    if (activity.prices["7-12"] !== undefined) {
-                        price = activity.prices["7-12"];
-                    } else if (activity.prices["13-17"] !== undefined) {
-                        price = activity.prices["13-17"];
-                    }
-                } else if (ageCategory === "15-19") {
-                    // 15-19 → ψάχνουμε 13-17 (για 15-17) και 18+ (για 18-19)
-                    if (activity.prices["13-17"] !== undefined) {
-                        price = activity.prices["13-17"];
-                    } else if (activity.prices["18+"] !== undefined) {
-                        price = activity.prices["18+"];
-                    }
-                } else if (ageCategory === "18+") {
-                    // 18+ → ψάχνουμε 18+
-                    price = activity.prices["18+"] || 0;
-                }
-                
-                // Άμα δεν βρέθηκε, δοκιμή γενικότερης αναζήτησης
-                if (price === 0 || price === undefined) {
-                    // Ψάξε για οποιαδήποτι τιμή που ταιριάζει
-                    for (const [key, value] of Object.entries(activity.prices || {})) {
-                        if (key.includes('-')) {
-                            const [min, max] = key.split('-').map(Number);
-                            const ageNum = parseInt(ageCategory.split('-')[0]); // πχ "6-14" → 6
+                // 1. Πρώτα δοκιμάζουμε άμεση αντιστοίχιση
+                if (activity.prices[ageCategory] !== undefined) {
+                    price = parseFloat(activity.prices[ageCategory]) || 0;
+                } 
+                // 2. Αν όχι, ψάχνουμε για διαφορετικά εύρη
+                else {
+                    for (const [range, rangePrice] of Object.entries(activity.prices)) {
+                        if (range.includes('-')) {
+                            const [minStr, maxStr] = range.split('-');
+                            const min = parseInt(minStr);
+                            const max = maxStr.includes('+') ? 999 : parseInt(maxStr);
+                            const ageNum = parseInt(ageCategory.split('-')[0]);
+                            
                             if (ageNum >= min && ageNum <= max) {
-                                price = value;
+                                price = parseFloat(rangePrice) || 0;
+                                break;
+                            }
+                        } else if (range.includes('+')) {
+                            const min = parseInt(range.replace('+', ''));
+                            const ageNum = parseInt(ageCategory.split('-')[0]);
+                            if (ageNum >= min) {
+                                price = parseFloat(rangePrice) || 0;
                                 break;
                             }
                         }
                     }
                 }
                 
-                const costForThisAge = (price || 0) * count;
+                const costForThisAge = price * count;
                 activityCost += costForThisAge;
-                
-                if (costForThisAge > 0) {
-                    console.log(`  ${ageCategory}: ${price}€ × ${count} = ${costForThisAge}€`);
-                }
             }
         });
         
+        // Στρογγυλοποίηση
+        activityCost = Math.round(activityCost * 100) / 100;
         totalCost += activityCost;
-        console.log(`  Σύνολο για ${activity.name}: ${activityCost}€`);
     });
     
+    // Τελική στρογγυλοποίηση
+    totalCost = Math.round(totalCost * 100) / 100;
     console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ: ${totalCost}€`);
     return totalCost;
 }
@@ -3866,25 +3863,28 @@ function calculateComboCosts(selectedActivities, availableCombos, ageGroups, reg
        
         combo.activities.forEach(activityName => {
             const activity = selectedActivities.find(act => act.name.includes(activityName));
-            if (activity) {
+            if (activity && activity.prices) {
                 Object.keys(ageGroups).forEach(ageCategory => {
                     const count = ageGroups[ageCategory];
-                    if (count > 0 && activity.prices[ageCategory]) {
-                        const price = typeof activity.prices[ageCategory] === 'number' ?
-                            activity.prices[ageCategory] : 0;
+                    if (count > 0) {
+                        const price = parseFloat(activity.prices[ageCategory]) || 0;
                         comboRegularCost += price * count;
                     }
                 });
             }
         });
        
+        // Στρογγυλοποίηση για να αποφύγουμε floating point errors
+        comboRegularCost = Math.round(comboRegularCost * 100) / 100;
+        const comboPrice = parseFloat(combo.comboPrice) || 0;
+       
         // Υπολογισμός εξοικονόμησης
-        const saving = comboRegularCost - combo.comboPrice;
+        const saving = Math.round((comboRegularCost - comboPrice) * 100) / 100;
        
         // Ενημέρωση του combo object
         combo.regularPrice = comboRegularCost;
         combo.saving = saving > 0 ? saving : 0;
-        combo.totalWithCombo = regularCost - saving;
+        combo.totalWithCombo = Math.round((regularCost - saving) * 100) / 100;
        
         results.allCombos.push(combo);
        
@@ -3892,7 +3892,7 @@ function calculateComboCosts(selectedActivities, availableCombos, ageGroups, reg
         if (saving > results.bestSaving) {
             results.bestSaving = saving;
             results.bestCombo = combo;
-            results.bestTotal = regularCost - saving;
+            results.bestTotal = Math.round((regularCost - saving) * 100) / 100;
         }
     });
    
