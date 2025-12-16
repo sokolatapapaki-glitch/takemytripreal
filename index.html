@@ -1941,13 +1941,18 @@ function createActivityCards(activityList) {
 
 // ==================== ΝΕΟΣ ΕΞΥΠΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ ====================
 function calculateAllCosts(activityList = null) {
+    console.log('🧮 Υπολογισμός κόστους με νέο σύστημα...');
+    
     // 1. ΕΥΡΕΣΗ ΤΩΝ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ
     if (!activityList) {
-        activityList = TravelDataManager.getCityData(selectedDestinationName)?.activities || [];
+        const cityData = TravelDataManager.getCityData(selectedDestinationName);
+        activityList = cityData ? cityData.activities : [];
+        console.log(`📊 Βρέθηκαν ${activityList.length} δραστηριότητες`);
     }
     
     // 2. ΕΝΗΜΕΡΩΣΗ ΟΙΚΟΓΕΝΕΙΑΣ
     updateFamilyMembers();
+    console.log('👨‍👩‍👧‍👦 Μέλη οικογένειας:', familyMembers);
    
     let overallTotal = 0;
    
@@ -1958,13 +1963,17 @@ function calculateAllCosts(activityList = null) {
        
         act.selected = isSelected;
 
-        if(isSelected){
+        if(isSelected && act.prices){
+            console.log(`✅ Επιλεγμένη: ${act.name.substring(0, 30)}...`);
+            console.log('💰 Τιμές:', act.prices);
+            
             let total = 0;
            
-            // ΧΡΗΣΗ ΤΟΥ ΝΕΟΥ MANAGER
+            // ΧΡΗΣΗ ΤΟΥ ΝΕΟΥ UNIFIED MANAGER
             familyMembers.forEach(member => {
-                const price = TravelDataManager.calculatePriceForMember(member.age, act.prices);
-                total += price;
+                const memberCost = window.UnifiedAgeManager.calculateFamilyCost(act, [member]);
+                console.log(`   ${member.name} (${member.age}): ${memberCost}€`);
+                total += memberCost;
             });
             
             // ΕΜΦΑΝΙΣΗ
@@ -1973,6 +1982,8 @@ function calculateAllCosts(activityList = null) {
                 totalElement.innerText = `Κόστος: ${total.toFixed(2)} €`;
             }
             overallTotal += total;
+            
+            console.log(`   Σύνολο για ${act.name}: ${total}€`);
         } else {
             const totalElement = document.getElementById(`total-${index}`);
             if (totalElement) totalElement.innerText = `Κόστος: 0 €`;
@@ -1984,9 +1995,10 @@ function calculateAllCosts(activityList = null) {
     if (overallTotalElement) {
         overallTotalElement.innerText = 
             `Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
+        console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΟΣΤΟΣ: ${overallTotal.toFixed(2)}€`);
     }
 
-    // 5. BUDGET TRACKER (παραμένει ίδιο)
+    // 5. BUDGET TRACKER
     if (selectedBudget > 0) {
         const budgetStatus = document.getElementById('budget-status') || document.createElement('div');
         budgetStatus.id = 'budget-status';
@@ -2024,6 +2036,8 @@ function calculateAllCosts(activityList = null) {
             activitiesContainer.parentNode.insertBefore(budgetStatus, activitiesContainer);
         }
     }
+    
+    console.log('✅ Υπολογισμός ολοκληρώθηκε');
 }
 // ΑΡΧΙΚΟΠΟΙΗΣΗ & ΠΛΟΗΓΗΣΗ SIDEBAR
 document.querySelectorAll('.step').forEach(step=>{
