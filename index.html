@@ -3552,7 +3552,7 @@ function calculateSmartCombos() {
     const comboResults = calculateComboCosts(selectedActivities, availableCombos, memberAgeGroups, regularCost);
    
     // Εμφάνιση αποτελεσμάτων
-    displayComboResults(comboResults, regularCost);
+    (comboResults, regularCost);
     
     console.log("✅ Έξυπνος υπολογισμός ολοκληρώθηκε!");
 }
@@ -3688,7 +3688,55 @@ function calculateRegularCost(selectedActivities, ageGroups) {
 function findAvailableCombos(allActivities, selectedActivities) {
     console.log("🔍 Αναζήτηση combos...");
     console.log("Επιλεγμένες δραστηριότητες:", selectedActivities.map(a => a.name));
-   
+    
+    // ΈΛΕΓΧΟΣ: Αν έχει επιλεγεί Combo Pass αλλά ΟΧΙ οι αντίστοιχες δραστηριότητες
+    const hasCombo2 = selectedActivities.some(act => act.name.includes("2-Attraction Combo Pass"));
+    const hasCombo3 = selectedActivities.some(act => act.name.includes("3-Attraction Combo Pass"));
+    const hasCombo5 = selectedActivities.some(act => act.name.includes("5-Attraction Combo Pass"));
+    
+    const comboPassesSelected = hasCombo2 || hasCombo3 || hasCombo5;
+    
+    if (comboPassesSelected) {
+        // Έλεγχος αν υπάρχουν και οι αντίστοιχες δραστηριότητες
+        const requiredActivities = {
+            "2-Attraction": ["Tower of London", "London Eye", "Warner Bros. Harry Potter Studio Tour"],
+            "3-Attraction": ["Tower of London", "London Eye", "Warner Bros. Harry Potter Studio Tour", "ZSL London Zoo"],
+            "5-Attraction": ["Tower of London", "London Eye", "Warner Bros. Harry Potter Studio Tour", "ZSL London Zoo", "Royal Observatory Greenwich"]
+        };
+        
+        let missingActivities = [];
+        
+        if (hasCombo2) {
+            const hasAny = requiredActivities["2-Attraction"].some(activityName =>
+                selectedActivities.some(act => act.name.includes(activityName))
+            );
+            if (!hasAny) missingActivities.push("2-Attraction Combo Pass (χωρίς δραστηριότητες)");
+        }
+        
+        if (hasCombo3) {
+            const hasAny = requiredActivities["3-Attraction"].some(activityName =>
+                selectedActivities.some(act => act.name.includes(activityName))
+            );
+            if (!hasAny) missingActivities.push("3-Attraction Combo Pass (χωρίς δραστηριότητες)");
+        }
+        
+        if (hasCombo5) {
+            const hasAny = requiredActivities["5-Attraction"].some(activityName =>
+                selectedActivities.some(act => act.name.includes(activityName))
+            );
+            if (!hasAny) missingActivities.push("5-Attraction Combo Pass (χωρίς δραστηριότητες)");
+        }
+        
+        if (missingActivities.length > 0) {
+            // Εμφάνιση μηνύματος με οδηγίες
+            setTimeout(() => {
+                alert(`🎫 ΠΡΟΣΟΧΗ: Έχετε επιλέξει Combo Pass αλλά ΟΧΙ δραστηριότητες!\n\n👉 Για το "${missingActivities[0]}" πρέπει να επιλέξετε ΚΑΙ:\n\n• Tower of London\n• London Eye\n• Harry Potter Studio\n\nΠαρακαλώ προσθέστε τουλάχιστον 2 από αυτές και δοκιμάστε ξανά.`);
+            }, 300);
+            console.log("⚠️ Combo Passes χωρίς δραστηριότητες:", missingActivities);
+            return []; // Επιστροφή κενής λίστας - δεν έχει νόημα να συνεχίσει
+        }
+    }
+    
     const combos = [];
    
     // Ειδικά combos για κάθε πόλη
@@ -3760,75 +3808,6 @@ function findAvailableCombos(allActivities, selectedActivities) {
         }
     }
    
-    // Για Κωνσταντινούπολη: Combo για μουσεία
-    if (selectedDestinationName.includes("Κωνσταντινούπολη")) {
-        console.log("🕌 Αναζήτηση combos για Κωνσταντινούπολη");
-        
-        // Combo 1: Αγία Σοφία + Τοπ Καπί
-        const hasHagiaSophia = selectedActivities.some(act =>
-            act.name && act.name.includes("Αγία Σοφία")
-        );
-        const hasTopkapi = selectedActivities.some(act =>
-            act.name && act.name.includes("Τοπ Καπί")
-        );
-       
-        if (hasHagiaSophia && hasTopkapi) {
-            console.log("✅ Βρέθηκε combo Αγία Σοφία + Τοπ Καπί");
-            combos.push({
-                name: "🎟️ Combo: Αγία Σοφία + Τοπ Καπί",
-                description: "Συνδυαστικό εισιτήριο για τα 2 κύρια αξιοθέατα",
-                activities: ["Αγία Σοφία", "Τοπ Καπί"],
-                regularPrice: 90,
-                comboPrice: 75,
-                saving: 15,
-                note: "Εξοικονόμηση 15€"
-            });
-        }
-        
-        // Combo 2: Μπλε Τζαμί + Βασιλική Κινστέρνα
-        const hasBlueMosque = selectedActivities.some(act =>
-            act.name && act.name.includes("Μπλε Τζαμί")
-        );
-        const hasBasilicaCistern = selectedActivities.some(act =>
-            act.name && act.name.includes("Βασιλική Κινστέρνα")
-        );
-       
-        if (hasBlueMosque && hasBasilicaCistern) {
-            console.log("✅ Βρέθηκε combo Μπλε Τζαμί + Βασιλική Κινστέρνα");
-            combos.push({
-                name: "💧 Combo: Μπλε Τζαμί + Βασιλική Κινστέρνα",
-                description: "Τζαμί & υπόγεια δεξαμενή",
-                activities: ["Μπλε Τζαμί", "Βασιλική Κινστέρνα"],
-                regularPrice: 30,
-                comboPrice: 25,
-                saving: 5,
-                note: "Εξοικονόμηση 5€ - Το Μπλε Τζαμί είναι δωρεάν"
-            });
-        }
-        
-        // Combo 3: Museum Pass Istanbul (5 Ημερών)
-        if (selectedActivities.length >= 3) {
-            const passActivities = ["Αγία Σοφία", "Τοπ Καπί", "Αρχαιολογικό Μουσείο", 
-                                   "Μουσείο Σύγχρονης Τέχνης", "Βασιλική Κινστέρνα"];
-            const selectedPassActivities = (selectedActivities || []).filter(act => 
-                passActivities.some(passAct => act.name && act.name.includes(passAct))
-            );
-            
-            if (selectedPassActivities.length >= 3) {
-                console.log("✅ Βρέθηκε Museum Pass (3+ δραστηριότητες)");
-                combos.push({
-                    name: "🏛️ Museum Pass Istanbul (5 Ημερών)",
-                    description: "Πρόσβαση σε 12+ μουσεία και αξιοθέατα για 5 ημέρες",
-                    activities: selectedPassActivities.map(a => a.name),
-                    regularPrice: calculateRegularCost(selectedPassActivities, categorizeFamilyMembers()),
-                    comboPrice: 85,
-                    saving: "Έως 50%",
-                    note: "Αγοράστε online: https://www.muze.gov.tr/museum-pass-istanbul"
-                });
-            }
-        }
-    }
-   
     // ΓΙΑ ΛΟΝΔΙΝΟ: Combo Passes
     if (selectedDestinationName.includes("Λονδίνο")) {
         console.log("🇬🇧 Αναζήτηση combos για Λονδίνο");
@@ -3880,18 +3859,28 @@ function findAvailableCombos(allActivities, selectedActivities) {
                 note: "Εξοικονόμηση 45€ για 5 αξιοθέατα"
             });
         }
-        
-                /* Family Discounts detection - ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ
-        selectedActivities.forEach(act => {
-            if (act.note && (
-                act.note.includes("οικογενειακή") || 
-                act.note.includes("οικογένεια") ||
-                act.note.includes("family") ||
-                act.note.includes("2+2") ||
-                act.note.includes("έκπτωση")
-            )) {
-               }); */
     }
+    
+    /* Family Discounts detection - ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ
+    selectedActivities.forEach(act => {
+        if (act.note && (
+            act.note.includes("οικογενειακή") || 
+            act.note.includes("οικογένεια") ||
+            act.note.includes("family") ||
+            act.note.includes("2+2") ||
+            act.note.includes("έκπτωση")
+        )) {
+            combos.push({
+                name: "👨‍👩‍👧‍👦 Οικογενειακή Έκπτωση",
+                description: `Οικογενειακή προσφορά για: ${act.name}`,
+                activities: [act.name],
+                regularPrice: calculateRegularCost([act], categorizeFamilyMembers()),
+                comboPrice: calculateRegularCost([act], categorizeFamilyMembers()) * 0.8, // 20% έκπτωση
+                saving: calculateRegularCost([act], categorizeFamilyMembers()) * 0.2,
+                note: "Εκτίμηση 20% έκπτωσης για οικογένειες - ελέγξτε στον πάροχο"
+            });
+        }
+    }); */
     
     console.log("📊 Σύνολο combos που βρέθηκαν:", combos.length);
     return combos;
@@ -4018,7 +4007,86 @@ function calculateComboCosts(selectedActivities, availableCombos, ageGroups, reg
     
     return results;
 }
+// ΣΥΝΑΡΤΗΣΗ: Εμφάνιση οδηγιών για combo passes
+function showComboInstructions() {
+    const modal = document.createElement('div');
+    modal.id = 'combo-instructions-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Comic Neue', Arial, sans-serif;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 20px; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h2 style="color: #9c27b0; margin-top: 0;">🎫 ΠΩΣ ΛΕΙΤΟΥΡΓΟΥΝ ΤΑ COMBO PASSES</h2>
+            
+            <div style="background: #f3e5f5; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h3 style="color: #7b1fa2;">📝 ΟΔΗΓΙΕΣ:</h3>
+                <ol style="text-align: left;">
+                    <li><strong>ΔΕΝ ΕΠΑΡΚΕΙ</strong> να επιλέξετε μόνο το "Combo Pass"</li>
+                    <li><strong>ΠΡΕΠΕΙ</strong> να επιλέξετε ΚΑΙ τις δραστηριότητες που καλύπτει</li>
+                </ol>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4>🎟️ <strong>2-Attraction Combo Pass</strong></h4>
+                <p>Καλύπτει <strong>2 από αυτές:</strong></p>
+                <ul style="text-align: left;">
+                    <li>✅ Tower of London</li>
+                    <li>✅ London Eye</li>
+                    <li>✅ Warner Bros. Harry Potter Studio Tour</li>
+                </ul>
+                <p style="color: #666; font-size: 0.9em;">👉 <strong>Επιλέξτε 2 από τις παραπάνω + το Combo Pass</strong></p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4>🎟️ <strong>3-Attraction Combo Pass</strong></h4>
+                <p>Καλύπτει <strong>3 από αυτές:</strong></p>
+                <ul style="text-align: left;">
+                    <li>✅ Tower of London</li>
+                    <li>✅ London Eye</li>
+                    <li>✅ Warner Bros. Harry Potter Studio Tour</li>
+                    <li>✅ ZSL London Zoo</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h4>🎟️ <strong>5-Attraction Combo Pass</strong></h4>
+                <p>Καλύπτει <strong>5 από αυτές:</strong></p>
+                <ul style="text-align: left;">
+                    <li>✅ Tower of London</li>
+                    <li>✅ London Eye</li>
+                    <li>✅ Warner Bros. Harry Potter Studio Tour</li>
+                    <li>✅ ZSL London Zoo</li>
+                    <li>✅ Royal Observatory Greenwich</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center;">
+                <button onclick="closeComboInstructions()" 
+                        style="padding: 12px 25px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                    ✅ Κατάλαβα, θα προσθέσω δραστηριότητες!
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
 
+function closeComboInstructions() {
+    const modal = document.getElementById('combo-instructions-modal');
+    if (modal) modal.remove();
+}
 function displayComboResults(results, regularCost) {
     // Δημιουργία modal για εμφάνιση αποτελεσμάτων
        const modal = document.createElement('div');
