@@ -82,28 +82,39 @@ class CityConverter {
     const newPrices = {};
     const oldGroups = Object.keys(oldPrices);
     
-    // ΒΕΛΤΙΩΜΕΝΗ ΑΝΙΧΝΕΥΣΗ ΚΑΝΟΝΩΝ
+  // ΒΕΛΤΙΩΜΕΝΗ ΑΝΙΧΝΕΥΣΗ ΚΑΝΟΝΩΝ
 let conversionRule = null;
 
 // ΚΑΝΟΝΑΣ 1: 0-6, 7-12, 13-17, 18+ (Τοπ Καπί, Αγία Σοφία)
-if (oldGroups.includes("0-6") && oldGroups.includes("7-12") && oldGroups.includes("13-17")) {
+// ΣΗΜΑΝΤΙΚΟ: Ελέγχουμε αν υπάρχουν ΟΛΕΣ οι ομάδες
+const hasGroup0_6 = oldGroups.includes("0-6") || oldGroups.some(g => g === "0-6");
+const hasGroup7_12 = oldGroups.includes("7-12") || oldGroups.some(g => g === "7-12");
+const hasGroup13_17 = oldGroups.includes("13-17") || oldGroups.some(g => g === "13-17");
+const hasGroup18plus = oldGroups.includes("18+") || oldGroups.some(g => g === "18+");
+
+if (hasGroup0_6 && hasGroup7_12 && hasGroup13_17 && hasGroup18plus) {
   conversionRule = "0-6";
+  console.log(`🔍 Εφαρμογή κανόνα "0-6" για: ${Object.keys(oldPrices)}`);
 } 
 // ΚΑΝΟΝΑΣ 2: 0-11, 12-17, 18+ (Μουσείο)
-else if (oldGroups.includes("0-11") && oldGroups.includes("12-17")) {
+else if (oldGroups.includes("0-11") && oldGroups.includes("12-17") && oldGroups.includes("18+")) {
   conversionRule = "0-11";
+  console.log(`🔍 Εφαρμογή κανόνα "0-11" για: ${Object.keys(oldPrices)}`);
 }
 // ΚΑΝΟΝΑΣ 3: 0-2, 3-6, 7-12, 13-17, 18+ (Κρουαζιέρα Βόσπορου)
-else if (oldGroups.includes("3-6") && oldGroups.includes("7-12") && oldGroups.includes("13-17")) {
+else if (oldGroups.includes("0-2") && oldGroups.includes("3-6") && oldGroups.includes("7-12") && oldGroups.includes("13-17") && oldGroups.includes("18+")) {
   conversionRule = "3-6";
+  console.log(`🔍 Εφαρμογή κανόνα "3-6" για: ${Object.keys(oldPrices)}`);
 }
 // ΚΑΝΟΝΑΣ 4: 0-4, 5-12, 13-17, 18+ (Vialand)
-else if (oldGroups.includes("0-4") && oldGroups.includes("5-12") && oldGroups.includes("13-17")) {
+else if (oldGroups.includes("0-4") && oldGroups.includes("5-12") && oldGroups.includes("13-17") && oldGroups.includes("18+")) {
   conversionRule = "0-4";
+  console.log(`🔍 Εφαρμογή κανόνα "0-4" για: ${Object.keys(oldPrices)}`);
 }
 // ΚΑΝΟΝΑΣ 5: 0-5, 6-12, 13-17, 18+ (Miniatürk)
-else if (oldGroups.includes("0-5") && oldGroups.includes("6-12") && oldGroups.includes("13-17")) {
+else if (oldGroups.includes("0-5") && oldGroups.includes("6-12") && oldGroups.includes("13-17") && oldGroups.includes("18+")) {
   conversionRule = "0-5";
+  console.log(`🔍 Εφαρμογή κανόνα "0-5" για: ${Object.keys(oldPrices)}`);
 }
     
     // Αν δεν βρέθηκε κανόνας, χρησιμοποιούμε default
