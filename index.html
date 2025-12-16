@@ -1558,6 +1558,74 @@ function searchHotels() {
   img.width = 1; img.height = 1; img.border = 0;
   document.body.appendChild(img);
 }
+// ==================== ΠΡΟΣΩΡΙΝΟΣ ΚΩΔΙΚΑΣ ΓΙΑ ΝΕΕΣ ΠΟΛΕΙΣ ====================
+const EXTRA_CITIES_CONFIG = {
+    "Κωνσταντινούπολη": {  // 👈 ΠΡΟΣΘΕΣΕ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    file: "istanbul.json", // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    enabled: true,        // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+    emoji: "🕌"           // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
+  },                      // 👈 ΚΑΙ ΑΥΤΟ ΤΟ ΚΟΜΜΑ
+  "Παρίσι": {
+    file: "paris.json",
+    enabled: true,
+    emoji: "🗼"
+  },
+    "Πράγα": {  // 👈 ΠΡΟΣΘΗΚΗ ΤΗΣ ΠΡΑΓΑΣ!
+    file: "prague.json",
+    enabled: true,
+    emoji: "🏰"
+  },
+  "Ρώμη": {
+    file: "data/rome.json", 
+    enabled: true,
+    emoji: "🍕"
+  }
+};
+window.TravelPlannerExtensions = {
+  checkAndLoadExtraCity: async function(cityName) {
+    console.log(`🔍 Έλεγχος για εξωτερική πόλη: ${cityName}`);
+    
+    const cityConfig = EXTRA_CITIES_CONFIG[cityName];
+    if (!cityConfig || !cityConfig.enabled) {
+      console.log(`❌ Η πόλη ${cityName} δεν είναι διαθέσιμη`);
+      return null;
+    }
+    
+    try {
+      console.log(`📥 Φόρτωση από: ${cityConfig.file}`);
+      const response = await fetch(cityConfig.file);
+      
+      if (!response.ok) {
+        console.log(`❌ Δεν βρέθηκε αρχείο: ${cityConfig.file}`);
+        return null;
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Φορτώθηκε: ${cityName} (${data.activities?.length || 0} δραστηριότητες)`);
+      return data;
+      
+    } catch (error) {
+      console.error(`❌ Σφάλμα:`, error);
+      return null;
+    }
+  }
+};
+    function showNoActivitiesMessage(cityName) {
+    const container = document.getElementById('activities-container');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div style="text-align: center; padding: 40px; background: #fff3cd; border-radius: 12px; border: 2px dashed #ffc107; max-width: 600px; margin: 0 auto;">
+            <h3 style="color: #856404;">⚠️ Δεν βρέθηκαν δραστηριότητες</h3>
+            <p>Δεν υπάρχουν διαθέσιμες δραστηριότητες για την πόλη "${cityName}".</p>
+            <p>Μπορείτε να επιστρέψετε στο Βήμα 1 για να επιλέξετε άλλη πόλη.</p>
+            <button onclick="activateStep('step-destination')" 
+                    style="padding: 10px 20px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px;">
+                Επιστροφή στο Βήμα 1
+            </button>
+        </div>
+    `;
+}
 async function goToStep4() {
     console.log(`🚀 goToStep4() για: ${selectedDestinationName}`);
     // 🔍 DEBUG: Τι υπάρχει στα configurations;
@@ -1569,9 +1637,8 @@ async function goToStep4() {
     console.log('🔍 cityConfig για', selectedDestinationName, ':', cityConfig);
     
     activateStep('step-activities');
-    activateStep('step-activities');
-    
-    const step4Section = document.getElementById("step-activities");
+       
+        const step4Section = document.getElementById("step-activities");
     const activityContainer = document.getElementById("activities-container");
     const overallTotalDiv = document.getElementById("overall-total");
     const step5BtnContainer = step4Section.querySelector('.step-5-btn-container');
@@ -1579,40 +1646,31 @@ async function goToStep4() {
     let currentActivities = null;
     let activityTitle = "";
     
-    // 🔄 ΒΗΜΑ 1: ΦΟΡΤΩΣΗ JSON ΠΟΛΕΩΝ ΠΡΙΝ ΑΠΟ ΟΛΟ (Κωνσταντινούπολη, Παρίσι, Πράγα)
+    console.log('🔍 Έλεγχος πόλης:', selectedDestinationName);
+    
+    // 🔄 ΒΗΜΑ 1: ΠΡΩΤΑ ΟΙ JSON ΠΟΛΕΙΣ
     const jsonCities = ["Κωνσταντινούπολη", "Παρίσι", "Πράγα"];
     const isJsonCity = jsonCities.some(city => selectedDestinationName.includes(city));
     
-    if (isJsonCity) {
-        console.log(`📂 Αυτή είναι JSON πόλη: ${selectedDestinationName}`);
+    if (isJsonCity && window.TravelPlannerExtensions) {
+        console.log(`📂 Προσπάθεια φόρτωσης JSON πόλης: ${selectedDestinationName}`);
         
-        // Προσπάθεια φόρτωσης από JSON
         try {
-            const cityConfig = window.EXTRA_CITIES_CONFIG?.[selectedDestinationName];
-            if (cityConfig && cityConfig.file) {
-                console.log(`📥 Φόρτωση από: ${cityConfig.file}`);
-                
-                const response = await fetch(cityConfig.file);
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if (data && data.activities) {
-                        // Αποθήκευση στις global μεταβλητές
-                        window.loadedExtraCityActivities = data.activities;
-                        currentActivities = data.activities;
-                        activityTitle = `Οικογενειακές Δραστηριότητες στην ${selectedDestinationName}`;
-                        
-                        console.log(`✅ Φορτώθηκαν ${currentActivities.length} δραστηριότητες από JSON`);
-                    }
-                }
+            const cityData = await window.TravelPlannerExtensions.checkAndLoadExtraCity(selectedDestinationName);
+            if (cityData && cityData.activities) {
+                currentActivities = cityData.activities;
+                activityTitle = `Οικογενειακές Δραστηριότητες στην ${selectedDestinationName}`;
+                console.log(`✅ Βρέθηκαν ${currentActivities.length} δραστηριότητες από JSON`);
             }
         } catch (error) {
             console.error('❌ Σφάλμα φόρτωσης JSON:', error);
         }
     }
     
-    // 🔄 ΒΗΜΑ 2: ΠΑΛΙΕΣ ΠΟΛΕΙΣ (built-in) - ΜΟΝΟ αν δεν έχουμε βρει από JSON
+    // 🔄 ΒΗΜΑ 2: ΕΝΣΩΜΑΤΩΜΕΝΕΣ ΠΟΛΕΙΣ
     if (!currentActivities) {
+        console.log('🔍 Έλεγχος για ενσωματωμένες πόλεις...');
+        
         if (selectedDestinationName.includes("Βιέννη")) {
             currentActivities = activities;
             activityTitle = "Οικογενειακές Δραστηριότητες στη Βιέννη";
@@ -1629,23 +1687,36 @@ async function goToStep4() {
             currentActivities = activitiesMadrid;
             activityTitle = "Οικογενειακές Δραστηριότητες στη Μαδρίτη";
         }
+        
+        if (currentActivities) {
+            console.log(`✅ Βρέθηκαν ${currentActivities.length} ενσωματωμένες δραστηριότητες`);
+        }
     }
     
-    // 🔄 ΒΗΜΑ 3: ΧΡΗΣΗ TravelDataManager για ΜΕΤΑΤΡΟΠΗ
+    // 🔄 ΒΗΜΑ 3: ΜΕΤΑΤΡΟΠΗ ΣΕ UNIFIED FORMAT
     if (currentActivities && currentActivities.length > 0 && window.UnifiedAgeManager) {
-        console.log(`🔄 Μετατροπή ${currentActivities.length} δραστηριοτήτων σε unified format...`);
+        console.log(`🔄 Μετατροπή ${currentActivities.length} δραστηριοτήτων...`);
         
-        // Μετατροπή ΚΑΘΕ δραστηριότητας
-        const convertedActivities = currentActivities.map(activity => {
-            return window.UnifiedAgeManager.convertActivity(activity);
-        });
-        
-        currentActivities = convertedActivities;
-        console.log('✅ Μετατροπή ολοκληρώθηκε');
+        try {
+            const convertedActivities = currentActivities.map(activity => {
+                return window.UnifiedAgeManager.convertActivity(activity);
+            });
+            
+            currentActivities = convertedActivities;
+            console.log('✅ Μετατροπή ολοκληρώθηκε');
+            
+            // ΔΕΙΞΕ ΤΙΣ ΤΙΜΕΣ ΓΙΑ DEBUG
+            if (currentActivities.length > 0) {
+                console.log('💰 Δείγμα τιμών μετά τη μετατροπή:', currentActivities[0].prices);
+            }
+        } catch (error) {
+            console.error('❌ Σφάλμα μετατροπής:', error);
+        }
     }
     
     // 🔄 ΒΗΜΑ 4: ΕΜΦΑΝΙΣΗ
     if (currentActivities && currentActivities.length > 0) {
+        console.log(`🎯 Δημιουργία καρτών για ${currentActivities.length} δραστηριότητες`);
         createActivityCards(currentActivities);
         
         step4Section.querySelector('h1').innerText = activityTitle;
@@ -1653,12 +1724,11 @@ async function goToStep4() {
         overallTotalDiv.style.display = 'block';
         step5BtnContainer.style.display = 'block';
         
-        // Αποθήκευση για μελλοντική χρήση
         window.currentDisplayedActivities = currentActivities;
-        
         calculateAllCosts(currentActivities);
         
     } else {
+        console.log('❌ Δεν βρέθηκαν δραστηριότητες για:', selectedDestinationName);
         showNoActivitiesMessage(selectedDestinationName);
     }
     
@@ -4414,58 +4484,7 @@ function showCustomPointForm(lat, lng, suggestedName = '') {
 
 // ==================== 👆 ΜΕΧΡΙ ΕΔΩ 👆 ====================
 
-// ==================== ΠΡΟΣΩΡΙΝΟΣ ΚΩΔΙΚΑΣ ΓΙΑ ΝΕΕΣ ΠΟΛΕΙΣ ====================
-const EXTRA_CITIES_CONFIG = {
-    "Κωνσταντινούπολη": {  // 👈 ΠΡΟΣΘΕΣΕ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
-    file: "istanbul.json", // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
-    enabled: true,        // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
-    emoji: "🕌"           // 👈 ΚΑΙ ΑΥΤΗ ΤΗ ΓΡΑΜΜΗ
-  },                      // 👈 ΚΑΙ ΑΥΤΟ ΤΟ ΚΟΜΜΑ
-  "Παρίσι": {
-    file: "paris.json",
-    enabled: true,
-    emoji: "🗼"
-  },
-    "Πράγα": {  // 👈 ΠΡΟΣΘΗΚΗ ΤΗΣ ΠΡΑΓΑΣ!
-    file: "prague.json",
-    enabled: true,
-    emoji: "🏰"
-  },
-  "Ρώμη": {
-    file: "data/rome.json", 
-    enabled: true,
-    emoji: "🍕"
-  }
-};
-window.TravelPlannerExtensions = {
-  checkAndLoadExtraCity: async function(cityName) {
-    console.log(`🔍 Έλεγχος για εξωτερική πόλη: ${cityName}`);
-    
-    const cityConfig = EXTRA_CITIES_CONFIG[cityName];
-    if (!cityConfig || !cityConfig.enabled) {
-      console.log(`❌ Η πόλη ${cityName} δεν είναι διαθέσιμη`);
-      return null;
-    }
-    
-    try {
-      console.log(`📥 Φόρτωση από: ${cityConfig.file}`);
-      const response = await fetch(cityConfig.file);
-      
-      if (!response.ok) {
-        console.log(`❌ Δεν βρέθηκε αρχείο: ${cityConfig.file}`);
-        return null;
-      }
-      
-      const data = await response.json();
-      console.log(`✅ Φορτώθηκε: ${cityName} (${data.activities?.length || 0} δραστηριότητες)`);
-      return data;
-      
-    } catch (error) {
-      console.error(`❌ Σφάλμα:`, error);
-      return null;
-    }
-  }
-};
+
 </script>
 
 <script src="unified-age-manager.js"></script>
