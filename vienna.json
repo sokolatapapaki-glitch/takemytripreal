@@ -1,0 +1,24 @@
+{
+  "city": "Βιέννη",
+  "pricing_model": "per_age",
+  "activities": [
+    {
+      "name": "Palace Ticket - Schönbrunn Palace",
+      "desc": "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide.",
+      "prices": {"0-2":0,"3-5":0,"6-14":28,"15-19":31.5,"18+":38},
+      "lat": 48.1845,
+      "lng": 16.3122,
+      "restaurant": "Café Residenz",
+      "website": "https://www.schoenbrunn.at/en/"
+    },
+    {
+      "name": "State Apartments / Guided Tour Maria Theresia",
+      "desc": "Σύντομη ξενάγηση ή θεματική ξενάγηση μεγαλύτερης διάρκειας.",
+      "prices": {"0-2":0,"3-5":0,"6-14":19,"15-19":29,"18+":39},
+      "lat": 48.1846,
+      "lng": 16.3123,
+      "restaurant": "Figlmüller",
+      "website": "https://www.schoenbrunn.at/en/"
+    }
+  ]
+}
