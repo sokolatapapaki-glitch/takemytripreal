@@ -3440,10 +3440,11 @@ const activitiesMadrid = [
 function calculateSmartCombos() {
     let currentActivities = null;
    
-    // 1. ΠΡΩΤΑ: Έλεγχος για πόλεις από JSON (Κωνσταντινούπολη, Παρίσι, Πράγα)
+    // 1. ΠΡΩΤΑ: Έλεγχος για πόλεις από JSON (Κωνσταντινούπολη, Παρίσι, Πράγα, Λονδίνο)
     if ((selectedDestinationName.includes("Κωνσταντινούπολη") || 
          selectedDestinationName.includes("Παρίσι") || 
-         selectedDestinationName.includes("Πράγα")) &&
+         selectedDestinationName.includes("Πράγα") ||
+         selectedDestinationName.includes("Λονδίνο")) &&  // <-- ΠΡΟΣΘΗΚΗ ΕΔΩ
         window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
         
         console.log("🎯 Χρήση δραστηριοτήτων από JSON για:", selectedDestinationName);
@@ -3704,11 +3705,12 @@ function findAvailableCombos(allActivities, selectedActivities) {
             });
         }
     }
-       // Για Κωνσταντινούπολη: Combo για μουσεία
-           if (selectedDestinationName.includes("Κωνσταντινούπολη")) {
+   
+    // Για Κωνσταντινούπολη: Combo για μουσεία
+    if (selectedDestinationName.includes("Κωνσταντινούπολη")) {
         console.log("🕌 Αναζήτηση combos για Κωνσταντινούπολη");
         
-        // Combo 1: Αγία Σοφία + Τοπ Καπί (από το json)
+        // Combo 1: Αγία Σοφία + Τοπ Καπί
         const hasHagiaSophia = selectedActivities.some(act =>
             act.name && act.name.includes("Αγία Σοφία")
         );
@@ -3722,8 +3724,8 @@ function findAvailableCombos(allActivities, selectedActivities) {
                 name: "🎟️ Combo: Αγία Σοφία + Τοπ Καπί",
                 description: "Συνδυαστικό εισιτήριο για τα 2 κύρια αξιοθέατα",
                 activities: ["Αγία Σοφία", "Τοπ Καπί"],
-                regularPrice: 90,  // 30€ + 60€ = 90€
-                comboPrice: 75,    // από το json
+                regularPrice: 90,
+                comboPrice: 75,
                 saving: 15,
                 note: "Εξοικονόμηση 15€"
             });
@@ -3743,8 +3745,8 @@ function findAvailableCombos(allActivities, selectedActivities) {
                 name: "💧 Combo: Μπλε Τζαμί + Βασιλική Κινστέρνα",
                 description: "Τζαμί & υπόγεια δεξαμενή",
                 activities: ["Μπλε Τζαμί", "Βασιλική Κινστέρνα"],
-                regularPrice: 30,  // 0€ + 30€ = 30€ (Μπλε Τζαμί είναι δωρεάν!)
-                comboPrice: 25,    // εκτίμηση
+                regularPrice: 30,
+                comboPrice: 25,
                 saving: 5,
                 note: "Εξοικονόμηση 5€ - Το Μπλε Τζαμί είναι δωρεάν"
             });
@@ -3752,12 +3754,11 @@ function findAvailableCombos(allActivities, selectedActivities) {
         
         // Combo 3: Museum Pass Istanbul (5 Ημερών)
         if (selectedActivities.length >= 3) {
-            // Μετράμε πόσες από τις 5 κύριες δραστηριότητες του pass έχει επιλέξει
             const passActivities = ["Αγία Σοφία", "Τοπ Καπί", "Αρχαιολογικό Μουσείο", 
                                    "Μουσείο Σύγχρονης Τέχνης", "Βασιλική Κινστέρνα"];
             const selectedPassActivities = (selectedActivities || []).filter(act => 
-    passActivities.some(passAct => act.name && act.name.includes(passAct))
-);
+                passActivities.some(passAct => act.name && act.name.includes(passAct))
+            );
             
             if (selectedPassActivities.length >= 3) {
                 console.log("✅ Βρέθηκε Museum Pass (3+ δραστηριότητες)");
@@ -3766,13 +3767,88 @@ function findAvailableCombos(allActivities, selectedActivities) {
                     description: "Πρόσβαση σε 12+ μουσεία και αξιοθέατα για 5 ημέρες",
                     activities: selectedPassActivities.map(a => a.name),
                     regularPrice: calculateRegularCost(selectedPassActivities, categorizeFamilyMembers()),
-                    comboPrice: 85,  // από το json
+                    comboPrice: 85,
                     saving: "Έως 50%",
                     note: "Αγοράστε online: https://www.muze.gov.tr/museum-pass-istanbul"
                 });
             }
         }
     }
+   
+    // ΓΙΑ ΛΟΝΔΙΝΟ: Combo Passes
+    if (selectedDestinationName.includes("Λονδίνο")) {
+        console.log("🇬🇧 Αναζήτηση combos για Λονδίνο");
+        
+        // Έλεγχος για Combo Passes στο JSON
+        const hasCombo2 = selectedActivities.some(act =>
+            act.name.includes("2-Attraction Combo Pass")
+        );
+        const hasCombo3 = selectedActivities.some(act =>
+            act.name.includes("3-Attraction Combo Pass")
+        );
+        const hasCombo5 = selectedActivities.some(act =>
+            act.name.includes("5-Attraction Combo Pass")
+        );
+        
+        // Αν υπάρχει Combo Pass, προσθέτουμε το combo
+        if (hasCombo2) {
+            combos.push({
+                name: "🎟️ 2-Attraction Combo Pass",
+                description: "Επιλογή 2 από: Tower of London, London Eye, Harry Potter Studio",
+                activities: ["Tower of London", "London Eye", "Harry Potter Studio"],
+                regularPrice: 78, // 41+37 = 78€
+                comboPrice: 65,
+                saving: 13,
+                note: "Εξοικονόμηση 13€ για 2 αξιοθέατα"
+            });
+        }
+        
+        if (hasCombo3) {
+            combos.push({
+                name: "🎟️ 3-Attraction Combo Pass",
+                description: "Επιλογή 3 από τα κορυφαία αξιοθέατα του Λονδίνου",
+                activities: ["Tower of London", "London Eye", "Harry Potter Studio", "Zoo"],
+                regularPrice: 120,
+                comboPrice: 95,
+                saving: 25,
+                note: "Εξοικονόμηση 25€ για 3 αξιοθέατα"
+            });
+        }
+        
+        if (hasCombo5) {
+            combos.push({
+                name: "🎟️ 5-Attraction Combo Pass",
+                description: "Πρόσβαση σε 5 αξιοθέατα του Λονδίνου",
+                activities: ["Tower of London", "London Eye", "Harry Potter Studio", "Zoo", "Observatory"],
+                regularPrice: 180,
+                comboPrice: 135,
+                saving: 45,
+                note: "Εξοικονόμηση 45€ για 5 αξιοθέατα"
+            });
+        }
+        
+        // Family Discounts detection
+        selectedActivities.forEach(act => {
+            if (act.note && (
+                act.note.includes("οικογενειακή") || 
+                act.note.includes("οικογένεια") ||
+                act.note.includes("family") ||
+                act.note.includes("2+2") ||
+                act.note.includes("έκπτωση")
+            )) {
+                combos.push({
+                    name: "👨‍👩‍👧‍👦 Οικογενειακή Έκπτωση",
+                    description: `Οικογενειακή προσφορά για: ${act.name}`,
+                    activities: [act.name],
+                    regularPrice: calculateRegularCost([act], categorizeFamilyMembers()),
+                    comboPrice: calculateRegularCost([act], categorizeFamilyMembers()) * 0.8, // 20% έκπτωση
+                    saving: calculateRegularCost([act], categorizeFamilyMembers()) * 0.2,
+                    note: "Εκτίμηση 20% έκπτωσης για οικογένειες - ελέγξτε στον πάροχο"
+                });
+            }
+        });
+    }
+    
     console.log("📊 Σύνολο combos που βρέθηκαν:", combos.length);
     return combos;
 }
