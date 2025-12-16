@@ -4859,7 +4859,23 @@ function calculateSimpleCost(activities, ageGroups) {
         });
     });
     return total;
-}    
+}   
+// ΕΛΕΓΧΟΣ COMBO ΣΥΝΑΡΤΗΣΗΣ
+console.log("=== ΕΛΕΓΧΟΣ COMBO ===");
+console.log("1. Υπάρχει calculateSmartCombos;", typeof calculateSmartCombos);
+console.log("2. Υπάρχει getSelectedActivities;", typeof getSelectedActivities);
+console.log("3. Υπάρχει updateFamilyMembers;", typeof updateFamilyMembers);
+
+// ΔΟΚΙΜΑ ΤΗΣ ΥΠΑΡΧΟΥΣΑΣ ΣΥΝΑΡΤΗΣΗΣ
+setTimeout(() => {
+    console.log("=== ΤΕΣΤ ΛΕΙΤΟΥΡΓΙΑΣ ===");
+    try {
+        calculateSmartCombos();
+        console.log("✅ Η συνάρτηση τρέχει χωρίς σφάλμα");
+    } catch (error) {
+        console.log("❌ ΣΦΑΛΜΑ:", error.message);
+    }
+}, 2000);    
 </script>
 </body>
 </html>
