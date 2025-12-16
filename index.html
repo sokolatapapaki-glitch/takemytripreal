@@ -1560,68 +1560,16 @@ function searchHotels() {
 async function goToStep4() {
     activateStep('step-activities');
     
-        
     const step4Section = document.getElementById("step-activities");
     const activityContainer = document.getElementById("activities-container");
     const overallTotalDiv = document.getElementById("overall-total");
     const step5BtnContainer = step4Section.querySelector('.step-5-btn-container');
 
-    let currentActivities = null;
-    let activityTitle = "";
+    // 1. ΦΟΡΤΩΣΗ ΔΡΑΣΤΗΡΙΟΤΗΤΩΝ ΜΕ ΤΟ ΝΕΟ ΣΥΣΤΗΜΑ
+    const cityData = await loadCityActivities(selectedDestinationName);
     
-    // 1. ΠΑΛΙΕΣ ΠΟΛΕΙΣ (built-in) - ΟΙ ΙΔΙΕΣ
-    if(selectedDestinationName.includes("Βιέννη")){
-        currentActivities = activities;
-        activityTitle = "Οικογενειακές Δραστηριότητες στη Βιέννη";
-    } else if (selectedDestinationName.includes("Βερολίνο")){
-        currentActivities = activitiesBerlin;
-        activityTitle = "Οικογενειακές Δραστηριότητες στο Βερολίνο";
-    } else if (selectedDestinationName.includes("Λισαβόνα")){
-        currentActivities = activitiesLisbon;
-        activityTitle = "Οικογενειακές Δραστηριότητες στη Λισαβόνα";
-    } else if (selectedDestinationName.includes("Βουδαπέστη")){
-        currentActivities = activitiesBudapest;
-        activityTitle = "Οικογενειακές Δραστηριότητες στη Βουδαπέστη";
-    } else if (selectedDestinationName.includes("Μαδρίτη")){
-        currentActivities = activitiesMadrid;
-        activityTitle = "Οικογενειακές Δραστηριότητες στη Μαδρίτη";
-    }
-    
-    // 2. ΝΕΟ ΣΥΣΤΗΜΑ: Έλεγχος για ΕΞΩΤΕΡΙΚΕΣ ΠΟΛΕΙΣ
-    if (!currentActivities && window.TravelPlannerExtensions) {
-        console.log(`🔍 Έλεγχος για εξωτερική πόλη: ${selectedDestinationName}`);
-        
-        try {
-            const extraCityData = await TravelPlannerExtensions.checkAndLoadExtraCity(selectedDestinationName);
-            
-            if (extraCityData && extraCityData.activities && extraCityData.activities.length > 0) {
-                currentActivities = extraCityData.activities;
-                activityTitle = `Οικογενειακές Δραστηριότητες στην ${selectedDestinationName}`;
-                console.log(`✅ Βρέθηκαν ${currentActivities.length} δραστηριότητες από εξωτερικό αρχείο`);
-                 // 👇 ΑΥΤΗ Η ΓΡΑΜΜΗ ΠΡΟΣΘΕΤΕΙ
-    window.loadedExtraCityActivities = extraCityData.activities;
-    console.log("💾 Αποθηκεύτηκαν στη window.loadedExtraCityActivities");
-            }
-        } catch (error) {
-            console.error("❌ Σφάλμα φόρτωσης εξωτερικής πόλης:", error);
-        }
-    }
-    
-    // 3. ΕΑΝ ΒΡΕΘΟΥΝ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ
-    if(currentActivities && currentActivities.length > 0){
-        // Επανάληψη των activity cards
-        createActivityCards(currentActivities);
-        
-        step4Section.querySelector('h1').innerText = activityTitle;
-        activityContainer.style.display = 'grid';
-        overallTotalDiv.style.display = 'block';
-        step5BtnContainer.style.display = 'block';
-        
-        // Υπολογισμός με τα νέα δεδομένα
-        calculateAllCosts(currentActivities);
-        
-    } else {
-        // 4. ΕΑΝ ΔΕΝ ΒΡΕΘΟΥΝ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ
+    if (!cityData || cityData.activities.length === 0) {
+        // ΑΝ ΔΕΝ ΒΡΕΘΟΥΝ ΔΡΑΣΤΗΡΙΟΤΗΤΕΣ
         step4Section.querySelector('h1').innerText = `Βήμα 4: Προορισμός: ${selectedDestinationName || 'Χωρίς Επιλογή'}`;
         activityContainer.style.display = 'block';
         overallTotalDiv.style.display = 'none';
@@ -1640,7 +1588,27 @@ async function goToStep4() {
                 </button>
             </div>
         `;
+        return;
     }
+    
+    // 2. ΕΜΦΑΝΙΣΗ ΤΙΤΛΟΥ
+    step4Section.querySelector('h1').innerText = `Οικογενειακές Δραστηριότητες - ${cityData.name}`;
+    
+    // 3. ΑΠΟΘΗΚΕΥΣΗ ΓΙΑ ΧΡΗΣΗ
+    window.currentCityActivities = cityData.activities;
+    
+    // 4. ΔΗΜΙΟΥΡΓΙΑ ΚΑΡΤΩΝ
+    createActivityCardsNew(cityData.activities);
+    
+    // 5. ΕΝΗΜΕΡΩΣΗ ΟΙΚΟΓΕΝΕΙΑΣ
+    updateFamilyMembers();
+    
+    // 6. ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ
+    calculateAllCostsNew();
+    
+    activityContainer.style.display = 'grid';
+    overallTotalDiv.style.display = 'block';
+    step5BtnContainer.style.display = 'block';
     
     saveToLocalStorage();
 }
@@ -1960,7 +1928,199 @@ function createActivityCards(activityList) {
     containerActivities.appendChild(card);
   });
 }
+// ==================== ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΤΟ ΝΕΟ ΣΥΣΤΗΜΑ ====================
 
+// 1. ΔΗΜΙΟΥΡΓΙΑ ΚΑΡΤΩΝ ΜΕ ΤΟ ΝΕΟ FORMAT
+function createActivityCardsNew(activityList) {
+  const containerActivities = document.getElementById('activities-container');
+  containerActivities.innerHTML = "";
+ 
+  const emojiMap = {
+    "Palace": "🏰", "Zoo": "🐯", "Museum": "🏛️", "Aquarium": "🐠",
+    "Park": "🌳", "Castle": "🏯", "Science": "🔬", "Music": "🎵",
+    "Tower": "🗼", "Theme": "🎡", "History": "📜", "Art": "🎨",
+    "Nature": "🌿", "Adventure": "🧗", "Cruise": "🚢", "Garden": "🌸",
+    "Schonbrunn": "🏰", "Prater": "🎡", "Opera": "🎭", "Danube": "🌉",
+    "Illuseum": "🎭", "Technikmuseum": "⚙️", "Naturkunde": "🦕",
+    "LEGOLAND": "🧱", "Tussauds": "👑", "Fernsehturm": "🗼",
+    "Oceanário": "🐠", "Pavilhão": "🔭", "Belém": "🏰", "Mosteiro": "⛪",
+    "Parliament": "🏛️", "Thermal": "♨️", "Eye": "🎡", "Margaret": "🏝️"
+  };
+ 
+  activityList.forEach((act, index) => {
+    // Βρίσκουμε κατάλληλο emoji
+    let emoji = "📍";
+    for (const [key, value] of Object.entries(emojiMap)) {
+      if (act.name.includes(key)) {
+        emoji = value;
+        break;
+      }
+    }
+   
+    const card = document.createElement('div');
+    card.className = "activity-card";
+    card.id = `activity-new-${index}`;
+    card.innerHTML = `
+      <span class="emoji-icon">${emoji}</span>
+      <span class="star">⭐</span>
+      <div class="activity-info">
+        <h3>${act.name}</h3>
+        <p>${act.description || act.desc || ''}</p>
+        ${act.website ? `<a href="${act.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px;">🔗 Δείτε περισσότερα</a>` : ''}
+        ${act.ageWarning ? `<div style="background: #fff3cd; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #856404;">⚠️ ${act.ageWarning}</div>` : ''}
+        ${act.priceNote ? `<div style="background: #d1ecf1; padding: 5px; border-radius: 6px; margin: 5px 0; font-size: 0.9em; color: #0c5460;">ℹ️ ${act.priceNote}</div>` : ''}
+        <div style="margin-top: 15px;">
+          <table class="activity-table">
+            <tr>
+              <th>0-5</th><th>6-14</th><th>15-17</th><th>18+</th>
+            </tr>
+            <tr>
+              <td>${getPriceForAgeRange(act.prices, 0, 5)}€</td>
+              <td>${getPriceForAgeRange(act.prices, 6, 14)}€</td>
+              <td>${getPriceForAgeRange(act.prices, 15, 17)}€</td>
+              <td>${act.prices.adult || 0}€</td>
+            </tr>
+          </table>
+        </div>
+        <div class="total" id="total-new-${index}">Κόστος: 0 €</div>
+      </div>
+    `;
+   
+    card.addEventListener('click', ()=> {
+      card.classList.toggle('selected');
+      act.selected = !act.selected;
+      calculateAllCostsNew();
+      saveToLocalStorage();
+    });
+    
+    containerActivities.appendChild(card);
+  });
+}
+
+// Βοηθητική: Πάρτι την τιμή για μια ηλικιακή ομάδα
+function getPriceForAgeRange(prices, minAge, maxAge) {
+  if (!prices) return 0;
+  
+  // Ψάχνουμε για οποιαδήποτε τιμή στην ομάδα
+  for (let age = minAge; age <= maxAge; age++) {
+    if (prices[age] !== undefined) {
+      return prices[age];
+    }
+  }
+  
+  // Αν δεν βρέθηκε, δοκιμάζουμε το adult
+  return prices.adult || 0;
+}
+
+// 2. ΝΕΟΣ ΥΠΟΛΟΓΙΣΜΟΣ ΚΟΣΤΟΥΣ
+function calculateAllCostsNew() {
+  if (!window.currentCityActivities || window.currentCityActivities.length === 0) {
+    console.log("⚠️ Δεν υπάρχουν δραστηριότητες φορτωμένες");
+    return;
+  }
+  
+  // Ενημέρωση οικογένειας
+  updateFamilyMembers();
+  
+  let overallTotal = 0;
+  
+  window.currentCityActivities.forEach((act, index) => {
+    const cardElement = document.getElementById(`activity-new-${index}`);
+    const isSelected = cardElement ? cardElement.classList.contains('selected') : false;
+   
+    act.selected = isSelected;
+
+    if(isSelected){
+      let total = 0;
+     
+      // ΑΠΛΟΣ ΥΠΟΛΟΓΙΣΜΟΣ: κάθε ηλικία χωριστά
+      familyMembers.forEach(member => {
+        const age = member.age;
+        let price = 0;
+        
+        // 1. ΕΑΝ ΕΧΕΙ ΑΚΡΙΒΗ ΗΛΙΚΙΑ
+        if (act.prices && act.prices[age] !== undefined) {
+          price = act.prices[age];
+        }
+        // 2. ΕΑΝ ΕΙΝΑΙ ΕΝΗΛΙΚΑΣ
+        else if (age >= 18 && act.prices && act.prices.adult !== undefined) {
+          price = act.prices.adult;
+        }
+        // 3. ΕΑΝ ΕΙΝΑΙ ΠΑΙΔΙ ΚΑΙ ΔΕΝ ΒΡΕΘΗΚΕ
+        else if (age <= 17 && act.prices) {
+          // Ψάξε για την πλησιέστερη χαμηλότερη ηλικία
+          for (let lowerAge = age - 1; lowerAge >= 0; lowerAge--) {
+            if (act.prices[lowerAge] !== undefined) {
+              price = act.prices[lowerAge];
+              break;
+            }
+          }
+          // Αν δεν βρέθηκε, πάρε adult
+          if (price === 0 && act.prices.adult !== undefined) {
+            price = act.prices.adult;
+          }
+        }
+        
+        total += price;
+      });
+      
+      if (document.getElementById(`total-new-${index}`)) {
+        document.getElementById(`total-new-${index}`).innerText = `Κόστος: ${total.toFixed(2)} €`;
+      }
+      overallTotal += total;
+    } else {
+      const totalElement = document.getElementById(`total-new-${index}`);
+      if (totalElement) totalElement.innerText = `Κόστος: 0 €`;
+    }
+  });
+  
+  const overallTotalElement = document.getElementById('overall-total');
+  if (overallTotalElement) {
+    overallTotalElement.innerText = `Συνολικό Κόστους Επιλεγμένων Δραστηριοτήτων: ${overallTotal.toFixed(2)} €`;
+  }
+
+  // Budget Tracker
+  if (selectedBudget > 0) {
+    const budgetStatus = document.getElementById('budget-status') || document.createElement('div');
+    budgetStatus.id = 'budget-status';
+    budgetStatus.style.cssText = `
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 15px;
+        border-radius: 16px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    `;
+   
+    const remaining = selectedBudget - overallTotal;
+    if (remaining >= 0) {
+      budgetStatus.style.background = '#d4edda';
+      budgetStatus.style.color = '#155724';
+      budgetStatus.style.border = '2px solid #28a745';
+      budgetStatus.innerHTML = `
+          💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
+          📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
+          ✅ <strong>Υπόλοιπο:</strong> ${remaining.toFixed(2)}€
+      `;
+    } else {
+      budgetStatus.style.background = '#f8d7da';
+      budgetStatus.style.color = '#721c24';
+      budgetStatus.style.border = '2px solid #dc3545';
+      budgetStatus.innerHTML = `
+          💰 <strong>Προϋπολογισμός:</strong> ${selectedBudget}€ |
+          📊 <strong>Ξοδεύτηκε:</strong> ${overallTotal.toFixed(2)}€ |
+          ❌ <strong>Υπέρβαση:</strong> ${Math.abs(remaining).toFixed(2)}€
+      `;
+    }
+   
+    if (!document.getElementById('budget-status')) {
+      const activitiesContainer = document.getElementById('activities-container-wrapper');
+      activitiesContainer.parentNode.insertBefore(budgetStatus, activitiesContainer);
+    }
+  }
+}
+    
 // ==================== ΤΡΟΠΟΠΟΙΗΜΕΝΗ ΣΥΝΑΡΤΗΣΗ calculateAllCosts ====================
 function calculateAllCosts(activityList = null) {
             if (!activityList) {
@@ -2159,84 +2319,15 @@ function selectQuickCity() {
 }
 
 function getSelectedActivities() {
-    console.log("🔍 Αναζήτηση επιλεγμένων για:", selectedDestinationName);
-    
-    // 1. ΓΙΑ ΚΩΝΣΤΑΝΤΙΝΟΥΠΟΛΗ (από JSON)
-    if (selectedDestinationName.includes("Κωνσταντινούπολη") 
-        && window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
-        console.log("🔍 Έλεγχος για Κωνσταντινούπολη...");
-        const selected = window.loadedExtraCityActivities.filter(act => act.selected === true);
-        if (selected.length > 0) {
-            console.log("✅ Βρέθηκαν επιλεγμένες για Κωνσταντινούπολη:", selected.length);
-            return selected;
-        } else {
-            console.log("⚠️ Δεν βρέθηκαν επιλεγμένες δραστηριότητες για Κωνσταντινούπολη");
-            return [];
-        }
-    }
-    
-    // 2. ΓΙΑ ΠΑΡΙΣΙ & ΠΡΑΓΑ (από JSON)
-    if ((selectedDestinationName.includes("Παρίσι") || selectedDestinationName.includes("Πράγα")) 
-        && window.loadedExtraCityActivities && window.loadedExtraCityActivities.length > 0) {
-        console.log("🔍 Έλεγχος για Παρίσι/Πράγα...");
-        const selected = window.loadedExtraCityActivities.filter(act => act.selected === true);
-        if (selected.length > 0) {
-            console.log("✅ Βρέθηκαν επιλεγμένες:", selected.length);
-            return selected;
-        } else {
-            console.log("⚠️ Δεν βρέθηκαν επιλεγμένες δραστηριότητες");
-            return [];
-        }
-    }
-    
-    // 3. Αν όχι, ψάχνουμε στις παλιές μεταβλητές
-    let currentActivities = null;
-   
-    if (selectedDestinationName.includes("Βιέννη")) {
-        currentActivities = activities;
-    } else if (selectedDestinationName.includes("Βερολίνο")) {
-        currentActivities = activitiesBerlin;
-    } else if (selectedDestinationName.includes("Λισαβόνα")) {
-        currentActivities = activitiesLisbon;
-    } else if (selectedDestinationName.includes("Βουδαπέστη")) {
-        currentActivities = activitiesBudapest;
-    } else if (selectedDestinationName.includes("Μαδρίτη")) {
-        currentActivities = activitiesMadrid;
-    } else {
-        console.log("⚠️ Δεν βρέθηκαν δραστηριότητες για:", selectedDestinationName);
-        return [];
-    }
-   
-    // Επιστροφή ΜΟΝΟ των δραστηριοτήτων που έχουν selected: true
-    const selected = currentActivities.filter(act => act.selected === true);
-    console.log("✅ Επιλεγμένες δραστηριότητες:", selected.length, selected);
-    return selected;
-}
-
-function createDailyProgram(activities, days) {
-    let programHTML = '';
-   
-    const activitiesPerDay = Math.ceil(activities.length / days);
-   
-    for (let day = 1; day <= days; day++) {
-        const startIndex = (day - 1) * activitiesPerDay;
-        const endIndex = startIndex + activitiesPerDay;
-        const dailyActivities = activities.slice(startIndex, endIndex);
-       
-        programHTML += `
-            <div style="margin: 15px 0; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #3eb489;">
-                <h4 style="margin: 0 0 8px 0; color: #3eb489;">📅 Ημέρα ${day}</h4>
-                ${dailyActivities.length > 0 ?
-                    `<ul style="margin: 0; padding-left: 20px;">
-                        ${dailyActivities.map(act => `<li>${act.name}</li>`).join('')}
-                    </ul>` :
-                    '<p style="margin: 0; color: #666;">⏳ Χωρίς δραστηριότητες - Αναψυχή!</p>'
-                }
-            </div>
-        `;
-    }
-   
-    return programHTML;
+  if (!window.currentCityActivities || window.currentCityActivities.length === 0) {
+    console.log("⚠️ Δεν υπάρχουν δραστηριότητες φορτωμένες");
+    return [];
+  }
+  
+  // Επιστρέφουμε ΜΟΝΟ τις επιλεγμένες
+  const selected = window.currentCityActivities.filter(act => act.selected === true);
+  console.log(`✅ Βρέθηκαν ${selected.length} επιλεγμένες δραστηριότητες`);
+  return selected;
 }
 
 function createSmartDailyProgram(activities, days) {
