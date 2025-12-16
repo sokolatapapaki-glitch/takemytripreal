@@ -3907,41 +3907,111 @@ function findAvailableCombos(allActivities, selectedActivities) {
     return combos;
 }
 function calculateComboCosts(selectedActivities, availableCombos, ageGroups, regularCost) {
+    console.log("🧮 ΥΠΟΛΟΓΙΣΜΟΣ COMBO ΚΟΣΤΟΥΣ...");
+    
     const results = {
         regularCost: regularCost,
         bestCombo: null,
         bestSaving: 0,
         allCombos: []
     };
-   
-    availableCombos.forEach(combo => {
-        // Υπολογισμός κανονικού κόστους για τις δραστηριότητες του combo
-        let comboRegularCost = 0;
-       
-        combo.activities.forEach(activityName => {
-            const activity = selectedActivities.find(act => act.name.includes(activityName));
-            if (activity && activity.prices) {
-                Object.keys(ageGroups).forEach(ageCategory => {
-                    const count = ageGroups[ageCategory];
-                    if (count > 0) {
-                        const price = parseFloat(activity.prices[ageCategory]) || 0;
-                        comboRegularCost += price * count;
+    
+    // Βοηθητική συνάρτηση για ακριβή πολλαπλασιασμό
+    function safeMultiply(a, b) {
+        return Math.round((parseFloat(a) * b + Number.EPSILON) * 100) / 100;
+    }
+    
+    // Βοηθητική συνάρτηση: Υπολογισμός κόστους για μια δραστηριότητα
+    function calculateActivityCost(activity) {
+        let activityCost = 0;
+        
+        if (!activity || !activity.prices) return 0;
+        
+        Object.keys(ageGroups).forEach(ageCategory => {
+            const count = ageGroups[ageCategory];
+            if (count > 0) {
+                let price = 0;
+                
+                // ΧΡΗΣΙΜΟΠΟΙΟΥΜΕ ΤΗΝ ΙΔΙΑ ΛΟΓΙΚΗ ΜΕ ΤΗΝ calculateRegularCost()
+                
+                // 1. Άμεση αντιστοίχιση
+                if (activity.prices[ageCategory] !== undefined) {
+                    price = parseFloat(activity.prices[ageCategory]) || 0;
+                }
+                // 2. ΕΙΔΙΚΗ ΛΟΓΙΚΗ ΓΙΑ ΛΟΝΔΙΝΟ
+                else if (selectedDestinationName.includes("Λονδίνο")) {
+                    const ageNum = parseInt(ageCategory.split('-')[0]);
+                    
+                    // ΚΑΝΟΝΕΣ ΜΕΤΑΤΡΟΠΗΣ ΛΟΝΔΙΝΟΥ:
+                    if (ageNum <= 2) {
+                        price = activity.prices["0-2"] || 0;
+                    } else if (ageNum <= 5) {
+                        // ΣΗΜΕΙΩΣΗ: Στο Λονδίνο, 3-5 ετών πληρώνουν 34€ (όχι δωρεάν)
+                        price = activity.prices["3-5"] || 0;
+                    } else if (ageNum <= 14) {
+                        price = activity.prices["6-14"] || 0;
+                    } else if (ageNum <= 19) {
+                        price = activity.prices["15-19"] || 0;
+                    } else {
+                        price = activity.prices["18+"] || 0;
                     }
-                });
+                }
+                
+                activityCost += safeMultiply(price, count);
             }
         });
+        
+        return Math.round((activityCost + Number.EPSILON) * 100) / 100;
+    }
+    
+    availableCombos.forEach((combo, index) => {
+        console.log(`\n🎫 COMBO ${index + 1}: ${combo.name}`);
+        console.log(`   Δραστηριότητες: ${combo.activities.join(', ')}`);
+        
+        let comboRegularCost = 0;
+        let foundActivities = 0;
        
-        // Στρογγυλοποίηση για να αποφύγουμε floating point errors
-        comboRegularCost = Math.round(comboRegularCost * 100) / 100;
+        // Για κάθε δραστηριότητα στο combo
+        combo.activities.forEach(activityName => {
+            // Βρες την πλήρη δραστηριότητα (με ακριβή ταίριασμα)
+            const activity = selectedActivities.find(act => {
+                // ΑΚΡΙΒΕΣ ΤΑΙΡΙΑΣΜΑ (όχι includes!)
+                return act.name === activityName || 
+                       combo.activities.some(comboAct => act.name.includes(comboAct));
+            });
+            
+            if (activity) {
+                foundActivities++;
+                const cost = calculateActivityCost(activity);
+                console.log(`   ✅ ${activity.name}: ${cost}€`);
+                comboRegularCost += cost;
+            } else {
+                console.log(`   ❌ Δεν βρέθηκε: ${activityName}`);
+            }
+        });
+        
+        // Στρογγυλοποίηση
+        comboRegularCost = Math.round((comboRegularCost + Number.EPSILON) * 100) / 100;
         const comboPrice = parseFloat(combo.comboPrice) || 0;
-       
-        // Υπολογισμός εξοικονόμησης
-        const saving = Math.round((comboRegularCost - comboPrice) * 100) / 100;
+        
+        console.log(`   📊 Κανονικό κόστος: ${comboRegularCost}€`);
+        console.log(`   💰 Combo τιμή: ${comboPrice}€`);
+        
+        // Υπολογισμός εξοικονόμησης (μόνο αν βρέθηκαν όλες οι δραστηριότητες)
+        let saving = 0;
+        if (foundActivities === combo.activities.length) {
+            saving = Math.round((comboRegularCost - comboPrice + Number.EPSILON) * 100) / 100;
+            console.log(`   💵 Εξοικονόμηση: ${saving}€`);
+        } else {
+            console.log(`   ⚠️ Μερικές δραστηριότητες λείπουν`);
+            saving = -99999; // Πολύ αρνητική τιμή για να μην επιλεγεί
+        }
        
         // Ενημέρωση του combo object
         combo.regularPrice = comboRegularCost;
         combo.saving = saving > 0 ? saving : 0;
-        combo.totalWithCombo = Math.round((regularCost - saving) * 100) / 100;
+        combo.totalWithCombo = Math.round((regularCost - combo.saving + Number.EPSILON) * 100) / 100;
+        combo.foundActivities = foundActivities;
        
         results.allCombos.push(combo);
        
@@ -3949,10 +4019,13 @@ function calculateComboCosts(selectedActivities, availableCombos, ageGroups, reg
         if (saving > results.bestSaving) {
             results.bestSaving = saving;
             results.bestCombo = combo;
-            results.bestTotal = Math.round((regularCost - saving) * 100) / 100;
+            results.bestTotal = Math.round((regularCost - saving + Number.EPSILON) * 100) / 100;
         }
     });
-   
+    
+    console.log(`\n📊 ΑΡΙΘΜΟΣ COMBOS: ${results.allCombos.length}`);
+    console.log(`🏆 ΚΑΛΥΤΕΡΗ ΕΞΟΙΚΟΝΟΜΗΣΗ: ${results.bestSaving}€`);
+    
     return results;
 }
 
