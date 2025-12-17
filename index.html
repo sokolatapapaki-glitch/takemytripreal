@@ -4649,17 +4649,25 @@ function categorizeFamilyMembers() {
 }
 
 function calculateComboRegularCost(selectedActivities, ageGroups) {
+    console.log("🧮 Υπολογισμός κανονικού κόστους για:", selectedActivities.length, "δραστηριότητες");
+    
     let totalCost = 0;
     
     selectedActivities.forEach((activity) => {
+        console.log(`   🔍 Δραστηριότητα: ${activity.name}`);
+        
         let activityCost = 0;
         
+        // Για κάθε ηλικιακή κατηγορία
         Object.keys(ageGroups).forEach(ageCategory => {
             const numberOfPeople = ageGroups[ageCategory];
             
             if (numberOfPeople > 0) {
+                console.log(`       👥 ${ageCategory}: ${numberOfPeople} άτομα`);
+                
                 let price = 0;
                 
+                // Βρες την τιμή για αυτή την ηλικιακή κατηγορία
                 if (activity.prices) {
                     if (ageCategory === "0-2" && activity.prices["0-2"] !== undefined) {
                         price = activity.prices["0-2"];
@@ -4676,14 +4684,16 @@ function calculateComboRegularCost(selectedActivities, ageGroups) {
                     }
                 }
                 
+                console.log(`       💵 Τιμή ανά άτομο: ${price}€`);
                 activityCost += price * numberOfPeople;
             }
         });
         
+        console.log(`   💰 Κόστος αυτής της δραστηριότητας: ${activityCost}€\n`);
         totalCost += activityCost;
     });
     
-    console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΑΝΟΝΙΚΟ ΚΟΣΤΟΣ: ${totalCost}€`);
+    console.log(`💰 ΣΥΝΟΛΙΚΟ ΚΑΝΟΝΙΚΟ ΚΟΣΤΟΣ (ΓΙΑ ΟΛΕΣ): ${totalCost}€`);
     return totalCost;
 }
 
@@ -4825,18 +4835,25 @@ function findGenericCombos(selectedActivities, ageGroups) {
     );
     
     if (zooActivities.length > 0 && aquariumActivities.length > 0) {
-        const combined = [...zooActivities, ...aquariumActivities];
-        const normalCost = calculateComboRegularCost(combined, ageGroups);
-        const comboCost = Math.round(normalCost * 0.8); // 20% έκπτωση
+        // Βρες 1 zoo και 1 aquarium για combo
+        const zooForCombo = zooActivities[0];
+        const aquariumForCombo = aquariumActivities[0];
+        
+        // Κόστος ΧΩΡΙΣ combo (για ΑΥΤΕΣ τις 2 δραστηριότητες)
+        const normalCostForTheseTwo = calculateComboRegularCost([zooForCombo, aquariumForCombo], ageGroups);
+        
+        // Combo τιμή (20% έκπτωση)
+        const comboCost = Math.round(normalCostForTheseTwo * 0.8);
+        const saving = normalCostForTheseTwo - comboCost;
         
         combos.push({
             name: "🐯 Zoo + Aquarium Combo",
             description: "Συνδυασμός ζωολογικού κήπου και ενυδρείου",
-            activities: combined.map(a => a.name),
-            regularPrice: normalCost,
-            comboPrice: comboCost,
-            saving: normalCost - comboCost,
-            note: "20% έκπτωση στο συνδυασμό"
+            activities: [zooForCombo.name, aquariumForCombo.name],
+            regularPrice: normalCostForTheseTwo, // ΜΟΝΟ για αυτές τις 2
+            comboPrice: comboCost,              // Τιμή combo για αυτές τις 2
+            saving: saving,
+            note: "20% έκπτωση στο συνδυασμό (μόνο για αυτές τις 2 δραστηριότητες)"
         });
     }
     
@@ -4847,17 +4864,24 @@ function findGenericCombos(selectedActivities, ageGroups) {
     );
     
     if (museumActivities.length >= 3) {
-        const normalCost = calculateComboRegularCost(museumActivities, ageGroups);
-        const comboCost = Math.round(normalCost * 0.85); // 15% έκπτωση
+        // Πάρε τα 3 πρώτα μουσεία για combo
+        const museumsForCombo = museumActivities.slice(0, 3);
+        
+        // Κόστος ΧΩΡΙΣ combo (για ΑΥΤΑ τα 3 μουσεία)
+        const normalCostForTheseThree = calculateComboRegularCost(museumsForCombo, ageGroups);
+        
+        // Combo τιμή (15% έκπτωση)
+        const comboCost = Math.round(normalCostForTheseThree * 0.85);
+        const saving = normalCostForTheseThree - comboCost;
         
         combos.push({
-            name: "🏛️ Museum Combo",
-            description: `Εκπτωτικό πακέτο για ${museumActivities.length} μουσεία`,
-            activities: museumActivities.map(a => a.name),
-            regularPrice: normalCost,
-            comboPrice: comboCost,
-            saving: normalCost - comboCost,
-            note: "15% έκπτωση για 3+ μουσεία"
+            name: "🏛️ Museum Combo (3 μουσεία)",
+            description: `Εκπτωτικό πακέτο για 3 μουσεία`,
+            activities: museumsForCombo.map(a => a.name),
+            regularPrice: normalCostForTheseThree, // ΜΟΝΟ για αυτά τα 3
+            comboPrice: comboCost,                // Τιμή combo για αυτά τα 3
+            saving: saving,
+            note: "15% έκπτωση για 3 μουσεία (μόνο για αυτά τα 3)"
         });
     }
     
