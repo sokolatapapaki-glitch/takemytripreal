@@ -3,12 +3,42 @@
   "activities": [
     {
       "name": "Palace Ticket - Schönbrunn Palace",
-      "desc": "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide.",
+      "desc": "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide. Timed entry.",
       "prices": {"0-2":0,"3-5":0,"6-14":28,"15-19":31.5,"18+":38},
       "lat": 48.1845,
       "lng": 16.3122,
-      "restaurant": "Café Residenz",
+      "restaurant": "<a href='https://maps.google.com/?q=Cafe+Residenz+Schönbrunn+Vienna' target='_blank'>Café Residenz</a> - μέσα στο Schönbrunn",
+      "website": "https://www.schoenbrunn.at/en/",
+      "note": "Σχολικές ομάδες (6-18): €18.00"
+    },
+    {
+      "name": "State Apartments / Guided Tour Maria Theresia",
+      "desc": "Σύντομη ξενάγηση ή θεματική ξενάγηση μεγαλύτερης διάρκειας.",
+      "prices": {"0-2":0,"3-5":0,"6-14":19,"15-19":29,"18+":39},
+      "lat": 48.1846,
+      "lng": 16.3123,
+      "restaurant": "<a href='https://maps.google.com/?q=Figlmüller+Vienna' target='_blank'>Figlmüller</a> - διάσημο για schnitzel",
       "website": "https://www.schoenbrunn.at/en/"
+    },
+    {
+      "name": "Sisi Pass (3 αυτοκρατορικά αξιοθέατα)",
+      "desc": "Schönbrunn Palace + Sisi Museum (Hofburg) + Vienna Furniture Museum. Χωρίς timeslot για μουσεία.",
+      "prices": {"0-2":0,"3-5":0,"6-14":37,"15-19":37,"18+":57},
+      "lat": 48.2058,
+      "lng": 16.3698,
+      "restaurant": "<a href='https://maps.google.com/?q=Cafe+Central+Vienna' target='_blank'>Café Central</a> - ιστορικό καφέ",
+      "website": "https://www.schoenbrunn.at/en/",
+      "note": "Εκπτωτικό combo για 3 αξιοθέατα"
+    },
+    {
+      "name": "Winter Pass (χειμερινή περίοδος)",
+      "desc": "Palace Ticket + Zoo + Desert House + Palm House. Ισχύει 3 Nov 2025–26 Mar 2026.",
+      "prices": {"0-2":0,"3-5":0,"6-14":47,"15-19":47,"18+":69},
+      "lat": 48.1847,
+      "lng": 16.3124,
+      "restaurant": "<a href='https://maps.google.com/?q=Schweizerhaus+Vienna' target='_blank'>Schweizerhaus</a> - πέρδικα και μπύρα",
+      "website": "https://www.schoenbrunn.at/en/",
+      "seasonal": true
     }
   ]
 }
