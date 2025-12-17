@@ -3421,9 +3421,13 @@ function categorizeFamilyMembers() {
 }
 
 function displayComboResults(results, regularCost) {
-    // Δημιουργία modal για εμφάνιση αποτελεσμάτων
-       const modal = document.createElement('div');
-    modal.id = 'combo-modal-main';  // Προσθήκη ID για εύκολη εύρεση
+    console.log("📊 Εμφάνιση αποτελεσμάτων combos...");
+    console.log("💰 Regular cost:", regularCost);
+    console.log("🏆 Best combo:", results.bestCombo);
+    console.log("💵 Best saving:", results.bestSaving);
+    
+    const modal = document.createElement('div');
+    modal.id = 'combo-modal-main';
     modal.style.cssText = `
         position: fixed;
         top: 0;
@@ -3435,7 +3439,7 @@ function displayComboResults(results, regularCost) {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-family: 'Comic Neue', Arial, sans-serif;
+        font-family: 'Commic Neue', Arial, sans-serif;
     `;
    
     const modalContent = document.createElement('div');
@@ -3448,37 +3452,66 @@ function displayComboResults(results, regularCost) {
         overflow-y: auto;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     `;
-   
+    
+    // ΥΠΟΛΟΓΙΣΜΟΣ ΣΩΣΤΟΥ ΣΥΝΟΛΙΚΟΥ ΚΟΣΤΟΥΣ
+    const finalTotalCost = regularCost - results.bestSaving;
+    
     let contentHTML = `
         <div style="text-align: center;">
-            <h2 style="color: #9c27b0; margin-top: 0;">💰 Έξυπνος Υπολογισμός Combo</h2>
+            <h2 style="color: #9c27b0; margin-top: 0;">💰 Έξυπνος Υπολογισμός Combos</h2>
             <div style="background: #f3e5f5; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                <h3 style="color: #7b1fa2;">Συνολικό Κόστος Χωρίς Combo: <strong>${regularCost.toFixed(2)} €</strong></h3>
+                <h3 style="color: #7b1fa2;">📊 Συνολικό Κόστος Χωρίς Combos: <strong>${regularCost.toFixed(2)} €</strong></h3>
+                <p style="color: #666;">🏙️ Πόλη: ${selectedDestinationName} | 👨‍👩‍👧‍👦 Μέλη: ${familyMembers.length}</p>
             </div>
     `;
    
     if (results.allCombos.length > 0) {
-        if (results.bestSaving > 0) {
+        if (results.bestSaving > 0 && results.bestCombo) {
             contentHTML += `
                 <div style="background: #e8f5e8; padding: 20px; border-radius: 12px; border: 3px solid #4caf50; margin-bottom: 20px;">
                     <h3 style="color: #2e7d32;">🏆 ΚΑΛΥΤΕΡΗ ΕΠΙΛΟΓΗ</h3>
                     <h4>${results.bestCombo.name}</h4>
                     <p>${results.bestCombo.description}</p>
+                    
+                    <div style="background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <h4 style="color: #1565c0; margin-top: 0;">🧮 ΠΩΣ ΥΠΟΛΟΓΙΖΕΤΑΙ:</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee;">Συνολικό κόστος (7 δραστηριότητες)</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${regularCost.toFixed(2)} €</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee;">Κόστος των 2 δραστηριοτήτων χωριστά</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${results.bestCombo.regularPrice.toFixed(2)} €</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee;">Combo τιμή για τις 2</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right; color: #4caf50; font-weight: bold;">${results.bestCombo.comboPrice} €</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px;"><strong>Εξοικονόμηση</strong></td>
+                                <td style="padding: 8px; text-align: right; color: #4caf50; font-weight: bold;">-${results.bestSaving.toFixed(2)} €</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
                     <div style="display: flex; justify-content: space-around; margin: 15px 0;">
                         <div style="text-align: center;">
-                            <div style="font-size: 24px; color: #f44336; text-decoration: line-through;">${results.bestCombo.regularPrice.toFixed(2)}€</div>
-                            <small>Κανονικό κόστος</small>
+                            <div style="font-size: 24px; color: #f44336; text-decoration: line-through;">${regularCost.toFixed(2)}€</div>
+                            <small>Χωρίς combo</small>
                         </div>
+                        <div style="text-align: center; font-size: 24px;">→</div>
                         <div style="text-align: center;">
-                            <div style="font-size: 28px; color: #4caf50; font-weight: bold;">${results.bestCombo.comboPrice}€</div>
-                            <small>Combo τιμή</small>
+                            <div style="font-size: 28px; color: #4caf50; font-weight: bold;">${finalTotalCost.toFixed(2)}€</div>
+                            <small>Με combo</small>
                         </div>
                     </div>
+                    
                     <div style="background: #4caf50; color: white; padding: 10px; border-radius: 8px; font-size: 22px; font-weight: bold;">
                         💰 Εξοικονόμηση: ${results.bestSaving.toFixed(2)} €
                     </div>
-                    <p style="margin-top: 10px;"><strong>Νέο Συνολικό Κόστος: ${results.bestTotal.toFixed(2)} €</strong></p>
-                    ${results.bestCombo.note ? `<p style="font-size: 0.9em; color: #666;">📝 ${results.bestCombo.note}</p>` : ''}
+                    
+                    ${results.bestCombo.note ? `<p style="margin-top: 10px; font-size: 0.9em; color: #666;">📝 ${results.bestCombo.note}</p>` : ''}
                 </div>
             `;
         }
@@ -3488,22 +3521,39 @@ function displayComboResults(results, regularCost) {
         results.allCombos.forEach((combo, index) => {
             const borderColor = combo.saving > 0 ? '#4caf50' : '#ff9800';
             const bgColor = combo.saving > 0 ? '#f1f8e9' : '#fff3e0';
+            
+            // Υπολογισμός συνολικού κόστους με αυτό το combo
+            const totalWithThisCombo = regularCost - combo.saving;
            
             contentHTML += `
                 <div style="background: ${bgColor}; padding: 15px; border-radius: 10px; border-left: 5px solid ${borderColor}; margin-bottom: 15px;">
                     <h4 style="margin-top: 0; color: #3f51b5;">${combo.name}</h4>
                     <p style="margin: 5px 0;">${combo.description}</p>
-                    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
-                        <div>
-                            <strong>Κανονικό:</strong> ${combo.regularPrice.toFixed(2)}€
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9em; color: #666;">Κόστος 2 δραστηριοτήτων:</div>
+                            <div style="font-size: 18px; color: #f44336; text-decoration: line-through;">${combo.regularPrice.toFixed(2)}€</div>
                         </div>
-                        <div>
-                            <strong>Combo:</strong> ${combo.comboPrice}€
-                        </div>
-                        <div style="color: ${combo.saving > 0 ? '#4caf50' : '#f44336'}; font-weight: bold;">
-                            ${combo.saving > 0 ? '💰 Εξοικονόμηση: ' : '⚠️ Διαφορά: '}${combo.saving.toFixed(2)}€
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9em; color: #666;">Combo τιμή:</div>
+                            <div style="font-size: 18px; color: #4caf50; font-weight: bold;">${combo.comboPrice}€</div>
                         </div>
                     </div>
+                    
+                    <div style="background: ${combo.saving > 0 ? '#e8f5e9' : '#ffebee'}; padding: 8px; border-radius: 6px; margin: 8px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span><strong>Συνολική εξοικονόμηση:</strong></span>
+                            <span style="color: ${combo.saving > 0 ? '#4caf50' : '#f44336'}; font-weight: bold;">
+                                ${combo.saving > 0 ? '💰 ' : '⚠️ '}${combo.saving.toFixed(2)}€
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                            <span>Νέο συνολικό κόστος:</span>
+                            <span><strong>${totalWithThisCombo.toFixed(2)}€</strong></span>
+                        </div>
+                    </div>
+                    
                     ${combo.note ? `<div style="font-size: 0.85em; color: #666; background: rgba(0,0,0,0.05); padding: 5px; border-radius: 4px;">📝 ${combo.note}</div>` : ''}
                 </div>
             `;
@@ -3513,31 +3563,33 @@ function displayComboResults(results, regularCost) {
             <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border: 2px solid #ffc107;">
                 <h3 style="color: #856404;">ℹ️ Δεν βρέθηκαν διαθέσιμα combos</h3>
                 <p>Οι επιλεγμένες σας δραστηριότητες δεν έχουν διαθέσιμα οικονομικά combos.</p>
-                <p>Συμβουλή: Επιλέξτε δραστηριότητες από την ίδια τοποθεσία ή ομάδα για καλύτερες προσφορές.</p>
+                <p>💡 Συμβουλή: Επιλέξτε πολλές δραστηριότητες από την ίδια κατηγορία (π.χ. μουσεία, ζωολογικούς κήπους).</p>
             </div>
         `;
     }
    
-    // Σύνοψη
     contentHTML += `
         <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ccc;">
-            <h4 style="color: #9c27b0;">📊 Σύνοψη:</h4>
-            <ul style="text-align: left; padding-left: 20px;">
-                <li>💰 <strong>Κανονικό κόστος:</strong> ${regularCost.toFixed(2)} €</li>
-                ${results.bestSaving > 0 ?
-                    `<li>🏆 <strong>Με καλύτερο combo:</strong> ${results.bestTotal.toFixed(2)} €</li>
-                     <li>✅ <strong>Συνολική εξοικονόμηση:</strong> ${results.bestSaving.toFixed(2)} €</li>` :
-                    `<li>ℹ️ <strong>Δεν βρέθηκε εξοικονόμηση</strong> με τα τρέχοντα combos</li>`
-                }
-                <li>🎯 <strong>Βρέθηκαν:</strong> ${results.allCombos.length} combos</li>
-            </ul>
+            <h4 style="color: #9c27b0;">📊 ΤΕΛΙΚΗ ΣΥΝΟΨΗ:</h4>
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 10px;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>💰 <strong>Κανονικό κόστος (χωρίς combos):</strong> ${regularCost.toFixed(2)} €</li>
+                    ${results.bestSaving > 0 ?
+                        `<li>🏆 <strong>Με καλύτερο combo (${results.bestCombo?.name}):</strong> ${finalTotalCost.toFixed(2)} €</li>
+                         <li>✅ <strong>Συνολική εξοικονόμηση:</strong> ${results.bestSaving.toFixed(2)} €</li>` :
+                        `<li>ℹ️ <strong>Δεν βρέθηκε εξοικονόμηση</strong></li>`
+                    }
+                    <li>🎯 <strong>Βρέθηκαν:</strong> ${results.allCombos.length} combos</li>
+                    <li>👨‍👩‍👧‍👦 <strong>Μέλη οικογένειας:</strong> ${familyMembers.length} άτομα</li>
+                </ul>
+            </div>
         </div>
        
         <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
             <button onclick="closeComboModal()"
-        style="padding: 12px 25px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
-    Κλείσιμο
-</button>
+                style="padding: 12px 25px; background: #3eb489; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                Κλείσιμο
+            </button>
             ${results.bestSaving > 0 ? `
             <button onclick="applyBestCombo()"
                     style="padding: 12px 25px; background: #9c27b0; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold;">
@@ -3549,7 +3601,6 @@ function displayComboResults(results, regularCost) {
     modalContent.innerHTML = contentHTML;
     modal.appendChild(modalContent);
    
-    // Προσθήκη κουμπιού κλεισίματος
     const closeBtn = document.createElement('button');
     closeBtn.innerHTML = '×';
     closeBtn.style.cssText = `
@@ -3566,12 +3617,14 @@ function displayComboResults(results, regularCost) {
         cursor: pointer;
         z-index: 10001;
     `;
-    closeBtn.onclick = () => modal.remove();
+    closeBtn.onclick = () => {
+        modal.remove();
+        closeBtn.remove();
+    };
    
     document.body.appendChild(modal);
     document.body.appendChild(closeBtn);
 }
-
 function applyBestCombo() {
     alert("ℹ️ Η λειτουργία αυτόματης εφαρμογής του combo βρίσκεται υπό ανάπτυξη.\n\n💡 Σας συνιστούμε να αγοράσετε το combo online για την καλύτερη τιμή!");
    
