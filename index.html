@@ -4494,6 +4494,10 @@ function createActivityCardsNew(activityList) {
     activityList.forEach((act, index) => {
         const card = document.createElement('div');
         card.className = "activity-card";
+        // Εάν η δραστηριότητα είναι επιλεγμένη, πρόσθεσε την κλάση .selected
+if (act.selected === true) {
+    card.classList.add('selected');
+}
         card.id = `activity-${index}`;
         
         card.innerHTML = `
