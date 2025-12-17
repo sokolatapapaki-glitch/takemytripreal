@@ -4517,43 +4517,64 @@ function convertAnyPriceFormatToPerAge(oldPrices) {
   
   const newPrices = {};
   
-  // 1. ΕΛΕΓΧΟΣ ΓΙΑ ΚΑΙΝΟΥΡΓΙΟ FORMAT (αν έχει ήδη per-age)
+  // 1. ΕΛΕΓΧΟΣ ΓΙΑ ΚΑΙΝΟΥΡΓΙΟ FORMAT
   if (oldPrices["0"] !== undefined || oldPrices["adult"] !== undefined) {
     console.log("✅ Ήδη είναι per-age format");
-    return oldPrices; // Επιστροφή ως έχει
+    return oldPrices;
   }
   
-  // 2. ΜΕΤΑΤΡΟΠΗ ΑΠΟ ΟΛΑ ΤΑ ΠΑΛΙΑ FORMATS
+  // 2. ΜΕΤΑΤΡΟΠΗ
   
-  // Α) Format: 0-2, 3-5, 6-14, 15-19, 18+ (Βιέννη, Βερολίνο, κλπ)
+  // 0-2 ετών
   if (oldPrices["0-2"] !== undefined) {
     for (let age = 0; age <= 2; age++) newPrices[age] = oldPrices["0-2"];
   }
+  
+  // 3-5 ετών
   if (oldPrices["3-5"] !== undefined) {
     for (let age = 3; age <= 5; age++) newPrices[age] = oldPrices["3-5"];
   }
+  
+  // 6-14 ετών
   if (oldPrices["6-14"] !== undefined) {
     for (let age = 6; age <= 14; age++) newPrices[age] = oldPrices["6-14"];
   }
+  
+  // 15-19 ετών - ΣΠΟΥΔΑΙΑ ΔΙΟΡΘΩΣΗ!
   if (oldPrices["15-19"] !== undefined) {
-    for (let age = 15; age <= 19; age++) newPrices[age] = oldPrices["15-19"];
+    // 15-17: 31.5€
+    for (let age = 15; age <= 17; age++) {
+        newPrices[age] = oldPrices["15-19"];
+    }
+    // 18-19: adult price (όχι 15-19 price!)
+    if (oldPrices["18+"] !== undefined) {
+        newPrices[18] = oldPrices["18+"];
+        newPrices[19] = oldPrices["18+"];
+    } else {
+        // Αν δεν υπάρχει 18+, χρησιμοποίησε 15-19
+        newPrices[18] = oldPrices["15-19"];
+        newPrices[19] = oldPrices["15-19"];
+    }
   }
+  
+  // Ενήλικες (18+)
   if (oldPrices["18+"] !== undefined) {
     newPrices["adult"] = oldPrices["18+"];
   }
   
-  // Β) Format: 0-6, 7-12, 13-17, 18+ (Κωνσταντινούπολη, Παρίσι, Πράγα)
+  // ΓΙΑ JSON ΠΟΛΕΙΣ (0-6, 7-12, 13-17, 18+)
   if (oldPrices["0-6"] !== undefined) {
     for (let age = 0; age <= 6; age++) {
-      // Μην αντικαταστήσεις αν έχει ήδη τιμή (από άλλο format)
       if (newPrices[age] === undefined) newPrices[age] = oldPrices["0-6"];
     }
   }
+  
   if (oldPrices["7-12"] !== undefined) {
     for (let age = 7; age <= 12; age++) {
       if (newPrices[age] === undefined) newPrices[age] = oldPrices["7-12"];
     }
   }
+  
   if (oldPrices["13-17"] !== undefined) {
     for (let age = 13; age <= 17; age++) {
       if (newPrices[age] === undefined) newPrices[age] = oldPrices["13-17"];
@@ -4565,26 +4586,24 @@ function convertAnyPriceFormatToPerAge(oldPrices) {
     newPrices["adult"] = oldPrices["18+"];
   }
   
-  // 4. ΒΕΛΤΙΩΣΗ: Αν κάποια ηλικία λείπει, χρησιμοποίησε την πλησιέστερη
+  // 4. ΒΕΛΤΙΩΣΗ: Αν κάποια ηλικία λείπει
   for (let age = 0; age <= 17; age++) {
     if (newPrices[age] === undefined) {
-      // Ψάξε για την πλησιέστερη χαμηλότερη ηλικία
       for (let lowerAge = age - 1; lowerAge >= 0; lowerAge--) {
         if (newPrices[lowerAge] !== undefined) {
           newPrices[age] = newPrices[lowerAge];
           break;
         }
       }
-      // Αν δεν βρέθηκε, χρησιμοποίησε adult
       if (newPrices[age] === undefined && newPrices["adult"] !== undefined) {
         newPrices[age] = newPrices["adult"];
       }
     }
   }
   
-  console.log("✅ Νέες τιμές (per-age):", newPrices);
+  console.log("✅ Νέες τιμές (per-age):", JSON.stringify(newPrices));
   return newPrices;
-}   
+}
 // ==================== ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΒΗΜΑ 4 ====================
 
 // 2. Η ΣΥΝΑΡΤΗΣΗ ΠΟΥ ΦΟΡΤΩΝΕΙ ΤΙΣ ΠΟΛΕΙΣ
