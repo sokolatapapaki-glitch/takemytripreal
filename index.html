@@ -3390,11 +3390,11 @@ function calculateSmartCombos() {
     }
    
     // Ενημέρωση των επιλεγμένων δραστηριοτήτων πρώτα
-    updateSelectedActivities(currentActivities);
-   
+currentActivities = updateSelectedActivities(currentActivities); // Νέα
+    
     // Βρίσκουμε τις επιλεγμένες δραστηριότητες
     const selectedActivities = currentActivities.filter(act => act.selected);
-   
+    
     if (selectedActivities.length === 0) {
         alert("⚠️ Δεν έχετε επιλέξει δραστηριότητες! Κάντε κλικ στις κάρτες για να τις επιλέξετε.");
         return;
@@ -3442,6 +3442,9 @@ function updateSelectedActivities(activityList) {
     // Έλεγχος
     const selectedCount = activityList.filter(act => act.selected).length;
     console.log(`📊 Σύνολο επιλεγμένων: ${selectedCount}`);
+    
+    // 🔽 🔽 🔽 ΠΡΟΣΘΗΚΗ: ΕΠΙΣΤΡΟΦΗ ΤΗΣ ΛΙΣΤΑΣ 🔽 🔽 🔽
+    return activityList;
 }
 
 function categorizeFamilyMembers() {
