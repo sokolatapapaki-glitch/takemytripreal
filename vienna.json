@@ -1,57 +1,14 @@
 {
   "city": "Βιέννη",
-  "country": "Αυστρία",
-  "currency": "EUR",
-  "emoji": "🏰",
-  "pricing_model": "per_age",
   "activities": [
     {
-      "id": 1,
       "name": "Palace Ticket - Schönbrunn Palace",
-      "description": "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide. Timed entry.",
-      "category": "castle",
-      "prices": {
-        "0": 0, "1": 0, "2": 0,     // 0-2 ετών: δωρεάν
-        "3": 0, "4": 0, "5": 0,     // 3-5 ετών: δωρεάν
-        "6": 28, "7": 28, "8": 28, "9": 28, "10": 28,
-        "11": 28, "12": 28, "13": 28, "14": 28,  // 6-14 ετών: 28€
-        "15": 31.5, "16": 31.5, "17": 31.5,      // 15-17 ετών: 31.5€
-        "adult": 38
-      },
-      "location": {
-        "lat": 48.1845,
-        "lng": 16.3122
-      },
-      "restaurant": "<a href='https://maps.google.com/?q=Cafe+Residenz+Schönbrunn+Vienna' target='_blank'>Café Residenz</a> - μέσα στο Schönbrunn",
-      "website": "https://www.schoenbrunn.at/en/",
-      "notes": ["Σχολικές ομάδες (6-18): €18.00"],
-      "tags": ["palace", "museum", "family"],
-      "duration_hours": 2.5,
-      "best_time": "morning"
-    },
-    {
-      "id": 2,
-      "name": "State Apartments / Guided Tour Maria Theresia",
-      "description": "Σύντομη ξενάγηση ή θεματική ξενάγηση μεγαλύτερης διάρκειας.",
-      "category": "castle",
-      "prices": {
-        "0": 0, "1": 0, "2": 0,
-        "3": 0, "4": 0, "5": 0,
-        "6": 19, "7": 19, "8": 19, "9": 19, "10": 19,
-        "11": 19, "12": 19, "13": 19, "14": 19,
-        "15": 29, "16": 29, "17": 29,
-        "adult": 39
-      },
-      "location": {
-        "lat": 48.1846,
-        "lng": 16.3123
-      },
-      "restaurant": "<a href='https://maps.google.com/?q=Figlmüller+Vienna' target='_blank'>Figlmüller</a> - διάσημο για schnitzel",
-      "website": "https://www.schoenbrunn.at/en/",
-      "notes": [],
-      "tags": ["guided tour", "history"],
-      "duration_hours": 1.5,
-      "best_time": "any"
+      "desc": "Βασικό εισιτήριο για τα κρατικά/ιδιωτικά διαμερίσματα με audio-guide.",
+      "prices": {"0-2":0,"3-5":0,"6-14":28,"15-19":31.5,"18+":38},
+      "lat": 48.1845,
+      "lng": 16.3122,
+      "restaurant": "Café Residenz",
+      "website": "https://www.schoenbrunn.at/en/"
     }
   ]
 }
