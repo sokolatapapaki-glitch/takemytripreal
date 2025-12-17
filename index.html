@@ -2623,10 +2623,12 @@ function addActivityMarkers(map, activities) {
     if (selectedDestinationName.includes("Βερολίνο")) markerColor = 'blue';
     else if (selectedDestinationName.includes("Λισαβόνα")) markerColor = 'red';
     else if (selectedDestinationName.includes("Βουδαπέστη")) markerColor = 'orange';
+    else if (selectedDestinationName.includes("Λονδίνο")) markerColor = 'green'; // ή όποιο χρώμα θες για Λονδίνο
     else markerColor = 'green';
    
     activities.forEach((activity, index) => {
-        if (activity.lat && activity.lng) {
+        // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
+        if (activity.location && activity.location.lat && activity.location.lng) {
             // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Χρήση custom icon με το σωστό χρώμα
             const customIcon = L.icon({
                 iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
@@ -2635,7 +2637,8 @@ function addActivityMarkers(map, activities) {
                 popupAnchor: [1, -34]
             });
            
-            const marker = L.marker([activity.lat, activity.lng], { icon: customIcon }).addTo(map);
+            // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
+            const marker = L.marker([activity.location.lat, activity.location.lng], { icon: customIcon }).addTo(map);
            
             // Προσθήκη popup
             marker.bindPopup(createPopupContent(activity));
@@ -2644,14 +2647,17 @@ function addActivityMarkers(map, activities) {
             marker.on('click', function() {
                 handleMarkerClick(marker, selectedMarkers, map, activity);
             });
+        } else {
+            console.warn(`⚠️ Δραστηριότητα ${activity.name} δεν έχει συντεταγμένες!`);
         }
     });
    
     // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Εάν υπάρχουν δραστηριότητες, fit bounds
     if (activities.length > 0) {
+        // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
         const latlngs = activities
-            .filter(a => a.lat && a.lng)
-            .map(a => [a.lat, a.lng]);
+            .filter(a => a.location && a.location.lat && a.location.lng)
+            .map(a => [a.location.lat, a.location.lng]);
        
         if (latlngs.length > 0) {
             const bounds = L.latLngBounds(latlngs);
