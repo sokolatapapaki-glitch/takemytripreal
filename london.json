@@ -536,6 +536,63 @@
       "tags": ["museum", "free", "gardens", "view", "anthropology"],
       "duration_hours": 2,
       "best_time": "afternoon"
+    },
+        {
+      "id": 29,
+      "name": "Madame Tussauds London",
+      "description": "Μουσείο κέρινων αγαλμάτων με 150+ διασημότητες και διαδραστικές ζώνες.",
+      "category": "museum",
+      "prices": {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0,
+        "5": 35, "6": 35, "7": 35, "8": 35, "9": 35, "10": 35, "11": 35, "12": 35, "13": 35, "14": 35, "15": 35,
+        "16": 40, "17": 40,
+        "adult": 40
+      },
+      "location": { "lat": 51.5231, "lng": -0.1544 },
+      "restaurant": "<a href='https://maps.google.com/?q=Madame+Tussauds+Cafe' target='_blank'>Madame Tussauds Cafe</a>",
+      "website": "https://www.madametussauds.com/london/",
+      "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
+      "tags": ["wax", "museum", "celebrities"],
+      "duration_hours": 2,
+      "best_time": "afternoon"
+    },
+    {
+      "id": 30,
+      "name": "SEA LIFE London Aquarium",
+      "description": "Ενυδρείο στο South Bank με πάνω από 500 είδη θαλάσσιας ζωής.",
+      "category": "aquarium",
+      "prices": {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0,
+        "5": 25, "6": 25, "7": 25, "8": 25, "9": 25, "10": 25, "11": 25, "12": 25, "13": 25, "14": 25, "15": 25,
+        "16": 30, "17": 30,
+        "adult": 30
+      },
+      "location": { "lat": 51.5023, "lng": -0.1192 },
+      "restaurant": "<a href='https://maps.google.com/?q=SEA+LIFE+London+Cafe' target='_blank'>SEA LIFE Cafe</a>",
+      "website": "https://www.visitsealife.com/london/",
+      "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
+      "tags": ["aquarium", "fish", "family"],
+      "duration_hours": 1.5,
+      "best_time": "any"
+    },
+    {
+      "id": 31,
+      "name": "Shrek's Adventure London",
+      "description": "Διαδραστική περιπέτεια με τους ήρωες του Shrek και τα άλλα παραμύθια.",
+      "category": "attraction",
+      "prices": {
+        "0": 0, "1": 0, "2": 0, "3": 0, "4": 0,
+        "5": 28, "6": 28, "7": 28, "8": 28, "9": 28, "10": 28, "11": 28, "12": 28, "13": 28, "14": 28, "15": 28,
+        "16": 32, "17": 32,
+        "adult": 32
+      },
+      "location": { "lat": 51.5029, "lng": -0.1193 },
+      "restaurant": "<a href='https://maps.google.com/?q=Shreks+Adventure+Cafe' target='_blank'>Shrek's Cafe</a>",
+      "website": "https://www.shreksadventure.com/london/",
+      "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
+      "tags": ["shrek", "interactive", "family", "adventure"],
+      "duration_hours": 1.5,
+      "best_time": "any"
     }
   ]
 }
