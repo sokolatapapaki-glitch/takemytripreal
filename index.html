@@ -2495,14 +2495,20 @@ const selectedActivities = window.currentCityActivities ?
             script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
             script.onload = () => {
                 // Μικρή καθυστέρηση για σίγουρο φόρτωμα
-                setTimeout(() => createSmartMapWithActivities(selectedActivities), 300);
+                setTimeout(() => {
+    const selectedActivitiesForMap = window.currentCityActivities ? 
+        window.currentCityActivities.filter(act => act.selected === true) : [];
+    createSmartMapWithActivities(selectedActivitiesForMap);
+}, 300);
             };
             document.head.appendChild(script);
         } else {
             // Το script είναι ήδη φορτωμένο, απλά περιμένουμε
             setTimeout(() => {
                 if (typeof L !== 'undefined') {
-                    createSmartMapWithActivities(selectedActivities);
+                   const selectedActivitiesForMap = window.currentCityActivities ? 
+    window.currentCityActivities.filter(act => act.selected === true) : [];
+createSmartMapWithActivities(selectedActivitiesForMap);
                 } else {
                     // Αν ακόμα δεν είναι έτοιμο, ξαναπροσπαθούμε
                     setTimeout(() => initializeSmartMap(), 500);
@@ -2511,7 +2517,9 @@ const selectedActivities = window.currentCityActivities ?
         }
     } else {
         // Ο Leaflet είναι ΉΔΗ φορτωμένος - δημιουργούμε χάρτη αμέσως
-        createSmartMapWithActivities(selectedActivities);
+        const selectedActivitiesForMap = window.currentCityActivities ? 
+    window.currentCityActivities.filter(act => act.selected === true) : [];
+createSmartMapWithActivities(selectedActivitiesForMap);
     }
 
 // ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Δημιουργία χάρτη με δραστηριότητες (κοινή για όλες τις πόλεις)
