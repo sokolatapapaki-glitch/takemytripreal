@@ -4583,21 +4583,21 @@ async function loadCityActivities(cityName) {
     console.log("🔍 Φόρτωση δραστηριοτήτων για:", cityName);
     
     try {
-        // ΠΡΩΤΗ ΠΡΟΣΠΑΘΕΙΑ: Από JSON αρχείο
-// Μετατροπή Ελληνικών ονομάτων σε Αγγλικά filenames
-const cityFileMap = {
-    'Βιέννη': 'vienna.json',
-    'Βερολίνο': 'berlin.json',
-    'Λισαβόνα': 'lisbon.json',
-    'Βουδαπέστη': 'budapest.json',
-    'Μαδρίτη': 'madrid.json',
-    'Κωνσταντινούπολη': 'istanbul.json',
-    'Παρίσι': 'paris.json',
-    'Πράγα': 'prague.json'
-};
+        // Μετατροπή Ελληνικών ονομάτων σε Αγγλικά filenames
+        const cityFileMap = {
+            'Βιέννη': 'vienna.json',
+            'Βερολίνο': 'berlin.json',
+            'Λισαβόνα': 'lisbon.json',
+            'Βουδαπέστη': 'budapest.json',
+            'Μαδρίτη': 'madrid.json',
+            'Κωνσταντινούπολη': 'istanbul.json',
+            'Παρίσι': 'paris.json',
+            'Πράγα': 'prague.json'
+        };
 
-const filename = cityFileMap[cityName] || `${cityName.toLowerCase()}.json`;
-const response = await fetch(filename);
+        const filename = cityFileMap[cityName] || `${cityName.toLowerCase()}.json`;
+        const response = await fetch(filename);
+        
         if (response.ok) {
             const cityData = await response.json();
             console.log("✅ Βρέθηκε JSON για:", cityName);
@@ -4657,29 +4657,35 @@ function createActivityCardsNew(activityList) {
             <div class="total" id="total-${index}">Κόστος: 0 €</div>
         `;
         
-       card.addEventListener('click', () => {
-    console.log(`🖱️ Κλικ στην κάρτα ${index}: ${act.name}`);
+        card.addEventListener('click', () => {
+            console.log(`🖱️ Κλικ στην κάρτα ${index}: ${act.name}`);
+            
+            // 1. Αλλαγή visual state της κάρτας
+            card.classList.toggle('selected');
+            
+            // 2. Ενημέρωση του activity object
+            if (act.selected === undefined) act.selected = false;
+            act.selected = !act.selected;
+            
+            console.log(`   ✅ Τώρα είναι selected: ${act.selected}`);
+            
+            // 3. Ενημέρωση του κεντρικού array
+            if (window.currentCityActivities && window.currentCityActivities[index]) {
+                window.currentCityActivities[index].selected = act.selected;
+            }
+            
+            // 4. Υπολογισμός κόστους
+            calculateAllCostsNew();
+            
+            // 5. Αποθήκευση
+            saveToLocalStorage();
+        });
+        
+        container.appendChild(card);
+    });
     
-    // 1. Αλλαγή visual state της κάρτας
-    card.classList.toggle('selected');
-    
-    // 2. Ενημέρωση του activity object
-    if (act.selected === undefined) act.selected = false;
-    act.selected = !act.selected;
-    
-    console.log(`   ✅ Τώρα είναι selected: ${act.selected}`);
-    
-    // 3. Ενημέρωση του κεντρικού array
-    if (window.currentCityActivities && window.currentCityActivities[index]) {
-        window.currentCityActivities[index].selected = act.selected;
-    }
-    
-    // 4. Υπολογισμός κόστους
-    calculateAllCostsNew();
-    
-    // 5. Αποθήκευση
-    saveToLocalStorage();
-});
+    console.log("✅ Δημιουργήθηκαν", activityList.length, "κάρτες");
+}
 
 // 3. Η ΣΥΝΑΡΤΗΣΗ ΠΟΥ ΥΠΟΛΟΓΙΖΕΙ ΤΟ ΚΟΣΤΟΣ
 function calculateAllCostsNew() {
@@ -4698,7 +4704,6 @@ function calculateAllCostsNew() {
         
         const isSelected = card.classList.contains('selected');
         const totalElement = document.getElementById(`total-${index}`);
-
         
         if (isSelected && totalElement) {
             // ΠΡΟΣΩΡΙΝΟΣ ΥΠΟΛΟΓΙΣΜΟΣ: 10€ ανά ενήλικα
@@ -4716,7 +4721,12 @@ function calculateAllCostsNew() {
     if (overallElement) {
         overallElement.textContent = `Συνολικό Κόστος: ${overallTotal} €`;
     }
+    
+    console.log("💰 Συνολικό κόστος:", overallTotal, "€");
 }
+
+// ==================== ΤΕΛΟΣ ΝΕΩΝ ΣΥΝΑΡΤΗΣΕΩΝ ====================
+ console.log("✅ Όλες οι συναρτήσεις φορτώθηκαν σωστά!");   
 </script>
 </body>
 </html>
