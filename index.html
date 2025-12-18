@@ -2750,12 +2750,20 @@ function addActivityMarkers(map, activities) {
 }
 
 function createPopupContent(activity) {
+    // Δέχεται και τις δύο δομές (παλιά και νέα JSON)
+    const name = activity.name || activity.title || 'Δραστηριότητα';
+    const desc = activity.description || activity.desc || '';
+    const restaurant = activity.restaurant || 'Δεν υπάρχει πληροφορία';
+    const website = activity.website || '';
+    
     return `
         <div style="max-width: 280px;">
-            <h4 style="margin: 0 0 8px 0; color: #3eb489;">${activity.name}</h4>
-            <p style="margin: 0 0 8px 0; font-size: 0.9em;">${activity.desc || ''}</p>
-            <div style="margin: 6px 0; font-size: 0.9em;"><strong>🍽️ Κοντινό Εστιατόριο:</strong><br>${activity.restaurant || 'Δεν υπάρχει πληροφορία'}</div>
-            ${activity.website ? `<a href="${activity.website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none;">🔗 Δείτε περισσότερα</a>` : ''}
+            <h4 style="margin: 0 0 8px 0; color: #3eb489;">${name}</h4>
+            <p style="margin: 0 0 8px 0; font-size: 0.9em;">${desc}</p>
+            <div style="margin: 6px 0; font-size: 0.9em;">
+                <strong>🍽️ Κοντινό Εστιατόριο:</strong><br>${restaurant}
+            </div>
+            ${website ? `<a href="${website}" target="_blank" style="color: #3eb489; font-weight: bold; text-decoration: none;">🔗 Δείτε περισσότερα</a>` : ''}
         </div>
     `;
 }
