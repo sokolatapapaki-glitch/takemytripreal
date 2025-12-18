@@ -927,7 +927,8 @@ function updateFamilyMembers() {
     
     // ΑΠΟΘΗΚΕΥΣΗ
     saveToLocalStorage();
-  }  
+    
+    }
 // ** 1. ΔΕΔΟΜΕΝΑ (Τελική λίστα προορισμών)**
 let selectedDestinationName = "";
 let selectedDaysStay = 0;
@@ -1498,7 +1499,12 @@ function createActivityCards(activityList) {
     card.classList.toggle('selected');
     activityList[index].selected = !activityList[index].selected;
    
-    const listToPass = window.currentCityActivities || [];
+    const listToPass = selectedDestinationName.includes("Βιέννη") ? activities :
+                      selectedDestinationName.includes("Βερολίνο") ? activitiesBerlin :
+                      selectedDestinationName.includes("Λισαβόνα") ? activitiesLisbon :
+                      selectedDestinationName.includes("Βουδαπέστη") ? activitiesBudapest :
+                      selectedDestinationName.includes("Μαδρίτη") ? activitiesMadrid : // ΠΡΟΣΘΗΚΗ
+                      activities;
     calculateAllCosts(listToPass);
    
     saveToLocalStorage();
