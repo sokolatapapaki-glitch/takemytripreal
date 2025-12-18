@@ -2713,49 +2713,39 @@ window.currentMap = map;
 
 // ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Προσθήκη πινεζών στον χάρτη
 function addActivityMarkers(map, activities) {
-    console.log(`Προσθήκη ${activities.length} πινεζών στον χάρτη...`);
-   
-    let selectedMarkers = [];
-    let markerColor;
-   
-    // Χρώμα πινέζας ανά πόλη
-    if (selectedDestinationName.includes("Βερολίνο")) markerColor = 'blue';
-    else if (selectedDestinationName.includes("Λισαβόνα")) markerColor = 'red';
-    else if (selectedDestinationName.includes("Βουδαπέστη")) markerColor = 'orange';
-    else markerColor = 'green';
-   
+    console.log(`✅ Προσθήκη ${activities.length} πινεζών`);
+    
+    let markerColor = 'green'; // Πάντα πράσινο
+    
     activities.forEach((activity, index) => {
-        if (activity.lat && activity.lng) {
-            // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Χρήση custom icon με το σωστό χρώμα
+        // ΕΛΕΓΧΟΣ: Τι δομή έχουν τα δεδομένα;
+        if (activity.location && activity.location.lat && activity.location.lng) {
+            const lat = activity.location.lat;
+            const lng = activity.location.lng;
+            
             const customIcon = L.icon({
                 iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
                 iconSize: [25, 41],
                 iconAnchor: [12, 41],
                 popupAnchor: [1, -34]
             });
-           
-            const marker = L.marker([activity.lat, activity.lng], { icon: customIcon }).addTo(map);
-           
-            // Προσθήκη popup
+            
+            const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
             marker.bindPopup(createPopupContent(activity));
-           
-            // Λογική για επιλογή πινεζών και διαδρομές
-            marker.on('click', function() {
-                handleMarkerClick(marker, selectedMarkers, map, activity);
-            });
+            
+        } else {
+            console.warn(`⚠️ Δραστηριότητα ${activity.name} δεν έχει συντεταγμένες!`);
         }
     });
-   
-    // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Εάν υπάρχουν δραστηριότητες, fit bounds
-    if (activities.length > 0) {
-        const latlngs = activities
-            .filter(a => a.lat && a.lng)
-            .map(a => [a.lat, a.lng]);
-       
-        if (latlngs.length > 0) {
-            const bounds = L.latLngBounds(latlngs);
-            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-        }
+    
+    // Fit bounds
+    const latlngs = activities
+        .filter(a => a.location && a.location.lat && a.location.lng)
+        .map(a => [a.location.lat, a.location.lng]);
+    
+    if (latlngs.length > 0) {
+        const bounds = L.latLngBounds(latlngs);
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
     }
 }
 
