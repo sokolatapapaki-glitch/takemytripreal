@@ -1217,7 +1217,7 @@ function goToStep5(){
        
     } else if (selectedDestinationName.includes("Βερολίνο")) {
         if (selectedActivities.length > 0) {
-            const dailyProgram = createBerlinSmartProgram(selectedActivities, selectedDaysStay || 1);
+           const dailyProgram = createSmartDailyProgram(selectedActivities, selectedDaysStay || 1);
             const distancesInfo = calculateDistances(selectedActivities);
            
             summaryDiv.innerHTML = `
