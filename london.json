@@ -16,8 +16,10 @@
         "16": 37, "17": 37,
         "adult": 37
       },
-      "lat": 51.5033,
-      "lng": -0.1195,
+      "location": {
+        "lat": 51.5033,
+        "lng": -0.1195
+      },
       "restaurant": "<a href='https://maps.google.com/?q=London+Eye+Restaurant' target='_blank'>London Eye Restaurant</a>",
       "website": "https://www.londoneye.com/",
       "notes": ["Κράτηση online συχνά φθηνότερη."],
@@ -36,8 +38,10 @@
         "16": 41, "17": 41,
         "adult": 41
       },
-      "lat": 51.5081,
-      "lng": -0.0759,
+      "location": {
+        "lat": 51.5081,
+        "lng": -0.0759
+      },
       "restaurant": "<a href='https://maps.google.com/?q=New+Armouries+Cafe+London' target='_blank'>New Armouries Cafe</a>",
       "website": "https://www.hrp.org.uk/tower-of-london/",
       "notes": ["Δωρεάν για κάτω των 5.", "Κράτηση απαιτείται."],
@@ -56,8 +60,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4967,
-      "lng": -0.1764,
+      "location": {
+        "lat": 51.4967,
+        "lng": -0.1764
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Tangerine+Cafe+Natural+History+Museum' target='_blank'>Tangerine Cafe</a>",
       "website": "https://www.nhm.ac.uk/",
       "notes": ["ΔΩΡΕΑΝ είσοδος. Συνεισφορά προαιρετική."],
@@ -76,8 +82,10 @@
         "16": 63, "17": 63,
         "adult": 63
       },
-      "lat": 51.6900,
-      "lng": -0.4187,
+      "location": {
+        "lat": 51.6900,
+        "lng": -0.4187
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Studio+Tour+Cafe' target='_blank'>Studio Tour Cafe</a>",
       "website": "https://www.wbstudiotour.co.uk/",
       "notes": ["Χωρίς μεταφορά.", "Οικογενειακή έκπτωση 26€ (2 ενήλικες + 2 παιδιά).", "Κράτηση απαραίτητη."],
@@ -96,8 +104,10 @@
         "16": 32, "17": 32,
         "adult": 32
       },
-      "lat": 51.5353,
-      "lng": -0.1534,
+      "location": {
+        "lat": 51.5353,
+        "lng": -0.1534
+      },
       "restaurant": "<a href='https://maps.google.com/?q=London+Zoo+Restaurants' target='_blank'>Βασικό Εστιατόριο</a>",
       "website": "https://www.zsl.org/zsl-london-zoo",
       "notes": ["Τιμές Off-Peak. Peak: Παιδιά 30€, Ενήλικες 37€.", "Κράτηση συνιστάται."],
@@ -116,8 +126,10 @@
         "16": 16, "17": 16,
         "adult": 16
       },
-      "lat": 51.4769,
-      "lng": -0.0005,
+      "location": {
+        "lat": 51.4769,
+        "lng": -0.0005
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Greenwich+Observatory+Cafe' target='_blank'>Observatory Cafe</a>",
       "website": "https://www.rmg.co.uk/royal-observatory",
       "notes": ["Greenwich Park (έξω) είναι δωρεάν.", "Εκτίμηση τιμών."],
@@ -136,8 +148,10 @@
         "16": 14.5, "17": 14.5, "18": 14.5, "19": 14.5, "20": 14.5, "21": 14.5, "22": 14.5, "23": 14.5, "24": 14.5,
         "adult": 21
       },
-      "lat": 51.5291,
-      "lng": -0.1213,
+      "location": {
+        "lat": 51.5291,
+        "lng": -0.1213
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Postal+Museum+Cafe' target='_blank'>Postal Museum Cafe</a>",
       "website": "https://www.postalmuseum.org/",
       "notes": ["⚠️ Η τιμή 'adult' (21€) ισχύει για επισκέπτες 25 ετών και άνω.", "Επισκέπτες 16-24 ετών: 14.5€."],
@@ -156,8 +170,10 @@
         "16": 6, "17": 6,
         "adult": 6
       },
-      "lat": 51.4403,
-      "lng": -0.0618,
+      "location": {
+        "lat": 51.4403,
+        "lng": -0.0618
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Horniman+Museum+Cafe' target='_blank'>Horniman Museum Cafe</a>",
       "website": "https://www.horniman.ac.uk/",
       "notes": ["Μόνο το ενυδρείο είναι πληρωτέο.", "Το μουσείο & οι κήποι είναι ΔΩΡΕΑΝ.", "Εκτίμηση τιμών."],
@@ -176,8 +192,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4975,
-      "lng": -0.1747,
+      "location": {
+        "lat": 51.4975,
+        "lng": -0.1747
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Science+Museum+Cafe' target='_blank'>Science Museum Cafe</a>",
       "website": "https://www.sciencemuseum.org.uk/",
       "notes": ["ΔΩΡΕΑΝ είσοδος. Συνεισφορά προαιρετική."],
@@ -196,8 +214,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5194,
-      "lng": -0.1269,
+      "location": {
+        "lat": 51.5194,
+        "lng": -0.1269
+      },
       "restaurant": "<a href='https://maps.google.com/?q=British+Museum+Great+Court+Restaurant' target='_blank'>Great Court Restaurant</a>",
       "website": "https://www.britishmuseum.org/",
       "notes": ["ΔΩΡΕΑΝ είσοδος. Συνεισφορά προαιρετική."],
@@ -216,8 +236,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5076,
-      "lng": -0.0994,
+      "location": {
+        "lat": 51.5076,
+        "lng": -0.0994
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Tate+Modern+Restaurant' target='_blank'>Tate Modern Restaurant</a>",
       "website": "https://www.tate.org.uk/visit/tate-modern",
       "notes": ["ΔΩΡΕΑΝ είσοδος στις μόνιμες συλλογές.", "Ορισμένες ειδικές εκθέσεις έχουν χρέωση."],
@@ -236,8 +258,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5071,
-      "lng": -0.0236,
+      "location": {
+        "lat": 51.5071,
+        "lng": -0.0236
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Museum+of+London+Docklands+Cafe' target='_blank'>Μουσείο Cafe</a>",
       "website": "https://www.museumoflondon.org.uk/museum-london-docklands",
       "notes": ["ΔΩΡΕΑΝ είσοδος."],
@@ -256,8 +280,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5311,
-      "lng": -0.1566,
+      "location": {
+        "lat": 51.5311,
+        "lng": -0.1566
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Regents+Park+Cafe' target='_blank'>Park Cafe</a>",
       "website": "https://www.royalparks.org.uk/parks/the-regents-park",
       "notes": ["ΔΩΡΕΑΝ είσοδος."],
@@ -276,8 +302,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5115,
-      "lng": -0.0841,
+      "location": {
+        "lat": 51.5115,
+        "lng": -0.0841
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Sky+Garden+Restaurant' target='_blank'>Sky Garden Restaurant</a>",
       "website": "https://skygarden.london/",
       "notes": ["ΔΩΡΕΑΝ, αλλά απαιτείται ΚΡΑΤΗΣΗ online."],
@@ -296,8 +324,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5056,
-      "lng": -0.0912,
+      "location": {
+        "lat": 51.5056,
+        "lng": -0.0912
+      },
       "restaurant": "Πολλά street food stalls μέσα στην αγορά.",
       "website": "https://boroughmarket.org.uk/",
       "notes": ["ΔΩΡΕΑΝ είσοδος.", "Κλειστό Κυριακές."],
@@ -316,8 +346,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4769,
-      "lng": -0.0005,
+      "location": {
+        "lat": 51.4769,
+        "lng": -0.0005
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Greenwich+Park+Pavillion+Cafe' target='_blank'>Pavillion Cafe</a>",
       "website": "https://www.royalparks.org.uk/parks/greenwich-park",
       "notes": ["ΔΩΡΕΑΝ.", "Έξω από το Royal Observatory (που έχει είσοδο)."],
@@ -336,8 +368,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4498,
-      "lng": -0.2802,
+      "location": {
+        "lat": 51.4498,
+        "lng": -0.2802
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Pembroke+Lodge+Richmond+Park' target='_blank'>Pembroke Lodge</a>",
       "website": "https://www.royalparks.org.uk/parks/richmond-park",
       "notes": ["ΔΩΡΕΑΝ.", "Προσοχή στα ελάφια, ιδιαίτερα την περίοδο του ζευγαρώματος."],
@@ -356,8 +390,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5017,
-      "lng": -0.2045,
+      "location": {
+        "lat": 51.5017,
+        "lng": -0.2045
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Holland+Park+Cafe' target='_blank'>Holland Park Cafe</a>",
       "website": "https://www.rbkc.gov.uk/leisure-and-culture/parks/holland-park",
       "notes": ["ΔΩΡΕΑΝ.", "Μέρος του Holland Park."],
@@ -376,8 +412,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5106,
-      "lng": -0.0806,
+      "location": {
+        "lat": 51.5106,
+        "lng": -0.0806
+      },
       "restaurant": "Κοντά στην αγορά Borough και στον Τάμεση.",
       "website": "",
       "notes": ["ΔΩΡΕΑΝ.", "Ιδανικό για μια σύντομη ξεκούραση από την πόλη."],
@@ -396,8 +434,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5232,
-      "lng": -0.1837,
+      "location": {
+        "lat": 51.5232,
+        "lng": -0.1837
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Cafe+Little+Venice' target='_blank'>Πολλά καφέ στις όχθες</a>",
       "website": "",
       "notes": ["ΔΩΡΕΑΝ βόλτα.", "Σημείο αναχώρησης για βόλτες με βαρκάδα προς το Camden."],
@@ -416,8 +456,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4911,
-      "lng": -0.0114,
+      "location": {
+        "lat": 51.4911,
+        "lng": -0.0114
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Mudchute+Farm+Cafe' target='_blank'>Farm Cafe</a>",
       "website": "https://www.mudchute.org/",
       "notes": ["ΔΩΡΕΑΝ.", "Επαφή με φάρμα και χωράφι στην καρδιά του Λονδίνου."],
@@ -436,8 +478,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5244,
-      "lng": -0.1203,
+      "location": {
+        "lat": 51.5244,
+        "lng": -0.1203
+      },
       "restaurant": "",
       "website": "https://www.coramsfields.org/",
       "notes": ["ΔΩΡΕΑΝ.", "Είσοδος ΜΟΝΟ για ενήλικες που συνοδεύουν παιδί/παιδιά."],
@@ -456,8 +500,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5419,
-      "lng": -0.1468,
+      "location": {
+        "lat": 51.5419,
+        "lng": -0.1468
+      },
       "restaurant": "Αμέτρητα street food stalls σε ολόκληρη την αγορά.",
       "website": "https://www.camdenmarket.com/",
       "notes": ["ΔΩΡΕΑΝ είσοδος.", "Πολυσύχναστη, ιδιαίτερα το Σαββατοκύριακο."],
@@ -476,8 +522,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5113,
-      "lng": -0.1304,
+      "location": {
+        "lat": 51.5113,
+        "lng": -0.1304
+      },
       "restaurant": "Δωδεκάδες κινέζικα εστιατόρια για κάθε γούστο.",
       "website": "",
       "notes": ["ΔΩΡΕΑΝ βόλτα.", "Ιδιαίτερα ζωντανή κατά τις βραδινές ώρες και για το Κινέζικο Νέο Έτος."],
@@ -496,8 +544,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5850,
-      "lng": -0.0047,
+      "location": {
+        "lat": 51.5850,
+        "lng": -0.0047
+      },
       "restaurant": "Το Rolling Scones Cafe είναι μέσα στον χώρο.",
       "website": "https://www.godsownjunkyard.co.uk/",
       "notes": ["ΔΩΡΕΑΝ.", "Απαγορεύεται η εμπορική φωτογραφία.", "Καλύτερα να ελέγξετε ώρες λειτουργίας."],
@@ -516,8 +566,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5094,
-      "lng": -0.1874,
+      "location": {
+        "lat": 51.5094,
+        "lng": -0.1874
+      },
       "restaurant": "",
       "website": "https://www.royalparks.org.uk/parks/kensington-gardens/diana-memorial-playground",
       "notes": ["ΔΩΡΕΑΝ.", "Συχνά υπάρχει ουρά για είσοδο.", "Είσοδος ΜΟΝΟ για ενήλικες που συνοδεύουν παιδί/παιδιά."],
@@ -536,8 +588,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.5147,
-      "lng": -0.1405,
+      "location": {
+        "lat": 51.5147,
+        "lng": -0.1405
+      },
       "restaurant": "",
       "website": "https://www.hamleys.com/",
       "notes": ["ΔΩΡΕΑΝ είσοδος.", "Εμπειρία περιήγησης και παιχνιδιού, όχι απλά ψώνια.", "Πολυσύχναστο, ιδιαίτερα το Σαββατοκύριακο."],
@@ -556,8 +610,10 @@
         "16": 0, "17": 0,
         "adult": 0
       },
-      "lat": 51.4403,
-      "lng": -0.0618,
+      "location": {
+        "lat": 51.4403,
+        "lng": -0.0618
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Horniman+Museum+Cafe' target='_blank'>Horniman Museum Cafe</a>",
       "website": "https://www.horniman.ac.uk/",
       "notes": ["ΔΩΡΕΑΝ για τις κύριες συλλογές.", "Το Ενυδρείο είναι ξεχωριστή πληρωμένη είσοδος.", "Οι κήποι είναι επίσης δωρεάν."],
@@ -576,8 +632,10 @@
         "16": 40, "17": 40,
         "adult": 40
       },
-      "lat": 51.5231,
-      "lng": -0.1544,
+      "location": {
+        "lat": 51.5231,
+        "lng": -0.1544
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Madame+Tussauds+Cafe' target='_blank'>Madame Tussauds Cafe</a>",
       "website": "https://www.madametussauds.com/london/",
       "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
@@ -596,8 +654,10 @@
         "16": 30, "17": 30,
         "adult": 30
       },
-      "lat": 51.5023,
-      "lng": -0.1192,
+      "location": {
+        "lat": 51.5023,
+        "lng": -0.1192
+      },
       "restaurant": "<a href='https://maps.google.com/?q=SEA+LIFE+London+Cafe' target='_blank'>SEA LIFE Cafe</a>",
       "website": "https://www.visitsealife.com/london/",
       "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
@@ -616,8 +676,10 @@
         "16": 32, "17": 32,
         "adult": 32
       },
-      "lat": 51.5029,
-      "lng": -0.1193,
+      "location": {
+        "lat": 51.5029,
+        "lng": -0.1193
+      },
       "restaurant": "<a href='https://maps.google.com/?q=Shreks+Adventure+Cafe' target='_blank'>Shrek's Cafe</a>",
       "website": "https://www.shreksadventure.com/london/",
       "notes": ["Συχνά περιλαμβάνεται σε Combo Passes."],
