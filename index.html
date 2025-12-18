@@ -2385,7 +2385,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 function showRouteAndDirections(marker1, marker2) {
-    const map = marker1._map;
+    const map = window.currentMap;
     const latlngs = [marker1.getLatLng(), marker2.getLatLng()];
    
     // Καθαρισμός παλιάς διαδρομής
