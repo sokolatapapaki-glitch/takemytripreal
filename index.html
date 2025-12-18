@@ -2614,51 +2614,65 @@ function createSmartMapWithActivities(activities) {
 
 // ΝΕΑ ΣΥΝΑΡΤΗΣΗ: Προσθήκη πινεζών στον χάρτη
 function addActivityMarkers(map, activities) {
-    console.log(`Προσθήκη ${activities.length} πινεζών στον χάρτη...`);
-   
+    console.log("✅ Προσθήκη πινεζών στον χάρτη για:", activities.length, "δραστηριότητες");
+    
     let selectedMarkers = [];
-    let markerColor;
-   
-    // Χρώμα πινέζας ανά πόλη
-    if (selectedDestinationName.includes("Βερολίνο")) markerColor = 'blue';
-    else if (selectedDestinationName.includes("Λισαβόνα")) markerColor = 'red';
-    else if (selectedDestinationName.includes("Βουδαπέστη")) markerColor = 'orange';
-    else if (selectedDestinationName.includes("Λονδίνο")) markerColor = 'green'; // ή όποιο χρώμα θες για Λονδίνο
-    else markerColor = 'green';
-   
+    let markerColor = 'green';
+    
     activities.forEach((activity, index) => {
-        // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
-        if (activity.location && activity.location.lat && activity.location.lng) {
-            // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Χρήση custom icon με το σωστό χρώμα
-            const customIcon = L.icon({
-                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            });
-           
-            // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
-            const marker = L.marker([activity.location.lat, activity.location.lng], { icon: customIcon }).addTo(map);
-           
-            // Προσθήκη popup
-            marker.bindPopup(createPopupContent(activity));
-           
-            // Λογική για επιλογή πινεζών και διαδρομές
-            marker.on('click', function() {
-                handleMarkerClick(marker, selectedMarkers, map, activity);
-            });
+        // ΕΛΕΓΧΟΣ: Προσαρμογή για διαφορετικές δομές δεδομένων
+        let lat, lng;
+        
+        if (activity.lat && activity.lng) {
+            // Παλιά δομή (Βιέννη, Βερολίνο, κλπ)
+            lat = activity.lat;
+            lng = activity.lng;
+        } else if (activity.location && activity.location.lat && activity.location.lng) {
+            // Νέα δομή (JSON πόλεις όπως Λονδίνο)
+            lat = activity.location.lat;
+            lng = activity.location.lng;
         } else {
             console.warn(`⚠️ Δραστηριότητα ${activity.name} δεν έχει συντεταγμένες!`);
+            return;
         }
+        
+        console.log(`📍 Συντεταγμένες: ${lat}, ${lng} για ${activity.name}`);
+        
+        const customIcon = L.icon({
+            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColor}.png`,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+        
+        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+        
+        // Προσθήκη popup
+        marker.bindPopup(createPopupContent(activity));
+        
+        // Λογική για επιλογή πινεζών και διαδρομές
+        marker.on('click', function() {
+            handleMarkerClick(marker, selectedMarkers, map, activity);
+        });
     });
-   
+    
     // ΒΕΛΤΙΣΤΟΠΟΙΗΣΗ: Εάν υπάρχουν δραστηριότητες, fit bounds
     if (activities.length > 0) {
-        // ΔΙΟΡΘΩΣΗ ΕΔΩ: Χρήση activity.location.lat και activity.location.lng
         const latlngs = activities
-            .filter(a => a.location && a.location.lat && a.location.lng)
-            .map(a => [a.location.lat, a.location.lng]);
-       
+            .filter(a => {
+                // Ελέγχουμε και τις δύο δομές
+                return (a.lat && a.lng) || 
+                       (a.location && a.location.lat && a.location.lng);
+            })
+            .map(a => {
+                // Επιστρέφουμε τις σωστές συντεταγμένες
+                if (a.lat && a.lng) {
+                    return [a.lat, a.lng];
+                } else {
+                    return [a.location.lat, a.location.lng];
+                }
+            });
+        
         if (latlngs.length > 0) {
             const bounds = L.latLngBounds(latlngs);
             map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
@@ -2769,53 +2783,70 @@ function createPopupContent(activity) {
 }
 
 function handleMarkerClick(marker, selectedMarkers, map, activity) {
-    const markerIndex = selectedMarkers.indexOf(marker);
+    console.log("📍 Κλικ σε πινέζα:", activity.name);
+    
+    const markerIndex = selectedMarkers.findIndex(m => m === marker);
+    
     if (markerIndex === -1) {
+        // Προσθήκη στην επιλεγμένη λίστα
         selectedMarkers.push(marker);
+        
         // Αλλαγή χρώματος όταν επιλεγεί
         marker.setIcon(L.icon({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
         }));
+        
+        console.log("✅ Προστέθηκε στις επιλογές. Επιλεγμένα:", selectedMarkers.length);
+        
     } else {
+        // Αφαίρεση από την επιλεγμένη λίστα
         selectedMarkers.splice(markerIndex, 1);
+        
         // Επιστροφή στο αρχικό χρώμα
-        let color;
-        if (selectedDestinationName.includes("Βερολίνο")) color = 'blue';
-        else if (selectedDestinationName.includes("Λισαβόνα")) color = 'red';
-        else if (selectedDestinationName.includes("Βουδαπέστη")) color = 'orange';
-        else color = 'green';
-       
+        let color = 'green'; // Προεπιλεγμένο για Λονδίνο
+        
         marker.setIcon(L.icon({
             iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
             iconSize: [25, 41],
             iconAnchor: [12, 41],
         }));
+        
+        console.log("❌ Αφαιρέθηκε από τις επιλογές. Επιλεγμένα:", selectedMarkers.length);
     }
-   
+    
+    // Αν έχουμε 2 επιλεγμένες πινέζες, δείξε διαδρομή
     if (selectedMarkers.length === 2) {
-        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1]);
+        console.log("🗺️ Προσπάθεια δημιουργίας διαδρομής μεταξύ 2 σημείων");
+        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1], map);
+        
     } else if (selectedMarkers.length > 2) {
+        console.log("⚠️ Περισσότερες από 2 επιλογές - διατήρηση των 2 τελευταίων");
+        
+        // Διατήρηση μόνο των 2 τελευταίων
         const oldMarker = selectedMarkers.shift();
+        
         // Επιστροφή του παλιού marker στο κανονικό χρώμα
-        let color;
-        if (selectedDestinationName.includes("Βερολίνο")) color = 'blue';
-        else if (selectedDestinationName.includes("Λισαβόνα")) color = 'red';
-        else if (selectedDestinationName.includes("Βουδαπέστη")) color = 'orange';
-        else color = 'green';
-       
+        let color = 'green';
         oldMarker.setIcon(L.icon({
             iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
             iconSize: [25, 41],
             iconAnchor: [12, 41],
         }));
-        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1]);
+        
+        // Δείξε διαδρομή για τα 2 τελευταία
+        showRouteAndDirections(selectedMarkers[0], selectedMarkers[1], map);
+        
     } else {
+        console.log("🗑️ Καθαρισμός διαδρομής");
+        // Κλείσιμο διαδρομής αν υπάρχει
         if (window.polyline) {
             map.removeLayer(window.polyline);
             window.polyline = null;
         }
+        
+        // Αφαίρεση οδηγιών
         const directionsDiv = document.getElementById('route-directions');
         if (directionsDiv) directionsDiv.remove();
     }
@@ -2894,57 +2925,257 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return distance.toFixed(1);
 }
 
-function showRouteAndDirections(marker1, marker2) {
-    const map = marker1._map;
+function showRouteAndDirections(marker1, marker2, map) {
+    console.log("📍 Δημιουργία διαδρομής μεταξύ σημείων");
+    
+    if (!marker1 || !marker2 || !map) {
+        console.error("❌ Λείπουν απαραίτητα στοιχεία για διαδρομή");
+        return;
+    }
+    
     const latlngs = [marker1.getLatLng(), marker2.getLatLng()];
-   
+    
+    // Καθαρισμός παλιάς διαδρομής
     if (window.polyline) {
         map.removeLayer(window.polyline);
     }
-   
-    window.polyline = L.polyline(latlngs, {color: 'red', weight: 5}).addTo(map);
-   
+    
+    // Δημιουργία νέας διαδρομής
+    window.polyline = L.polyline(latlngs, {
+        color: 'red',
+        weight: 5,
+        opacity: 0.7,
+        dashArray: '10, 10'
+    }).addTo(map);
+    
+    // Υπολογισμός απόστασης (σε km)
     const distance = map.distance(latlngs[0], latlngs[1]) / 1000;
-   
+    console.log("📏 Απόσταση:", distance.toFixed(2), "km");
+    
+    // Δημιουργία οδηγιών
+    createDirectionsPanel(latlngs[0], latlngs[1], distance, map);
+}
+ // ==================== ΣΥΝΑΡΤΗΣΗ: ΔΗΜΙΟΥΡΓΙΑ ΟΔΗΓΙΩΝ ====================
+
+function createDirectionsPanel(point1, point2, distance, map) {
+    console.log("📝 Δημιουργία οδηγιών για απόσταση:", distance.toFixed(2), "km");
+    
+    // 1. ΚΛΕΙΣΙΜΟ ΠΑΛΙΩΝ ΟΔΗΓΙΩΝ
+    const oldDirections = document.getElementById('route-directions');
+    if (oldDirections) oldDirections.remove();
+    
+    // 2. ΥΠΟΛΟΓΙΣΜΟΣ ΧΡΟΝΩΝ ΜΕΤΑΚΙΝΗΣΗΣ
+    const walkTime = Math.round(distance * 15);     // 4 km/h (περπάτημα)
+    const carTime = Math.round(distance * 3);       // 40 km/h (με κίνηση)
+    const transitTime = Math.round(distance * 5);   // ΜΜΜ (με αναμονή)
+    const bikeTime = Math.round(distance * 8);      // Ποδήλατο
+    
+    // 3. ΕΙΔΙΚΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΛΟΝΔΙΝΟ
+    let londonTip = "";
+    if (selectedDestinationName.includes("Λονδίνο")) {
+        londonTip = "🚇 <strong>Tube Tip:</strong> Χρησιμοποιήστε την Oyster Card ή contactless payment για καλύτερες τιμές!";
+    }
+    
+    // 4. ΔΗΜΙΟΥΡΓΙΑ HTML PANEL
     const directionsDiv = document.createElement('div');
     directionsDiv.id = 'route-directions';
     directionsDiv.style.cssText = `
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 80px;
+        left: 15px;
         background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         z-index: 1000;
-        max-width: 300px;
-        border: 2px solid #3eb489;
+        max-width: 380px;
+        width: 90%;
+        border: 3px solid #3eb489;
+        font-family: 'Comic Neue', Arial, sans-serif;
+        animation: slideIn 0.3s ease-out;
     `;
-   
+    
     directionsDiv.innerHTML = `
-        <h4 style="margin: 0 0 10px 0; color: #3eb489;">🗺️ Οδηγίες Μετακίνησης</h4>
-        <p style="margin: 5px 0;"><strong>📏 Απόσταση:</strong> ${distance.toFixed(1)} km</p>
-        <p style="margin: 5px 0;"><strong>🚶 Περπάτημα:</strong> ~${Math.round(distance * 15)} λεπτά</p>
-        <p style="margin: 5px 0;"><strong>🚗 Αυτοκίνητο:</strong> ~${Math.round(distance * 3)} λεπτά</p>
-        <p style="margin: 5px 0;"><strong>🚇 ΜΜΜ:</strong> ~${Math.round(distance * 5)} λεπτά</p>
-        <div style="margin-top: 10px;">
-            <a href="https://www.google.com/maps/dir/${latlngs[0].lat},${latlngs[0].lng}/${latlngs[1].lat},${latlngs[1].lng}"
-               target="_blank" style="color: #4c7af0; text-decoration: none; font-weight: bold;">
-               📱 Άνοιγμα Google Maps
-            </a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; color: #3eb489; font-size: 1.4em;">🗺️ Οδηγίες Μετακίνησης</h3>
+            <button onclick="closeDirectionsPanel()" 
+                    style="background: #e74c3c; color: white; border: none; border-radius: 50%; 
+                           width: 30px; height: 30px; cursor: pointer; font-size: 16px; font-weight: bold;">
+                ×
+            </button>
         </div>
-        <button onclick="this.parentElement.remove(); if(window.polyline) map.removeLayer(window.polyline);"
-                style="margin-top: 10px; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                ✖️ Κλείσιμο
-        </button>
+        
+        <!-- ΑΠΟΣΤΑΣΗ -->
+        <div style="background: linear-gradient(135deg, #3eb489, #4c7af0); 
+                    padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; color: white;">
+            <div style="font-size: 14px; margin-bottom: 5px;">📏 ΑΠΟΣΤΑΣΗ</div>
+            <div style="font-size: 32px; font-weight: bold; margin-bottom: 5px;">
+                ${distance.toFixed(1)} km
+            </div>
+            <div style="font-size: 12px; opacity: 0.9;">
+                ${distance < 1 ? "Κοντά! 🎯" : distance < 3 ? "Μέτρια απόσταση 👌" : "Μακριά ⚠️"}
+            </div>
+        </div>
+        
+        <!-- ΧΡΟΝΟΙ ΜΕΤΑΚΙΝΗΣΗΣ -->
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin: 0 0 12px 0; color: #2c3e50; font-size: 1.1em;">⏱️ Εκτιμώμενος Χρόνος</h4>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                <div style="padding: 12px; background: #e8f5e9; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 24px;">🚶</div>
+                    <div style="font-size: 16px; font-weight: bold; color: #2e7d32;">${walkTime} λεπτά</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 3px;">Περπάτημα</div>
+                    <div style="font-size: 10px; color: #888; margin-top: 2px;">~${(distance / 4).toFixed(1)} ώρες</div>
+                </div>
+                
+                <div style="padding: 12px; background: #e3f2fd; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 24px;">🚗</div>
+                    <div style="font-size: 16px; font-weight: bold; color: #1565c0;">${carTime} λεπτά</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 3px;">Αυτοκίνητο</div>
+                    <div style="font-size: 10px; color: #888; margin-top: 2px;">+πάρκινγκ</div>
+                </div>
+                
+                <div style="padding: 12px; background: #fff3e0; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 24px;">🚇</div>
+                    <div style="font-size: 16px; font-weight: bold; color: #f57c00;">${transitTime} λεπτά</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 3px;">ΜΜΜ</div>
+                    <div style="font-size: 10px; color: #888; margin-top: 2px;">+αναμονή</div>
+                </div>
+                
+                <div style="padding: 12px; background: #f3e5f5; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 24px;">🚲</div>
+                    <div style="font-size: 16px; font-weight: bold; color: #7b1fa2;">${bikeTime} λεπτά</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 3px;">Ποδήλατο</div>
+                    <div style="font-size: 10px; color: #888; margin-top: 2px;">Santander bikes</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GOOGLE MAPS LINK -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
+            <a href="https://www.google.com/maps/dir/${point1.lat},${point1.lng}/${point2.lat},${point2.lng}"
+               target="_blank"
+               style="display: block; padding: 14px; background: #4c7af0; color: white; 
+                      text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;
+                      transition: all 0.3s; border: 2px solid #4c7af0;">
+                <span style="font-size: 20px; margin-right: 8px;">📱</span>
+                Άνοιγμα Google Maps
+                <span style="font-size: 14px; margin-left: 8px;">↗️</span>
+            </a>
+            <p style="font-size: 12px; color: #666; margin-top: 8px; margin-bottom: 0;">
+                Θα ανοίξει σε νέα καρτέλα με πλήρεις οδηγίες
+            </p>
+        </div>
+        
+        <!-- ΣΥΜΒΟΥΛΕΣ -->
+        ${londonTip ? `
+        <div style="background: #e8f4f8; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #1565c0;">
+            <div style="font-size: 13px; color: #1565c0;">
+                ${londonTip}
+            </div>
+        </div>` : ''}
+        
+        <div style="background: #fff8e1; padding: 12px; border-radius: 8px; border-left: 4px solid #ff9800;">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <span style="font-size: 18px; margin-right: 8px;">💡</span>
+                <strong style="color: #f57c00;">Γρήγορες Οδηγίες</strong>
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li><strong>Χρησιμοποιήστε τα ΜΜΜ</strong> για γρήγορη μετακίνηση στο κέντρο</li>
+                    <li><strong>Περπάτημα</strong> για αποστάσεις κάτω των 2km</li>
+                    <li><strong>Ποδήλατο</strong> με Santander Bikes για ευέλικτη μετακίνηση</li>
+                </ul>
+            </div>
+        </div>
     `;
-   
-    const oldDirections = document.getElementById('route-directions');
-    if (oldDirections) oldDirections.remove();
-   
+    
+    // 5. CSS ANIMATION
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        #route-directions a:hover {
+            background: #3a6bd9 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 122, 240, 0.3);
+        }
+    `;
+    directionsDiv.appendChild(style);
+    
+    // 6. ΠΡΟΣΘΗΚΗ ΣΤΟΝ ΧΑΡΤΗ
     map.getContainer().appendChild(directionsDiv);
+    
+    // 7. CLICK OUTSIDE TO CLOSE
+    setTimeout(() => {
+        const closeOnClickOutside = (e) => {
+            if (directionsDiv && 
+                !directionsDiv.contains(e.target) && 
+                !e.target.closest('.leaflet-marker-icon')) {
+                closeDirectionsPanel();
+                document.removeEventListener('click', closeOnClickOutside);
+            }
+        };
+        
+        // Προσθήκη event listener με μικρή καθυστέρηση
+        setTimeout(() => {
+            document.addEventListener('click', closeOnClickOutside);
+        }, 100);
+    }, 0);
 }
 
+// ==================== ΣΥΝΑΡΤΗΣΗ: ΚΛΕΙΣΙΜΟ ΟΔΗΓΙΩΝ ====================
+
+function closeDirectionsPanel() {
+    console.log("🗑️ Κλείσιμο οδηγιών μετακίνησης");
+    
+    // 1. ΑΦΑΙΡΕΣΗ ΟΔΗΓΙΩΝ
+    const directionsDiv = document.getElementById('route-directions');
+    if (directionsDiv) {
+        directionsDiv.style.animation = 'slideOut 0.2s ease-in';
+        setTimeout(() => directionsDiv.remove(), 200);
+    }
+    
+    // 2. ΚΑΘΑΡΙΣΜΟΣ ΔΙΑΔΡΟΜΗΣ
+    if (window.polyline && window.currentMap) {
+        window.currentMap.removeLayer(window.polyline);
+        window.polyline = null;
+    }
+    
+    // 3. ΚΑΘΑΡΙΣΜΟΣ ΕΠΙΛΕΓΜΕΝΩΝ MARKERS
+    if (window.customMarkers) {
+        window.customMarkers.forEach(markerObj => {
+            const color = 'green'; // Επιστροφή στο κανονικό χρώμα
+            markerObj.marker.setIcon(L.icon({
+                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            }));
+        });
+    }
+    
+    // 4. ΚΑΘΑΡΙΣΜΟΣ GLOBAL SELECTED MARKERS
+    if (window.selectedMarkersForRoute) {
+        window.selectedMarkersForRoute = [];
+    }
+}
+
+// ==================== CSS ΓΙΑ ΚΛΕΙΣΙΜΟ ====================
+// Προσθήκη CSS animation για κλείσιμο
+if (!document.querySelector('#route-directions-style')) {
+    const closeStyle = document.createElement('style');
+    closeStyle.id = 'route-directions-style';
+    closeStyle.textContent = `
+        @keyframes slideOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-20px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(closeStyle);
+}   
 function isMobile() {
     return window.innerWidth <= 640;
 }
