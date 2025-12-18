@@ -413,12 +413,16 @@ table.activity-table th, table.activity-table td { padding: 4px; }
 
 /* 🔥 OPTIMIZED BACKGROUND */
 body {
-    background: #f0f8ff;
+    background-color: #f0f8ff; /* Μόνο χρώμα, όχι εικόνα */
+    background-image: linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.4)), 
+                      url('https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200');
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     image-rendering: -webkit-optimize-contrast;
+    min-height: 100vh;
 }
-
 /* 🔥 ΝΕΑ ΒΕΛΤΙΩΣΗ ΓΙΑ ΚΙΝΗΤΑ */
 @media (max-width: 640px) {
     .sidebar {
