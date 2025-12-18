@@ -1499,12 +1499,7 @@ function createActivityCards(activityList) {
     card.classList.toggle('selected');
     activityList[index].selected = !activityList[index].selected;
    
-    const listToPass = selectedDestinationName.includes("Βιέννη") ? activities :
-                      selectedDestinationName.includes("Βερολίνο") ? activitiesBerlin :
-                      selectedDestinationName.includes("Λισαβόνα") ? activitiesLisbon :
-                      selectedDestinationName.includes("Βουδαπέστη") ? activitiesBudapest :
-                      selectedDestinationName.includes("Μαδρίτη") ? activitiesMadrid : // ΠΡΟΣΘΗΚΗ
-                      activities;
+    const listToPass = window.currentCityActivities || [];
     calculateAllCosts(listToPass);
    
     saveToLocalStorage();
