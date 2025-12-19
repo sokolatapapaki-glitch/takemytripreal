@@ -850,7 +850,6 @@ let familyMembers = [
     { name: "Μητέρα", age: 40 }
 ];
   // ==================== ΓΙΑ ΤΟΝ ΧΑΡΤΗ (ΒΗΜΑ 6) ====================
-let selectedMarkersForRoute = []; // Επιλεγμένες πινέζες για διαδρομή
 let routePolyline = null; // Η γραμμή της διαδρομής  
 
 // ==================== ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΠΡΟΣΘΗΚΗΣ ΜΕΛΩΝ ====================
@@ -982,6 +981,7 @@ function toggleFamily(){
   const type = document.getElementById("travel-type").value;
   document.getElementById("family-options").style.display = (type==="Οικογένεια")?"flex":"none";
 }
+    
 // ==================== 👇 ΠΡΟΣΘΕΣΕ ΑΥΤΗ ΤΗ ΣΥΝΑΡΤΗΣΗ ΑΚΡΙΒΩΣ ΕΔΩ 👇 ====================
 function toggleQuickSelection() {
     const quickSelect = document.getElementById('quick-city-select');
@@ -3535,7 +3535,6 @@ function applyComboToTotal(comboName, savingAmount) {
 
 // =============== ΔΙΑΔΡΟΜΕΣ ΜΕΤΑΞΥ ΠΙΝΕΖΩΝ ===============
 
-let selectedMarkers = []; // Αποθηκεύει τις επιλεγμένες πινέζες
 let currentRoute = null;  // Η τρέχουσα διαδρομή
 
 // 1. ΣΥΝΑΡΤΗΣΗ: ΕΠΕΞΕΡΓΑΣΙΑ ΚΛΙΚ ΣΕ MARKER
