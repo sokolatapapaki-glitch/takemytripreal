@@ -4885,6 +4885,119 @@ function handleMarkerClick(marker, activity) {
         removeRoute();
     }
 }
+ // =============== ΣΥΝΑΡΤΗΣΗ: ΠΛΗΡΟΦΟΡΙΕΣ ΔΙΑΔΡΟΜΗΣ ===============
+function showRouteInfo(marker1, marker2, distanceKm, walkTime, carTime, transitTime) {
+    // Κλείσιμο παλιών πληροφοριών
+    const oldInfo = document.getElementById('route-info-panel');
+    if (oldInfo) oldInfo.remove();
+    
+    // Δημιουργία νέου panel
+    const infoPanel = document.createElement('div');
+    infoPanel.id = 'route-info-panel';
+    infoPanel.style.cssText = `
+        position: absolute;
+        top: 100px;
+        left: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        max-width: 350px;
+        width: 90%;
+        border: 3px solid #3eb489;
+        font-family: 'Comic Neue', Arial, sans-serif;
+    `;
+    
+    infoPanel.innerHTML = `
+        <h3 style="margin-top: 0; color: #3eb489; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            🗺️ Πληροφορίες Μετακίνησης
+        </h3>
+        
+        <div style="margin-bottom: 15px;">
+            <h4 style="margin: 0 0 5px 0; color: #555;">📍 Από:</h4>
+            <p style="margin: 0; font-weight: bold;">${marker1.activityData?.name || 'Σημείο 1'}</p>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <h4 style="margin: 0 0 5px 0; color: #555;">🎯 Προς:</h4>
+            <p style="margin: 0; font-weight: bold;">${marker2.activityData?.name || 'Σημείο 2'}</p>
+        </div>
+        
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <span style="font-size: 28px; color: #ff6b35;">📏</span>
+                <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">${distanceKm} km</div>
+                <div style="font-size: 14px; color: #666;">Απόσταση</div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                <div>
+                    <div style="font-size: 20px;">🚶</div>
+                    <div style="font-weight: bold;">${walkTime} λεπτά</div>
+                    <div style="font-size: 12px; color: #666;">Περπάτημα</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px;">🚗</div>
+                    <div style="font-weight: bold;">${carTime} λεπτά</div>
+                    <div style="font-size: 12px; color: #666;">Αυτοκίνητο</div>
+                </div>
+                <div>
+                    <div style="font-size: 20px;">🚇</div>
+                    <div style="font-weight: bold;">${transitTime} λεπτά</div>
+                    <div style="font-size: 12px; color: #666;">ΜΜΜ</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+            <h4 style="margin: 0 0 8px 0; color: #2e7d32;">🔗 Σύνδεσμοι</h4>
+            <a href="https://www.google.com/maps/dir/${marker1.getLatLng().lat},${marker1.getLatLng().lng}/${marker2.getLatLng().lat},${marker2.getLatLng().lng}"
+               target="_blank"
+               style="display: block; padding: 10px; background: #4c7af0; color: white; 
+                      text-decoration: none; border-radius: 6px; text-align: center; margin-bottom: 8px;">
+                📱 Άνοιγμα Google Maps
+            </a>
+        </div>
+        
+        <button onclick="removeRouteAndInfo()"
+                style="width: 100%; padding: 10px; background: #e74c3c; color: white; 
+                       border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+            ❌ Κλείσιμο Πληροφοριών
+        </button>
+    `;
+    
+    document.getElementById('map-container').appendChild(infoPanel);
+}
+
+// =============== ΣΥΝΑΡΤΗΣΗ: ΑΦΑΙΡΕΣΗ ΔΙΑΔΡΟΜΗΣ ===============
+function removeRoute() {
+    if (routePolyline && window.currentMap) {
+        window.currentMap.removeLayer(routePolyline);
+        routePolyline = null;
+    }
+    
+    const infoPanel = document.getElementById('route-info-panel');
+    if (infoPanel) infoPanel.remove();
+}
+
+// =============== ΣΥΝΑΡΤΗΣΗ: ΑΦΑΙΡΕΣΗ ΔΙΑΔΡΟΜΗΣ ΚΑΙ ΠΛΗΡΟΦΟΡΙΩΝ ===============
+function removeRouteAndInfo() {
+    // Αφαίρεση διαδρομής
+    removeRoute();
+    
+    // Επανάφερε τα markers στο κανονικό χρώμα
+    if (window.selectedMarkersForRoute) {
+        window.selectedMarkersForRoute.forEach(marker => {
+            marker.setIcon(L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            }));
+        });
+        window.selectedMarkersForRoute = [];
+    }
+}   
 </script>
 </body>
 </html>
