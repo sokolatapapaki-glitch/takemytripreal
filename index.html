@@ -1974,6 +1974,13 @@ function preloadLeaflet() {
 }
 
 function initializeSmartMap() {
+       console.log("🗺️ DEBUG: initializeSmartMap καλείται!");
+    
+    const selectedActivities = window.currentCityActivities ? 
+        window.currentCityActivities.filter(act => act.selected === true) : [];
+    
+    console.log("🗺️ DEBUG: Επιλεγμένες δραστηριότητες για χάρτη:", selectedActivities.length);
+     
 const selectedActivities = window.currentCityActivities ? 
     window.currentCityActivities.filter(act => act.selected === true) : [];   const mapContainer = document.getElementById('map-container');
     mapContainer.innerHTML = '<div id="smart-map" style="height: 100%; width: 100%;"></div>';
