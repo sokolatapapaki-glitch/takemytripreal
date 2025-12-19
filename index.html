@@ -2241,7 +2241,6 @@ function addActivityMarkers(map, activities) {
 }
 
 function createPopupContent(activity) {
-    // Δέχεται και τις δύο δομές (παλιά και νέα JSON)
     const name = activity.name || activity.title || 'Δραστηριότητα';
     const desc = activity.description || activity.desc || '';
     const restaurant = activity.restaurant || 'Δεν υπάρχει πληροφορία';
@@ -2330,34 +2329,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distance = R * c;
     return distance.toFixed(1);
-}
-
-function showRouteAndDirections(marker1, marker2) {
-    const map = window.currentMap;
-    const latlngs = [marker1.getLatLng(), marker2.getLatLng()];
-   
-    // Καθαρισμός παλιάς διαδρομής
-    if (window.polyline) {
-        map.removeLayer(window.polyline);
-    }
-   
-    // Δημιουργία νέας διαδρομής
-    window.polyline = L.polyline(latlngs, {
-        color: 'red',
-        weight: 5,
-        opacity: 0.7,
-        dashArray: '10, 10'
-    }).addTo(map);
-   
-    // Υπολογισμός απόστασης (σε km)
-    const distance = map.distance(latlngs[0], latlngs[1]) / 1000;
-   
-    // Κλείσιμο παλιών οδηγιών
-    const oldDirections = document.getElementById('route-directions');
-    if (oldDirections) oldDirections.remove();
-    
-    // Δημιουργία οδηγιών
-    createDirectionsPanel(latlngs[0], latlngs[1], distance, map);
 }
 
 function createDirectionsPanel(point1, point2, distance, map) {
@@ -2542,11 +2513,8 @@ function closeDirectionsPanel() {
         setTimeout(() => directionsDiv.remove(), 200);
     }
     
-    // 2. ΚΑΘΑΡΙΣΜΟΣ ΔΙΑΔΡΟΜΗΣ
-    if (window.polyline && window.currentMap) {
-        window.currentMap.removeLayer(window.polyline);
-        window.polyline = null;
-    }
+    // 2. ΚΑΘΑΡΙΣΜΟΣ ΔΙΑΔΡΟΜΗΣ (ΧΡΗΣΙΜΟΠΟΙΕΙ ΤΟ ΝΕΟ ΣΥΣΤΗΜΑ)
+removeRoute();
     
     // 3. ΚΑΘΑΡΙΣΜΟΣ ΕΠΙΛΕΓΜΕΝΩΝ MARKERS
     if (window.customMarkers) {
