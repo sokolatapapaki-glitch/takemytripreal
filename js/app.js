@@ -2618,21 +2618,27 @@ function setupEventListeners() {
         });
     });
     
-    document.getElementById("days-stay").addEventListener("change", function() {
-        selectedDaysStay = this.value ? parseInt(this.value) : 0;
-        saveToLocalStorage();
-        
-        updateStep1Display();
-        
-        if (document.getElementById('step-summary').classList.contains('active')) {
-            setTimeout(() => goToStep5(), 100);
-        }
-    });
+    const daysStayElement = document.getElementById("days-stay");
+    if (daysStayElement) {
+        daysStayElement.addEventListener("change", function() {
+            selectedDaysStay = this.value ? parseInt(this.value) : 0;
+            saveToLocalStorage();
+            
+            updateStep1Display();
+            
+            if (document.getElementById('step-summary') && document.getElementById('step-summary').classList.contains('active')) {
+                setTimeout(() => goToStep5(), 100);
+            }
+        });
+    }
     
-    document.getElementById("travel-budget").addEventListener("input", function() {
-        selectedBudget = this.value ? parseInt(this.value) : 0;
-        saveToLocalStorage();
-    });
+    const travelBudgetElement = document.getElementById("travel-budget");
+    if (travelBudgetElement) {
+        travelBudgetElement.addEventListener("input", function() {
+            selectedBudget = this.value ? parseInt(this.value) : 0;
+            saveToLocalStorage();
+        });
+    }
     
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('member-name') || e.target.classList.contains('member-age')) {
@@ -2647,20 +2653,28 @@ function setupEventListeners() {
 function init() {
     console.log("🚀 Αρχικοποίηση με ασφαλή init...");
     
-    // Περιμένουμε λίγο παραπάνω για σιγουριά
-    setTimeout(() => {
-        try {
-            setupEventListeners();
-            loadFromLocalStorage();
-            checkMobileView();
-            console.log("✅ Οργανωτής ταξιδιού έτοιμος!");
-        } catch(error) {
-            console.error("❌ Σφάλμα κατά την αρχικοποίηση:", error);
-            // Προσπάθησε ξανά μετά από 500ms
-            setTimeout(init, 500);
-        }
-    }, 300);
+    try {
+        setupEventListeners();
+        loadFromLocalStorage();
+        checkMobileView();
+        console.log("✅ Οργανωτής ταξιδιού έτοιμος!");
+    } catch(error) {
+        console.error("❌ Σφάλμα κατά την αρχικοποίηση:", error);
+        // Προσπάθησε ξανά μετά από 500ms
+        setTimeout(init, 500);
+    }
 }
 
-// Αντί για DOMContentLoaded, περιμένουμε να φορτωθεί ΟΛΗ η σελίδα
-window.addEventListener('load', init);
+// ==================== START APPLICATION ====================
+
+// Περιμένουμε το DOM να φορτωθεί ΠΛΗΡΩΣ πριν εκτελέσουμε
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(init, 100); // Μικρή καθυστέρηση για σιγουριά
+    });
+} else {
+    // Αν το DOM έχει ήδη φορτωθεί, τρέχουμε αμέσως
+    setTimeout(init, 100);
+}
+
+console.log("📜 app.js φορτώθηκε, περιμένει το DOM...");
