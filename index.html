@@ -14,63 +14,465 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <!-- ΟΛΟΚΛΗΡΗ Η HTML ΔΟΜΗ (όπως είχε) -->
+    <!-- ΟΛΟΚΛΗΡΗ Η HTML ΔΟΜΗ -->
     <div class="sidebar">
-        <!-- ... -->
+        <h2>📋 Βήματα</h2>
+        <div class="step active" data-target="step-destination">
+            <h3>1️⃣ Προορισμός</h3>
+            <p>Επιλογή πόλης</p>
+        </div>
+        <div class="step" data-target="step-flight">
+            <h3>2️⃣ Πτήσεις</h3>
+            <p>Αναζήτηση πτήσεων</p>
+        </div>
+        <div class="step" data-target="step-hotel">
+            <h3>3️⃣ Ξενοδοχεία</h3>
+            <p>Εύρεση ξενοδοχείων</p>
+        </div>
+        <div class="step" data-target="step-activities">
+            <h3>4️⃣ Δραστηριότητες</h3>
+            <p>Οικογενειακές δραστηριότητες</p>
+        </div>
+        <div class="step" data-target="step-summary">
+            <h3>5️⃣ Σύνοψη</h3>
+            <p>Πρόγραμμα & Κόστος</p>
+        </div>
+        <div class="step" data-target="step-map">
+            <h3>6️⃣ Χάρτης</h3>
+            <p>Χάρτης & Διαδρομές</p>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: rgba(0,0,0,0.1); border-radius: 10px;">
+            <button onclick="clearAllData()" style="background: #e74c3c; width: 100%;">
+                🗑️ Διαγραφή Όλων
+            </button>
+        </div>
     </div>
 
     <div class="mobile-nav">
-        <!-- ... -->
+        <select id="mobile-step-select" onchange="activateStep(this.value)">
+            <option value="step-destination">1️⃣ Προορισμός</option>
+            <option value="step-flight">2️⃣ Πτήσεις</option>
+            <option value="step-hotel">3️⃣ Ξενοδοχεία</option>
+            <option value="step-activities">4️⃣ Δραστηριότητες</option>
+            <option value="step-summary">5️⃣ Σύνοψη</option>
+            <option value="step-map">6️⃣ Χάρτης</option>
+        </select>
     </div>
 
     <div class="main">
         <!-- Βήμα 1: Προορισμός -->
         <div id="step-destination" class="section active">
-            <!-- ... όλο το HTML για βήμα 1 ... -->
+            <h1>🏙️ Βήμα 1: Επιλογή Προορισμού</h1>
+            
+            <!-- Κουμπί γρήγορης επιλογής -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="toggleQuickSelection()" style="background: #9c27b0;">
+                    🚀 Γρήγορη Επιλογή Πόλης
+                </button>
+            </div>
+            
+            <!-- Γρήγορη επιλογή (κρυφή αρχικά) -->
+            <div id="quick-city-select" style="display: none; background: #f3e5f5; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3>🚀 Επιλέξτε γρήγορα πόλη:</h3>
+                <select id="quick-city" style="width: 100%; padding: 10px; margin: 10px 0;">
+                    <option value="">-- Επιλέξτε πόλη --</option>
+                </select>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="selectQuickCity()" style="flex: 1; background: #9c27b0;">✅ Επιλογή</button>
+                    <button onclick="toggleQuickSelection()" style="flex: 1; background: #6c757d;">❌ Ακύρωση</button>
+                </div>
+            </div>
+            
+            <!-- Φίλτρα -->
+            <div class="destination-filters">
+                <div class="filter-group">
+                    <h3>📍 Απόσταση</h3>
+                    <select id="distance">
+                        <option value="">Οποιαδήποτε απόσταση</option>
+                        <option value="1">1 ώρα</option>
+                        <option value="2">2 ώρες</option>
+                        <option value="3">3 ώρες</option>
+                        <option value="4">4 ώρες</option>
+                        <option value="5">Πάνω από 4 ώρες</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>🌤️ Καιρός</h3>
+                    <select id="weather">
+                        <option value="">Οποιοσδήποτε καιρός</option>
+                        <option value="Πιο ζεστό">Πιο ζεστό</option>
+                        <option value="Ίδια">Ίδια θερμοκρασία</option>
+                        <option value="Πιο κρύο">Πιο κρύο</option>
+                        <option value="Χιόνια">Χιονισμένες περιοχές</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>🎢 Θέμα Πάρκο</h3>
+                    <select id="themeparks">
+                        <option value="">Δεν έχει σημασία</option>
+                        <option value="Ναι">Ναι</option>
+                        <option value="Όχι">Όχι</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>🎄 Χριστουγεννιάτικη Ατμόσφαιρα</h3>
+                    <select id="christmas">
+                        <option value="">Δεν έχει σημασία</option>
+                        <option value="Ναι">Ναι</option>
+                        <option value="Όχι">Όχι</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>🏖️ Τύπος Διακοπών</h3>
+                    <select id="vacation-type">
+                        <option value="">Οποιοσδήποτε τύπος</option>
+                        <option value="Πόλη">Πόλη</option>
+                        <option value="Θάλασσα">Θάλασσα</option>
+                        <option value="Πολιτισμός">Πολιτισμός</option>
+                        <option value="Φυσική Ομορφιά">Φυσική Ομορφιά</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>💰 Επίπεδο Κόστους</h3>
+                    <select id="cost-level">
+                        <option value="">Οποιοδήποτε κόστος</option>
+                        <option value="Οικονομικό">Οικονομικό</option>
+                        <option value="Μέτριο">Μέτριο</option>
+                        <option value="Ακριβό">Ακριβό</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Οικογένεια -->
+            <div class="family-members-container">
+                <h3>👨‍👩‍👧‍👦 Οικογένεια</h3>
+                
+                <select id="travel-type" onchange="toggleFamily()">
+                    <option value="Ζευγάρι">Ζευγάρι</option>
+                    <option value="Οικογένεια">Οικογένεια</option>
+                    <option value="Φίλοι">Φίλοι</option>
+                    <option value="Μόνος">Μόνος</option>
+                </select>
+                
+                <div id="family-options" style="display: none;">
+                    <h4>Προσθέστε μέλη:</h4>
+                    <div class="buttons-container">
+                        <button onclick="addAdultMember()">👨 + Ενήλικας</button>
+                        <button onclick="addChildMember()">🧒 + Παιδί</button>
+                        <button onclick="addBabyMember()">👶 + Μωρό</button>
+                        <button onclick="updateFamilyMembers()">🔄 Ενημέρωση Οικογένειας</button>
+                    </div>
+                    
+                    <div id="family-members-list">
+                        <div class="family-member-input">
+                            <span>👨</span>
+                            <input type="text" placeholder="Όνομα" value="Πατέρας" class="member-name">
+                            <input type="number" placeholder="Ηλικία" value="42" class="member-age" min="18" max="120">
+                            <span>ετών</span>
+                        </div>
+                        <div class="family-member-input">
+                            <span>👩</span>
+                            <input type="text" placeholder="Όνομα" value="Μητέρα" class="member-name">
+                            <input type="number" placeholder="Ηλικία" value="40" class="member-age" min="18" max="120">
+                            <span>ετών</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Προϋπολογισμός & Διάρκεια -->
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0;">
+                <h3>💰 Προϋπολογισμός & Διάρκεια</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
+                    <div>
+                        <label for="travel-budget">💶 Συνολικό Προϋπολογισμός (€):</label>
+                        <input type="number" id="travel-budget" placeholder="π.χ. 1500" min="0" style="width: 100%;">
+                    </div>
+                    
+                    <div>
+                        <label for="days-stay">📅 Μέρες Διαμονής:</label>
+                        <select id="days-stay" onchange="updateDaysStay()" style="width: 100%;">
+                            <option value="">-- Επιλέξτε --</option>
+                            <option value="2">2 μέρες</option>
+                            <option value="3">3 μέρες</option>
+                            <option value="4">4 μέρες</option>
+                            <option value="5">5 μέρες</option>
+                            <option value="7">7 μέρες</option>
+                            <option value="10">10 μέρες</option>
+                            <option value="14">14 μέρες</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Κουμπιά ενεργειών -->
+            <div class="buttons-container">
+                <button onclick="filterDestinations()" style="background: #3eb489; padding: 15px 30px; font-size: 18px;">
+                    🔍 Αναζήτηση Προορισμών
+                </button>
+                <button onclick="resetFilters()" style="background: #6c757d;">
+                    🔄 Επαναφορά Φίλτρων
+                </button>
+            </div>
+            
+            <!-- Αποτελέσματα -->
+            <div id="destination-cards">
+                <!-- Οι κάρτες προορισμών θα εμφανιστούν εδώ -->
+            </div>
         </div>
 
         <!-- Βήμα 2: Πτήσεις -->
         <div id="step-flight" class="section">
-            <!-- ... όλο το HTML για βήμα 2 ... -->
+            <h1>✈️ Βήμα 2: Αναζήτηση Πτήσεων</h1>
+            
+            <div style="background: #e3f2fd; padding: 25px; border-radius: 16px; margin: 20px 0; text-align: center;">
+                <h3 style="color: #1565c0;">🔍 Αναζήτηση πτήσεων για: <span id="flight-destination">[Πόλη]</span></h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0;">
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <label>🛫 Από:</label>
+                        <select style="width: 100%; padding: 10px;">
+                            <option>Αθήνα (ATH)</option>
+                            <option>Θεσσαλονίκη (SKG)</option>
+                            <option>Ηράκλειο (HER)</option>
+                            <option>Ρόδος (RHO)</option>
+                        </select>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <label>📅 Ημερομηνία Αναχώρησης:</label>
+                        <input type="date" style="width: 100%; padding: 10px;">
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <label>📅 Ημερομηνία Επιστροφής:</label>
+                        <input type="date" style="width: 100%; padding: 10px;">
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <label>👥 Επιβάτες:</label>
+                        <select style="width: 100%; padding: 10px;">
+                            <option>1 ενήλικας</option>
+                            <option selected>2 ενήλικες</option>
+                            <option>2 ενήλικες + 1 παιδί</option>
+                            <option>2 ενήλικες + 2 παιδιά</option>
+                            <option>Οικογένεια 4 ατόμων</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="alert('🚀 Η αναζήτηση πτήσεων θα ανοίξει σε νέα καρτέλα!')" 
+                        style="background: #ff5722; padding: 15px 40px; font-size: 18px;">
+                    ✈️ Αναζήτηση Πτήσεων
+                </button>
+                
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    Θα ανοίξει σε νέα καρτέλα με τα διαθέσιμα δρομολόγια
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button onclick="goToStep3()" style="background: #3eb489; padding: 15px 40px; font-size: 18px;">
+                    ✅ Συνέχεια στο Βήμα 3
+                </button>
+            </div>
         </div>
 
         <!-- Βήμα 3: Ξενοδοχεία -->
         <div id="step-hotel" class="section">
-            <!-- ... όλο το HTML για βήμα 3 ... -->
+            <h1>🏨 Βήμα 3: Εύρεση Ξενοδοχείων</h1>
+            
+            <div style="background: #fff3cd; padding: 25px; border-radius: 16px; margin: 20px 0; text-align: center;">
+                <h3 style="color: #856404;">🏨 Αναζήτηση ξενοδοχείων στην: <span id="hotel-destination">[Πόλη]</span></h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 25px 0;">
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 2px solid #ffc107;">
+                        <h4>📅 Ημερομηνίες</h4>
+                        <p>Check-in: <input type="date" style="padding: 8px; margin: 5px;"></p>
+                        <p>Check-out: <input type="date" style="padding: 8px; margin: 5px;"></p>
+                    </div>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 2px solid #ffc107;">
+                        <h4>👨‍👩‍👧‍👦 Επισκέπτες</h4>
+                        <p>Δωμάτια: 
+                            <select style="padding: 8px; margin: 5px;">
+                                <option>1</option>
+                                <option selected>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                            </select>
+                        </p>
+                        <p>Έναρξη αναζήτησης για οικογένειες</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 2px solid #ffc107;">
+                        <h4>⭐ Κατηγορία</h4>
+                        <select style="width: 100%; padding: 10px;">
+                            <option>Οποιοδήποτε ξενοδοχείο</option>
+                            <option>3 αστέρια και άνω</option>
+                            <option>4 αστέρια και άνω</option>
+                            <option>5 αστέρια</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="searchHotels()" 
+                        style="background: #ff9800; padding: 15px 40px; font-size: 18px;">
+                    🏨 Αναζήτηση Ξενοδοχείων
+                </button>
+                
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    Συνεργαζόμαστε με Expedia για τις καλύτερες τιμές
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button onclick="goToStep4()" style="background: #3eb489; padding: 15px 40px; font-size: 18px;">
+                    ✅ Συνέχεια στο Βήμα 4
+                </button>
+            </div>
         </div>
 
         <!-- Βήμα 4: Δραστηριότητες -->
         <div id="step-activities" class="section">
-            <!-- ... όλο το HTML για βήμα 4 ... -->
+            <h1>🎭 Βήμα 4: Οικογενειακές Δραστηριότητες</h1>
+            
+            <div style="background: #e8f5e9; padding: 20px; border-radius: 16px; margin: 20px 0; text-align: center;">
+                <h3 style="color: #2e7d32;">🏙️ Δραστηριότητες για: <span id="activities-city">[Πόλη]</span></h3>
+                <p>👨‍👩‍👧‍👦 Κάντε κλικ στις δραστηριότητες που σας ενδιαφέρουν. Το κόστος θα υπολογιστεί αυτόματα!</p>
+            </div>
+            
+            <!-- Activity Cards Container -->
+            <div id="activities-container-wrapper">
+                <div id="activities-container">
+                    <!-- Οι κάρτες δραστηριοτήτων θα εμφανιστούν εδώ -->
+                </div>
+            </div>
+            
+            <!-- Συνολικό Κόστος -->
+            <div id="overall-total" class="total-overall">
+                Συνολικό Κόστος Επιλεγμένων Δραστηριοτήτων: 0 €
+            </div>
+            
+            <!-- Κουμπιά -->
+            <div class="step-5-btn-container">
+                <button onclick="calculateSmartCombos()" style="background: #9c27b0; margin-right: 15px;">
+                    🧮 Υπολογισμός Combos
+                </button>
+                <button onclick="goToStep5()" class="step-5-btn">
+                    📋 Συνέχεια στο Βήμα 5
+                </button>
+            </div>
         </div>
 
         <!-- Βήμα 5: Σύνοψη -->
         <div id="step-summary" class="section">
-            <!-- ... όλο το HTML για βήμα 5 ... -->
+            <h1>📋 Βήμα 5: Συνοπτική Προβολή</h1>
+            
+            <div style="background: #fff3e0; padding: 25px; border-radius: 16px; margin: 20px 0;">
+                <h3 style="color: #ef6c00;">📊 Σύνοψη Ταξιδιού</h3>
+                
+                <div id="summary-content" class="summary-content">
+                    <!-- Το πρόγραμμα θα εμφανιστεί εδώ -->
+                    <p>⏳ Φόρτωση συνοπτικής προβολής...</p>
+                </div>
+            </div>
+            
+            <!-- Χάρτης -->
+            <div style="background: #e3f2fd; padding: 25px; border-radius: 16px; margin: 20px 0;">
+                <h3 style="color: #1565c0;">🗺️ Χάρτης & Διαδρομές</h3>
+                <p>Δείτε τον χάρτη με τις επιλεγμένες δραστηριότητες:</p>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button onclick="goToStep6()" style="background: #2196f3; padding: 15px 40px; font-size: 18px;">
+                        🗺️ Άνοιγμα Χάρτη
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Export -->
+            <div style="background: #fce4ec; padding: 25px; border-radius: 16px; margin: 20px 0; text-align: center;">
+                <h3 style="color: #c2185b;">📄 Εξαγωγή Σχεδίου</h3>
+                <p>Εξάγετε το σχέδιό σας σε μορφή PDF:</p>
+                
+                <button id="pdf-export-btn" 
+                        onclick="alert('📄 Το PDF θα δημιουργηθεί σύντομα!')"
+                        style="background: #e91e63; padding: 15px 40px; font-size: 18px; margin-top: 15px;">
+                    📥 Εξαγωγή PDF
+                </button>
+            </div>
         </div>
 
         <!-- Βήμα 6: Χάρτης -->
         <div id="step-map" class="section">
-            <!-- ... όλο το HTML για βήμα 6 ... -->
+            <h1>🗺️ Βήμα 6: Χάρτης & Διαδρομές</h1>
+            
+            <div style="background: #f1f8e9; padding: 25px; border-radius: 16px; margin: 20px 0;">
+                <h3 style="color: #7cb342;">📍 Χάρτης Δραστηριοτήτων</h3>
+                <p>Δείτε τις τοποθεσίες των επιλεγμένων δραστηριοτήτων στον διαδραστικό χάρτη:</p>
+                
+                <!-- Map Container -->
+                <div id="map-container" style="height: 500px; width: 100%; border-radius: 12px; border: 3px solid #3eb489; margin: 20px 0;">
+                    <div style="text-align: center; padding: 100px 20px; color: #666;">
+                        <h3>🗺️ Ο χάρτης θα φορτωθεί εδώ</h3>
+                        <p>Κάντε κλικ στο κουμπί για να φορτώσετε τον χάρτη</p>
+                        <button onclick="initializeSmartMap()" style="background: #3eb489; padding: 15px 30px; font-size: 18px; margin-top: 20px;">
+                            🗺️ Φόρτωση Χάρτη
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Custom Points -->
+                <div style="background: white; padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #9c27b0;">
+                    <h4 style="color: #9c27b0;">🟣 Προσθήκη Προσωπικών Σημείων</h4>
+                    <p>Προσθέστε δικά σας σημεία στον χάρτη (ξενοδοχεία, εστιατόρια, κλπ):</p>
+                    
+                    <div class="buttons-container" style="margin: 15px 0;">
+                        <button onclick="addCustomPointSmart()" style="background: #9c27b0;">
+                            🟣 Προσθήκη Σημείου στον Χάρτη
+                        </button>
+                        <button onclick="viewCustomPoints()" style="background: #673ab7;">
+                            📋 Προβολή Προσωπικών Σημείων
+                        </button>
+                    </div>
+                    
+                    <div id="custom-points-container">
+                        <!-- Τα προσωπικά σημεία θα εμφανιστούν εδώ -->
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button onclick="activateStep('step-destination')" style="background: #3eb489; padding: 15px 40px; font-size: 18px;">
+                    🏁 Επιστροφή στην Αρχή
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- ΜΟΝΟ ΑΥΤΑ ΤΑ 2 SCRIPT TAGS ΠΡΕΠΕΙ ΝΑ ΜΕΙΝΟΥΝ -->
-   <script>
-    // Πρώτα βάζουμε το service worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js')
-                .then(function(registration) {
-                    console.log('✅ Service Worker registered: ', registration.scope);
-                })
-                .catch(function(error) {
-                    console.log('❌ Service Worker registration failed: ', error);
-                });
-        });
-    }
-</script>
+    <script>
+        // Πρώτα βάζουμε το service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registered: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Service Worker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
 
-<script src="js/app.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
