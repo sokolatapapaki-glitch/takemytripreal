@@ -2645,16 +2645,21 @@ function setupEventListeners() {
 
 // Initialize the application
 function init() {
-    console.log("🚀 Αρχικοποίηση Οικογενειακού Ταξιδιωτικού Οργανωτή...");
+    console.log("🚀 Αρχικοποίηση με ασφαλή init...");
     
-    setupEventListeners();
-    
+    // Περιμένουμε λίγο παραπάνω για σιγουριά
     setTimeout(() => {
-        loadFromLocalStorage();
-        checkMobileView();
-    }, 100);
-    
-    console.log("✅ Οργανωτής ταξιδιού έτοιμος!");
+        try {
+            setupEventListeners();
+            loadFromLocalStorage();
+            checkMobileView();
+            console.log("✅ Οργανωτής ταξιδιού έτοιμος!");
+        } catch(error) {
+            console.error("❌ Σφάλμα κατά την αρχικοποίηση:", error);
+            // Προσπάθησε ξανά μετά από 500ms
+            setTimeout(init, 500);
+        }
+    }, 300);
 }
 
 // Αντί για DOMContentLoaded, περιμένουμε να φορτωθεί ΟΛΗ η σελίδα
