@@ -147,41 +147,70 @@
                         <option value="Ακριβό">Ακριβό</option>
                     </select>
                 </div>
+                
+                <!-- 👇 ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΝΕΟ CHECKBOX GROUP ΓΙΑ ΤΙΣ ΗΛΙΚΙΕΣ 👇 -->
+                <div class="filter-group">
+                    <h3>👨‍👩‍👧‍👦 Κατάλληλο για</h3>
+                    <div id="suitability-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" value="Νεογέννητα"> 👶 Νεογέννητα
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" value="Παιδικό"> 🧒 Παιδικό
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" value="ΑΜΕΑ"> ♿ ΑΜΕΑ
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" value="Ηλικιωμένοι"> 👵 Ηλικιωμένοι
+                        </label>
+                    </div>
+                </div>
             </div>
             
-            <!-- Οικογένεια -->
+            <!-- Οικογένεια - ΕΔΩ ΕΧΕΙ ΑΛΛΑΓΗ: display: block ΠΑΝΤΑ -->
             <div class="family-members-container">
-                <h3>👨‍👩‍👧‍👦 Οικογένεια</h3>
+                <h3>👨‍👩‍👧‍👦 Μέλη Ομάδας / Οικογένειας</h3>
                 
-                <select id="travel-type" onchange="toggleFamily()">
-                    <option value="Ζευγάρι">Ζευγάρι</option>
-                    <option value="Οικογένεια">Οικογένεια</option>
-                    <option value="Φίλοι">Φίλοι</option>
-                    <option value="Μόνος">Μόνος</option>
-                </select>
-                
-                <div id="family-options" style="display: none;">
-                    <h4>Προσθέστε μέλη:</h4>
+                <div id="family-options" style="margin-top: 20px;">
+                    <h4>👨‍👩‍👧‍👦 Προσθέστε μέλη:</h4>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                        💡 <strong>Σημαντικό:</strong> Συμπληρώστε τις ηλικίες για ακριβή υπολογισμό κόστους!
+                    </p>
+                    
                     <div class="buttons-container">
                         <button onclick="addAdultMember()">👨 + Ενήλικας</button>
                         <button onclick="addChildMember()">🧒 + Παιδί</button>
                         <button onclick="addBabyMember()">👶 + Μωρό</button>
-                        <button onclick="updateFamilyMembers()">🔄 Ενημέρωση Οικογένειας</button>
+                        <button onclick="updateFamilyMembers()" style="background: #3eb489;">🔄 Ενημέρωση Οικογένειας</button>
                     </div>
                     
-                    <div id="family-members-list">
+                    <div id="family-members-list" style="margin-top: 20px;">
                         <div class="family-member-input">
                             <span>👨</span>
                             <input type="text" placeholder="Όνομα" value="Πατέρας" class="member-name">
-                            <input type="number" placeholder="Ηλικία" value="42" class="member-age" min="18" max="120">
+                            <input type="number" placeholder="Ηλικία" value="42" class="member-age" min="0" max="120">
                             <span>ετών</span>
                         </div>
                         <div class="family-member-input">
                             <span>👩</span>
                             <input type="text" placeholder="Όνομα" value="Μητέρα" class="member-name">
-                            <input type="number" placeholder="Ηλικία" value="40" class="member-age" min="18" max="120">
+                            <input type="number" placeholder="Ηλικία" value="40" class="member-age" min="0" max="120">
                             <span>ετών</span>
                         </div>
+                    </div>
+                    
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #3eb489;">
+                        <h5>ℹ️ Πληροφορίες για τον υπολογισμό:</h5>
+                        <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
+                            <li><strong>👶 Μωρό:</strong> 0-5 ετών (συνήθως δωρεάν ή έκπτωση)</li>
+                            <li><strong>🧒 Παιδί:</strong> 6-14 ετών (ειδικές παιδικές τιμές)</li>
+                            <li><strong>👨 Ενήλικας:</strong> 15+ ετών (κανονική τιμή)</li>
+                            <li><strong>👵 Ηλικιωμένος:</strong> 65+ (συνήθως έκπτωση)</li>
+                        </ul>
+                        <p style="font-size: 14px; color: #2e7d32; margin-top: 10px;">
+                            ✅ Το κόστος θα υπολογιστεί αυτόματα στο <strong>Βήμα 4</strong> με βάση τις ηλικίες!
+                        </p>
                     </div>
                 </div>
             </div>
@@ -193,22 +222,33 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
                     <div>
                         <label for="travel-budget">💶 Συνολικό Προϋπολογισμός (€):</label>
-                        <input type="number" id="travel-budget" placeholder="π.χ. 1500" min="0" style="width: 100%;">
+                        <input type="number" id="travel-budget" placeholder="π.χ. 1500" min="0" style="width: 100%; padding: 10px; border: 2px solid #3eb489; border-radius: 8px;">
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Για ολόκληρο το ταξίδι (πτήσεις, ξενοδοχεία, δραστηριότητες)</p>
                     </div>
                     
                     <div>
                         <label for="days-stay">📅 Μέρες Διαμονής:</label>
-                        <select id="days-stay" onchange="updateDaysStay()" style="width: 100%;">
+                        <select id="days-stay" onchange="updateDaysStay()" style="width: 100%; padding: 10px; border: 2px solid #3eb489; border-radius: 8px;">
                             <option value="">-- Επιλέξτε --</option>
-                            <option value="2">2 μέρες</option>
-                            <option value="3">3 μέρες</option>
-                            <option value="4">4 μέρες</option>
-                            <option value="5">5 μέρες</option>
-                            <option value="7">7 μέρες</option>
-                            <option value="10">10 μέρες</option>
-                            <option value="14">14 μέρες</option>
+                            <option value="2">2 μέρες (Σαβ-Κυρ)</option>
+                            <option value="3">3 μέρες (από Παρασκευή)</option>
+                            <option value="4">4 μέρες (μακρά σαββατοκύριακο)</option>
+                            <option value="5">5 μέρες (μετ' αργίας)</option>
+                            <option value="7">7 μέρες (ολόκληρη εβδομάδα)</option>
+                            <option value="10">10 μέρες (εβδομάδα +)</option>
+                            <option value="14">14 μέρες (δύο εβδομάδες)</option>
                         </select>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Θα δημιουργήσει έξυπνο πρόγραμμα με τις δραστηριότητες</p>
                     </div>
+                </div>
+                
+                <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px dashed #ffc107;">
+                    <h5>🎯 Συμβουλή:</h5>
+                    <p style="margin: 5px 0; font-size: 14px;">
+                        • Στο <strong>Βήμα 4</strong> θα δείτε το <strong>συνολικό κόστος</strong> των επιλεγμένων δραστηριοτήτων<br>
+                        • Το κόστος υπολογίζεται <strong>ανά ηλικία</strong> (μωρό, παιδί, ενήλικας)<br>
+                        • Μπορείτε να δείτε <strong>έξυπνα combos</strong> για εξοικονόμηση χρημάτων
+                    </p>
                 </div>
             </div>
             
@@ -346,7 +386,7 @@
             
             <div style="background: #e8f5e9; padding: 20px; border-radius: 16px; margin: 20px 0; text-align: center;">
                 <h3 style="color: #2e7d32;">🏙️ Δραστηριότητες για: <span id="activities-city">[Πόλη]</span></h3>
-                <p>👨‍👩‍👧‍👦 Κάντε κλικ στις δραστηριότητες που σας ενδιαφέρουν. Το κόστος θα υπολογιστεί αυτόματα!</p>
+                <p>👨‍👩‍👧‍👦 Κάντε κλικ στις δραστηριότητες που σας ενδιαφέρουν. Το κόστος θα υπολογιστεί αυτόματα με βάση τις ηλικίες που ορίσατε στο Βήμα 1!</p>
             </div>
             
             <!-- Activity Cards Container -->
@@ -416,7 +456,7 @@
             
             <div style="background: #f1f8e9; padding: 25px; border-radius: 16px; margin: 20px 0;">
                 <h3 style="color: #7cb342;">📍 Χάρτης Δραστηριοτήτων</h3>
-                <p>Δείτε τις τοποθεσίες των επιλεγμένων δραστηριοτήτων στον διαδραστικό χάρτη:</p>
+                <p>Δείτε τις τοποθεσίες των επιλεγμένων δραστηριότητες στον διαδραστικό χάρτη:</p>
                 
                 <!-- Map Container -->
                 <div id="map-container" style="height: 500px; width: 100%; border-radius: 12px; border: 3px solid #3eb489; margin: 20px 0;">
